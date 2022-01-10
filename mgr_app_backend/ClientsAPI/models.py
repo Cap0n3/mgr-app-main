@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 #GLOBAL LISTS (FOR CHOICES)
 
@@ -7,6 +8,31 @@ COUNTRY = (
     ('France', 'France'),
 )
 
+# ====== TEACHER ====== #
+class Teacher(models.Model):
+	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+	business_name = models.CharField(max_length=200, default='My School', blank=True)
+	#business_logo = models.ImageField(default='genericLogo.png', null=True, blank=True)
+	business_website = models.CharField(max_length=200, default='www.myschool.com', blank=True)
+	teacher_fname = models.CharField(max_length=200, default='Pierre')
+	teacher_lname = models.CharField(max_length=200, default='Dupont')
+	teacher_email = models.EmailField(default='myschool@mymail.com')
+	teacher_phone = models.CharField(max_length=200, blank=True)
+	teacher_address = models.CharField(max_length=200, default='6 chemin de Nullepart')
+	teacher_postal = models.CharField(max_length=200, default='1200')
+	teacher_city = models.CharField(max_length=200, default='Genève')
+	teacher_country = models.CharField(max_length=200, default='Suisse', choices=COUNTRY)
+	teacher_bankNumber = models.CharField(max_length=200, default='45-875468-3')
+	teacher_iban = models.CharField(max_length=200, default='CH65 7654 5221 0000 4587 5468 3')
+	teacher_bicSwift = models.CharField(max_length=200, default='POSXF')
+	teacher_taxLabel = models.CharField(max_length=50, default="Taxe")
+	teacher_tax = models.IntegerField(default=0)
+	teacher_dueDays = models.IntegerField(default=10)
+
+	def __str__(self):
+		return self.teacher_lname + " " + self.teacher_fname
+
+# ====== CLIENTS (STUDENTS) ====== #
 class Clients(models.Model):
 	#Choices Lists
 	DAY_LIST = (
@@ -61,7 +87,7 @@ class Clients(models.Model):
 		('EUR', 'EUR'),
 	)
 
-	#teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
+	teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
 	#student_pic = models.ImageField(default='studentPic.png', null=True, blank=True)
 	first_name = models.CharField(max_length=200)
 	last_name = models.CharField(max_length=200)
