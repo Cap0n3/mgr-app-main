@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import "../layout.css"
 import Dashboard from "../pages/Dashboard";
-import Cloud from "../pages/Cloud";
+import ClientDetail from "../pages/ClientDetail";
 import Server from "../pages/Server";
 
 const Content = () => {
@@ -10,7 +10,7 @@ const Content = () => {
 		<div className="content">
 			<Switch>
 				<Route path="/" exact component={Dashboard} />
-				<Route path="/cloud" component={Cloud} />
+				<Route path="/client/:clientID" component={ClientDetail} />
 				<Route path="/server" component={Server} />
        		</Switch>
 		</div>
