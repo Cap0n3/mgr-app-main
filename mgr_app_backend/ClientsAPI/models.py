@@ -12,7 +12,7 @@ COUNTRY = (
 class Teacher(models.Model):
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
 	business_name = models.CharField(max_length=200, default='My School', blank=True)
-	#business_logo = models.ImageField(default='genericLogo.png', null=True, blank=True)
+	business_logo = models.ImageField(default='genericLogo.png', null=True, blank=True)
 	business_website = models.CharField(max_length=200, default='www.myschool.com', blank=True)
 	teacher_fname = models.CharField(max_length=200, default='Pierre')
 	teacher_lname = models.CharField(max_length=200, default='Dupont')
@@ -88,7 +88,7 @@ class Clients(models.Model):
 	)
 
 	teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
-	#student_pic = models.ImageField(default='studentPic.png', null=True, blank=True)
+	student_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True)
 	first_name = models.CharField(max_length=200)
 	last_name = models.CharField(max_length=200)
 	invoice_fname = models.CharField(max_length=200)

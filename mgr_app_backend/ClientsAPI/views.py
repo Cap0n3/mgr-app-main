@@ -5,6 +5,6 @@ from .serializers import ClientSerializer
 
 
 # Create your views here.
-class DummyView(generics.ListAPIView):
+class ClientsView(generics.ListAPIView):
     queryset = Clients.objects.all()
     serializer_class = ClientSerializer
