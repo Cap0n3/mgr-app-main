@@ -1,0 +1,281 @@
+:root {
+	/* DARK THEME COLORS */
+	--dark-background-color: #11162fff;
+	--dark-sidebar-color: #191f3f;
+	--dark-header-color: #11162fff;
+	--dark-icon: #44578eff;
+	--font-color: #ffffffff;
+	/* LAYOUT DESIGN */
+	--header-height: 60px;
+	--sidebar-width: 60px;
+	--sidebar-open-width: 200px;
+	--sidebar-li-height: 55px;
+	--notif-icon-spacing: 20px;
+}
+
+body {
+	margin: 0;
+	overflow: hidden;
+	color: var(--font-color);
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.App {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+	/* background-color: purple; */
+}
+
+.main-container {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 100%;
+	overflow: hidden;
+}
+
+/* ==================== */
+/* ====== HEADER ====== */
+/* ==================== */
+
+.header {
+	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	width: 100%;
+	height: var(--header-height);
+	padding: 10px 15px 10px 15px;
+	background-color: var(--dark-header-color);
+	overflow: hidden;
+}
+
+.notif-icons {
+	display: flex;
+	color: #2470f5;
+	margin-left: var(--notif-icon-spacing);
+	cursor: pointer;
+}
+
+.header-menu-dropdown {
+	display: flex;
+	color: var(--dark-icon);
+	margin-right: 25px;
+	margin-left: var(--notif-icon-spacing);
+	cursor: pointer;
+}
+
+/* ========================= */
+/* ====== MENU BUTTON ====== */
+/* ========================= */
+
+.menuButton {
+	/* Base menu button properties */
+	color: var(--dark-icon);
+	position: fixed;
+	top: 19px;
+	left: calc(var(--sidebar-width) + 15px);
+	cursor: pointer;
+	transition: 0.3s ease-in;
+	z-index: 999;
+}
+
+.menuButton-active {
+	left: calc(var(--sidebar-open-width) + 15px);
+}
+
+/* ===================== */
+/* ====== CONTENT ====== */
+/* ===================== */
+
+.content {
+	box-sizing: border-box;
+	background-color: var(--dark-background-color);
+	width: 100%;
+	padding: 10px 30px 10px 30px;
+	height: calc(100vh - var(--header-height));
+	overflow-y: auto;
+	/* border: 1px solid red; */
+}
+
+/* ===================== */
+/* ====== SIDEBAR ====== */
+/* ===================== */
+
+.sidebar {
+	/* Base sidebar properties */
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-content: space-between;
+	height: 100vh;
+	width: var(--sidebar-width);
+	min-width: var(--sidebar-width);
+	background-color: var(--dark-sidebar-color);
+	transition: 0.3s ease-in;
+	overflow: hidden;
+}
+
+.sidebar-open {
+	width: var(--sidebar-open-width);
+	min-width: var(--sidebar-open-width);
+}
+
+/* === Sidebar elements === */
+
+.siteLogo-container {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	margin-top: 10px;
+	white-space: nowrap;
+	/* border: 1px solid brown; */
+}
+
+.site-logo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 18px;
+	height: var(--sidebar-li-height);
+	min-width: var(--sidebar-width);
+	cursor: pointer;
+	/* border: 1px solid purple; */
+}
+
+.app-logo {
+	color: #3c81f6ff;
+}
+
+.siteLogo-container span {
+	color: var(--dark-icon);
+	font-size: 1.2em;
+	text-transform: uppercase;
+}
+
+/* Nav List container */
+.nav-list-container {
+	margin: 20px 0px 0px 0px;
+	padding: 0px;
+	list-style: none;
+	white-space: nowrap;
+	/* border: 1px solid red; */
+}
+
+.nav-list-container li {
+	display: flex;
+	align-items: center;
+	height: var(--sidebar-li-height);
+	width: 100%;
+	cursor: pointer;
+	/* border: 1px solid white; */
+}
+
+.nav-list-container li:hover {
+	background-color: #181c35;
+}
+
+/* 
+= Active link icon color. =
+
+Couldn't find another way to do it ... to improve if possible.
+Using styled-component props for link text and simple activeClassName 
+for icon.
+*/
+.active .nav-icon {
+	color: #8796c5;
+	padding: 8px;
+	border-radius: 10px;
+	background: linear-gradient(90deg, rgba(38,47,80,1) 100%,rgba(135,150,197,1) 0%);
+}
+
+/* Router-dom links */
+.routerLink {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: var(--dark-icon);
+}
+
+/* Nav Icons */
+.navIcon-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 18px;
+	height: var(--sidebar-li-height);
+	min-width: var(--sidebar-width);
+	/* border: 1px solid purple; */
+}
+
+.nav-icon {
+	color: var(--dark-icon);
+	width: 25px;
+	height: auto;
+	/* border: 1px solid red; */
+}
+
+/* Logout button */
+.logoutIcon-wrapper {
+	position: absolute;
+	bottom: 30px;
+	left: 0px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: var(--sidebar-li-height);
+	min-width: var(--sidebar-width);
+	/* border: 1px solid purple; */
+}
+
+.logout-icon {
+	
+	cursor: pointer;
+	color: var(--dark-icon);
+}
+
+@media screen and (max-width: 960px) {
+	.overlay {
+		box-sizing: border-box;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		background: linear-gradient(
+			rgba(0, 0, 0, 0.9), 
+			rgba(0, 0, 0, 0.9)
+		 );
+		z-index: 100;
+	}
+
+	.sidebar {
+		position: fixed;
+		top: 0;
+		left: calc(var(--sidebar-width) * -1)
+	}
+
+	.sidebar-open {
+		position: fixed;
+		top: 0;
+		left: 0;
+		margin-left: 0;
+		z-index: 999;
+	}
+
+	.menuButton {
+		left: 15px;
+	}
+
+	.menuButton-active {
+		left: calc(var(--sidebar-open-width) + 15px);
+	}
+
+	
+}
+
+@keyframes fadeinout {
+	50% { opacity: 1; }
+}
