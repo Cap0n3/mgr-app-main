@@ -45,9 +45,10 @@ class Clients(models.Model):
 		('Dimanche', 'Dimanche'),
 	)
 	LESSONS_FREQ = (
+		('Quotidien', 'Quotidien'),
 		('Hebdomadaire', 'Hebdomadaire'),
 		('Bimensuel', 'Bimensuel'),
-		('A la carte', 'A la carte'),
+		('Libre', 'A la carte'),
 	)
 	LESSON_DURATION = (
 		('25', '25'),
