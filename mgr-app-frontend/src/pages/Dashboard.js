@@ -16,6 +16,7 @@ const Dashboard = () => {
 	}
 	return (
 		<>
+			<Link to="/client/create">Create New Client</Link>
 			<table>
 				<thead>
 					<tr>

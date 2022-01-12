@@ -4,6 +4,7 @@ import "../layout.css"
 import Dashboard from "../pages/Dashboard";
 import ClientDetail from "../pages/ClientDetail";
 import Server from "../pages/Server";
+import CreateClient from "../pages/CreateClient";
 
 const Content = () => {
 	return(
@@ -11,8 +12,9 @@ const Content = () => {
 			<Switch>
 				<Route path="/" exact component={Dashboard} />
 				<Route path="/client/:clientID" component={ClientDetail} />
+				<Route path="/create-client" component={CreateClient} />
 				<Route path="/server" component={Server} />
-       		</Switch>
+       	</Switch>
 		</div>
 	);	
 }
