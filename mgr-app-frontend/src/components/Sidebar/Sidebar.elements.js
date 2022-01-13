@@ -7,7 +7,7 @@ export const StyledLink = styled(NavLink) `
 	text-decoration: none;
 	color: #44578eff;
 
-	&.${props => props.activeClassName} {
+	&.${props => props.activeclassname} {
 		color: #8796c5;
 	 }
 `;

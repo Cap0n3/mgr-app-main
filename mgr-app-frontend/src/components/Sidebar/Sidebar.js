@@ -23,7 +23,7 @@ const Sidebar = (props) => {
 				</div>
 				<ul className="nav-list-container">
 					<li>
-						<StyledLink exact to="/" activeClassName="active">
+						<StyledLink to="/" activeclassname="active">
 							<div className="navIcon-wrapper">
 								<GoDashboard className="nav-icon" onClick={() => isSmallScreen() ? props.setOpenCallback(false) : null} />
 							</div>
@@ -31,7 +31,7 @@ const Sidebar = (props) => {
 						</StyledLink>
 					</li>
 					<li>
-						<StyledLink to="/cloud" activeClassName="active">
+						<StyledLink to="/billing" activeclassname="active">
 							<div className="navIcon-wrapper">
 								<GoCloudUpload className="nav-icon" onClick={() => isSmallScreen() ? props.setOpenCallback(false) : null} />
 							</div>
@@ -39,7 +39,7 @@ const Sidebar = (props) => {
 						</StyledLink>
 					</li>
 					<li>
-						<StyledLink to="/server" activeClassName="active">
+						<StyledLink to="/notes" activeclassname="active">
 							<div className="navIcon-wrapper">
 								<GoServer className="nav-icon" onClick={() => isSmallScreen() ? props.setOpenCallback(false) : null} />
 							</div>

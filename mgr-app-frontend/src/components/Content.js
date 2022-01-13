@@ -1,20 +1,22 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "../layout.css"
 import Dashboard from "../pages/Dashboard";
 import ClientDetail from "../pages/ClientDetail";
-import Server from "../pages/Server";
 import CreateClient from "../pages/CreateClient";
+import Billing from "../pages/Billing";
+import Notes from "../pages/Notes";
 
 const Content = () => {
 	return(
 		<div className="content">
-			<Switch>
-				<Route path="/" exact component={Dashboard} />
-				<Route path="/client/:clientID" component={ClientDetail} />
-				<Route path="/create-client" component={CreateClient} />
-				<Route path="/server" component={Server} />
-       	</Switch>
+			<Routes>
+				<Route path="/" element={<Dashboard />} />
+				<Route path="/client/:clientID" element={<ClientDetail />} />
+				<Route path="/client/create" element={<CreateClient />} />
+				<Route path="/billing" element={<Billing />} />
+				<Route path="/notes" element={<Notes />} />
+       	</Routes>
 		</div>
 	);	
 }
