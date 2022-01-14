@@ -39,7 +39,8 @@ const Dashboard = () => {
 							<td>{info.lesson_duration} minutes</td>
 							<td>{info.lesson_frequency}</td>
 							<td>{info.instrument}</td>
-							<td><Link to={`/client/${info.id}`}>detail</Link></td>
+							<td><Link to={`/client/${info.id}`}>Detail</Link></td>
+							<td><Link to={`/client/update/${info.id}`}>Update</Link></td>
 						</tr>
 					))}
 				</tbody>

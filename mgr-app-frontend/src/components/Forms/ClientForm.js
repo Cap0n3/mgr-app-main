@@ -9,12 +9,43 @@ const ClientFormComponent = (props) => {
 	// On first render check if it's an update (to get client infos)
 	useEffect(() => {
 		if (props.target === "update") {
-			const getClient = () => {
-				return
+			const getClient = async () => {
+				let response = await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`)
+				let data = await response.json()
+				let clientObject = {
+					"first_name": data.first_name,
+					"last_name": data.last_name,
+					"invoice_fname": data.invoice_fname,
+					"invoice_lname": data.invoice_lname,
+					"student_birth": data.student_birth,
+					"lesson_day": data.lesson_day,
+					"lesson_hour": data.lesson_hour,
+					"lesson_duration": data.lesson_duration,
+					"lesson_frequency": data.lesson_frequency,
+					"instrument": data.instrument,
+					"student_level": data.student_level,
+					"student_email": data.student_email,
+					"student_phone": data.student_phone,
+					"billing_rate": data.billing_rate,
+					"billing_currency": data.billing_currency,
+					"invoice_numbering": data.invoice_numbering,
+					"invoice_email": data.invoice_email,
+					"invoice_phone": data.invoice_phone,
+					"invoice_address": data.invoice_address,
+					"invoice_postal": data.invoice_postal,
+					"invoice_city": data.invoice_city,
+					"invoice_country": data.invoice_country,
+					"payment_option": data.payment_option,
+					"notes": data.notes,
+				}
+				// Fill inputs with client data
+				setInputs(inputs => ({
+					...clientObject,
+				}));
 			}
 			getClient();
 		}
-	}, [props.target])
+	}, [props.target, props.clientID])
 
 	// Get values from inputs
 	const handleChange = (e) => {
@@ -112,9 +143,9 @@ const ClientFormComponent = (props) => {
 					<option value="Dimanche">Dimanche</option>
 				</Select>
 				<Label>Heure du cours * :</Label>
-				<Input type="time" name="lesson_hour" value={inputs.lesson_hour} onChange={handleChange} />
+				<Input type="time" name="lesson_hour" value={inputs.lesson_hour || ""} onChange={handleChange} />
 				<Label>Durée du cours (min) * :</Label>
-				<Input type="number" name="lesson_duration" value={inputs.lesson_duration} onChange={handleChange} />
+				<Input type="number" name="lesson_duration" value={inputs.lesson_duration || ""} onChange={handleChange} />
 				<Label>Fréquence du cours * :</Label>
 				<Select name="lesson_frequency" defaultValue={"DEFAULT"} value={inputs.lesson_frequency} onChange={handleChange}>
 					<option value="DEFAULT" disabled>Choisir une fréquence ...</option>
@@ -157,12 +188,12 @@ const ClientFormComponent = (props) => {
 				<Input type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} />
 				<Legend>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
-				<Input type="number" name="billing_rate" value={inputs.billing_rate} onChange={handleChange} />
+				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} />
 				<Label>Monnaie * :</Label>
 				<Select name="billing_currency" defaultValue={"DEFAULT"} value={inputs.billing_currency} onChange={handleChange}>
 					<option value="DEFAULT" disabled>Choisir une monnaie ...</option>
-					<option value="CHF">Francs suisse</option>
-					<option value="EUR">Euros</option>
+					<option value="CHF">CHF - Francs suisse</option>
+					<option value="EUR">EUR - Euros</option>
 				</Select>
 				<Label>Mode de règlement * :</Label>
 				<Select name="payment_option" defaultValue={"DEFAULT"} value={inputs.payment_option} onChange={handleChange}>
@@ -178,7 +209,7 @@ const ClientFormComponent = (props) => {
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
 				<input type="radio" id="numbering_false" name="invoice_numbering" value="false" onChange={handleChange} />
 				<Legend>Notes</Legend>
-				<Textarea name="notes" value={inputs.notes} onChange={handleChange}></Textarea>
+				<Textarea name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				<Input type="submit" value="Créer" />
 			</Form>
 		</>);
