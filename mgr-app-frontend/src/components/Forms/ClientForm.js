@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./ClientForm.style"
 
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
 	const navigate = useNavigate();
+	const radioBtnTrue = useRef();
+	const radioBtnFalse = useRef();
 
 	// On first render check if it's an update (to get client infos)
 	useEffect(() => {
@@ -47,14 +49,6 @@ const ClientFormComponent = (props) => {
 		}
 	}, [props.target, props.clientID])
 
-	// Get values from inputs
-	const handleChange = (e) => {
-		const inputName = e.target.name;
-		const inputValue = e.target.value;
-		// See JS spread operator
-		setInputs(values => ({ ...values, [inputName]: inputValue }))
-	}
-
 	// Send info to API to create client
 	const createClient = async () => {
 		await fetch(`http://127.0.0.1:8000/client/create/`, {
@@ -93,9 +87,35 @@ const ClientFormComponent = (props) => {
 	const updateClient = () => {
 		return
 	}
+	
+	//===========================//
+	//====== FORM HANDLING ======//
+	//===========================//
+	
+	// Get values from inputs
+	const handleChange = (e) => {
+		const inputName = e.target.name;
+		const	inputValue = e.target.value;
+		// See JS spread operator
+		setInputs(values => ({ ...values, [inputName]: inputValue }))
+	}
+	
+	const handleRadioBtn = (e) => {
+		/*
+			**Function to handle Radio button**
+			=> Radio buttons must be handled diffently that regular inputs
+			due to the booleean nature of them-
+		*/
+		const inputName = e.target.name;
+		// convert string "true"/"false" to actual booleean
+		const inputValue = (e.target.id === "true") ? true : false;
+		// See JS spread operator
+		setInputs(values => ({ ...values, [inputName]: inputValue }))
+	}
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+		console.log(inputs)
 		// Evaluate if it's an update or a creation
 		if (props.target === "create") {
 			createClient();
@@ -114,7 +134,7 @@ const ClientFormComponent = (props) => {
 		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
 		return firstToUpper
 	}
-
+	console.log(inputs.invoice_numbering)
 	return (
 		<>
 			<Form onSubmit={handleSubmit}>
@@ -205,12 +225,12 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Label>Référence facture * :</Label>
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
-				<input type="radio" id="numbering_true" name="invoice_numbering" value="true" onChange={handleChange} />
+				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
-				<input type="radio" id="numbering_false" name="invoice_numbering" value="false" onChange={handleChange} />
+				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
 				<Legend>Notes</Legend>
 				<Textarea name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
-				<Input type="submit" value="Créer" />
+				<Input type="submit" value={upperFirstChar(props.target)} />
 			</Form>
 		</>);
 }
