@@ -227,7 +227,7 @@ const ClientFormComponent = (props) => {
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
 				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
-				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
+				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
 				<Legend>Notes</Legend>
 				<Textarea name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				<Input type="submit" value={upperFirstChar(props.target)} />
