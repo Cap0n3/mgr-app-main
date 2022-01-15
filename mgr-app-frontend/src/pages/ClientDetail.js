@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom'
 
 const Cloud = () => {
@@ -38,6 +39,7 @@ const Cloud = () => {
 						<td>{clientData.lesson_duration} minutes</td>
 						<td>{clientData.lesson_frequency}</td>
 						<td>{clientData.instrument}</td>
+						<td><Link to={`/client/update/${clientID}`}>Update</Link></td>
 					</tr>
 				</tbody>
 			</table>		

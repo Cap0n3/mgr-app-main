@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./ClientForm.style"
 
+/**
+ * Form React Component that is used to CREATE or UPDATE client data throught API calls.
+ */
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
 	const navigate = useNavigate();
@@ -84,8 +87,38 @@ const ClientFormComponent = (props) => {
 		})
 	}
 	
-	const updateClient = () => {
-		return
+	const updateClient =  async () => {
+		await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				first_name: inputs.first_name,
+				last_name: inputs.last_name,
+				invoice_fname: inputs.invoice_fname,
+				invoice_lname: inputs.invoice_lname,
+				student_birth: inputs.student_birth,
+				lesson_day: inputs.lesson_day,
+				lesson_hour: inputs.lesson_hour,
+				lesson_duration: inputs.lesson_duration,
+				lesson_frequency: inputs.lesson_frequency,
+				instrument: inputs.instrument,
+				student_level: inputs.student_level,
+				student_email: inputs.student_email,
+				student_phone: inputs.student_phone,
+				billing_rate: inputs.billing_rate,
+				billing_currency: inputs.billing_currency,
+				invoice_numbering: inputs.invoice_numbering,
+				invoice_email: inputs.invoice_email,
+				invoice_phone: inputs.invoice_phone,
+				invoice_address: inputs.invoice_address,
+				invoice_postal: inputs.invoice_postal,
+				invoice_city: inputs.invoice_city,
+				invoice_country: inputs.invoice_country,
+				payment_option: inputs.payment_option,
+				notes: inputs.notes,
+				teacher: 1,
+			}),
+		})
 	}
 	
 	//===========================//
@@ -115,7 +148,6 @@ const ClientFormComponent = (props) => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(inputs)
 		// Evaluate if it's an update or a creation
 		if (props.target === "create") {
 			createClient();
