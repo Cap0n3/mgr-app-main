@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { EditButton } from "./Dashboard.style";
+import { EditButton } from "./Dashboard.style"; 
 
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
