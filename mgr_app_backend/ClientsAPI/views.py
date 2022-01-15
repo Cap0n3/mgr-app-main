@@ -20,3 +20,7 @@ class CreateClientView(generics.CreateAPIView):
 class UpdateClientView(generics.RetrieveUpdateAPIView):
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
+
+class DeleteClientView(generics.DestroyAPIView):
+	queryset = Clients.objects.all()
+	serializer_class = ClientSerializer

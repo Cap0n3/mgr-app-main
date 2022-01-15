@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { useParams } from 'react-router-dom'
+import { EditButton } from "./Dashboard.style";
 
 const Cloud = () => {
 	const [clientData, setData ] = useState([])
 	const { clientID } = useParams()
+	const navigate = useNavigate();
 	
 	useEffect(() => {
 		const getClient = async() => {
@@ -15,6 +17,11 @@ const Cloud = () => {
 		}
 		getClient();
 	}, [clientID]);
+	
+	const handleUpdateBtn = (e) => {
+		let client_ID = e.target.value
+		navigate(`/client/update/${client_ID}`);
+	}
 	
 	return (
 		<>
@@ -39,7 +46,7 @@ const Cloud = () => {
 						<td>{clientData.lesson_duration} minutes</td>
 						<td>{clientData.lesson_frequency}</td>
 						<td>{clientData.instrument}</td>
-						<td><Link to={`/client/update/${clientID}`}>Update</Link></td>
+						<td><EditButton name="update" value={clientID} onClick={handleUpdateBtn}>Update</EditButton></td>
 					</tr>
 				</tbody>
 			</table>		
