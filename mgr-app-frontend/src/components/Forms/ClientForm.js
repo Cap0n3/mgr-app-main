@@ -166,7 +166,7 @@ const ClientFormComponent = (props) => {
 		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
 		return firstToUpper
 	}
-	console.log(inputs.invoice_numbering)
+	
 	return (
 		<>
 			<Form onSubmit={handleSubmit}>
