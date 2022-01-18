@@ -5,35 +5,37 @@ from .serializers import ClientSerializer, TeacherSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import permissions
 
-#TEST
-class IsOwner(permissions.BasePermission):
-	# def has_permission(self, request, view):
-	# 	return True
-		#return request.user and request.user.is_authenticated()
 
+class IsAdminOrOwner(permissions.BasePermission):
 	def has_object_permission(self, request, view, obj):
-		return obj.teacher.id == request.user.id
-	
+		isAdmin = request.user.is_superuser
+		isOwner = obj.teacher.id == request.user.id
+		if isAdmin:
+			return True
+		elif isOwner:
+			return True
+		else:
+			return False
 
-# Create your views here.
 class TeachersView(generics.ListAPIView):
 	queryset = Teacher.objects.all()
 	serializer_class = TeacherSerializer
 	permission_classes = [IsAuthenticated]
 
 class ClientsView(generics.ListAPIView):
-	#queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
-		user = self.request.user.id
-		return Clients.objects.filter(teacher=user)
+		userID = self.request.user.id
+		queryset = Clients.objects.all()
+		isAdmin = self.request.user.is_superuser
+		return queryset if isAdmin else queryset.filter(teacher=userID)
 
 class ClientDetailView(generics.RetrieveAPIView):
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
-	permission_classes = [IsAuthenticated, IsOwner]
+	permission_classes = [IsAuthenticated, IsAdminOrOwner]
 
 class CreateClientView(generics.CreateAPIView):
 	queryset = Clients.objects.all()
@@ -49,9 +51,12 @@ class CreateClientView(generics.CreateAPIView):
 class UpdateClientView(generics.RetrieveUpdateAPIView):
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
-	permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated, IsAdminOrOwner]
+
+	def perform_update(self, serializer):
+		instance = serializer.save()
 
 class DeleteClientView(generics.DestroyAPIView):
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
-	permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated, IsAdminOrOwner]

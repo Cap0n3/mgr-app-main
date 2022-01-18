@@ -14,5 +14,5 @@ class TeacherSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Clients
-		#fields = '__all__'
-		exclude = ['teacher']
+		fields = '__all__'
+		#exclude = ['teacher']
