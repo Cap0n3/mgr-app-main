@@ -3,24 +3,37 @@ from rest_framework import generics
 from .models import Clients, Teacher
 from .serializers import ClientSerializer, TeacherSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import permissions
+from .permissions import IsAdminOrOwner
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
+# === JWT TOKEN CUSTOM VIEWS === #
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+	@classmethod
+	def get_token(cls, user):
+		token = super().get_token(user)
 
-class IsAdminOrOwner(permissions.BasePermission):
-	def has_object_permission(self, request, view, obj):
-		isAdmin = request.user.is_superuser
-		isOwner = obj.teacher.id == request.user.id
-		if isAdmin:
-			return True
-		elif isOwner:
-			return True
-		else:
-			return False
+		# Add custom claims
+		token['fname'] = user.teacher.teacher_fname
+		token['lname'] = user.teacher.teacher_lname
+		# ...
 
+		return token
+
+class MyTokenObtainPairView(TokenObtainPairView):
+	serializer_class = MyTokenObtainPairSerializer
+
+# === APP VIEW CLASSES === #
 class TeachersView(generics.ListAPIView):
 	queryset = Teacher.objects.all()
 	serializer_class = TeacherSerializer
 	permission_classes = [IsAuthenticated]
+
+	def get_queryset(self):
+		userID = self.request.user.id
+		queryset = Teacher.objects.all()
+		isAdmin = self.request.user.is_superuser
+		return queryset if isAdmin else queryset.filter(user=userID)
 
 class ClientsView(generics.ListAPIView):
 	serializer_class = ClientSerializer
