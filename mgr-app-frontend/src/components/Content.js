@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "../layout.css"
 import Dashboard from "../pages/Dashboard";
+import LoginPage from "../pages/LoginPage";
 import ClientDetail from "../pages/ClientDetail";
 import CreateClient from "../pages/CreateClient";
 import UpdateClient from "../pages/UpdateClient";
@@ -12,6 +13,7 @@ const Content = () => {
 	return(
 		<div className="content">
 			<Routes>
+				<Route path="/login" element={<LoginPage />} />
 				<Route path="/" element={<Dashboard />} />
 				<Route path="/client/:clientID" element={<ClientDetail />} />
 				<Route path="/client/create" element={<CreateClient />} />
