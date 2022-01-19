@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import AuthContext from '../context/AuthContext';
 import { EditButton } from "./Dashboard.style"; 
 
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
+	const { authTokens } = useContext(AuthContext)
 	const navigate = useNavigate();
 	
 	useEffect(() => {
@@ -11,10 +13,24 @@ const Dashboard = () => {
 	}, [])
 	
 	const getClients = async () => {
-		let response = await fetch('http://127.0.0.1:8000/clients/')
+		console.log(authTokens.access)
+		let response = await fetch('http://127.0.0.1:8000/clients/', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + String(authTokens.access)
+			}
+		})
+		
 		let data = await response.json()
-		console.log(data)
-		setData(data)
+		
+		if (response.status === 200) {
+			console.log("Success")
+			setData(data)
+			console.log(data)
+		} else if (response.statusText === 'Unauthorized') {
+			console.log("Unauthorized")
+		}	
 	}
 	
 	const deleteClient = async (clientID) => {

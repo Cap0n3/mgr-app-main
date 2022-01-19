@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
 		if (response.status === 200) {
 			setAuthTokens(data)
 			setUser(jwt_decode(data.access))
+			// Set Cookie
 			localStorage.setItem('authTokens', JSON.stringify(data))
 			//history.push('/')
 		} else {
@@ -34,8 +35,8 @@ export const AuthProvider = ({ children }) => {
 		// For DEBUG
 		console.log("username : " + e.target.username.value)
 		console.log("password : " + e.target.password.value)
-		console.log("autTokens : " + authTokens)
-		console.log("user token : " + user)
+		console.log("autTokens : " + Object.values(authTokens))
+		console.log("user token : " + Object.values(user))
 	}
 	
 	// Send vars and funcs to context (App component and children)
