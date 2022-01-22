@@ -23,12 +23,15 @@ from rest_framework_simplejwt.views import (
 from ClientsAPI.views import MyTokenObtainPairView
 
 urlpatterns = [
-   path('admin/', admin.site.urls),
-	path('', include('ClientsAPI.urls')),
-	path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-   path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('admin/', admin.site.urls),
+    path('', include('ClientsAPI.urls')),
+    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
+urlpatterns += [
+    path('api/auth/', include('rest_framework.urls')),
+]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
