@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<AuthContext.Provider value={contextData} >
-			{/* "children" passes everything between AuthProvider tags => here it's app div */}
+			{/* "children" passes everything between AuthProvider tags in App.js => So entire App (app div) */}
 			{children}
 		</AuthContext.Provider>
 	)

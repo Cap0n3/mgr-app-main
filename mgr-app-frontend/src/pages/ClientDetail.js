@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate} from "react-router-dom";
 import { useParams } from 'react-router-dom'
+import AuthContext from "../context/AuthContext";
 import { EditButton } from "./Dashboard.style";
 
 const Cloud = () => {
 	const [clientData, setData ] = useState([])
 	const { clientID } = useParams()
+	const {authTokens} = useContext(AuthContext)
 	const navigate = useNavigate();
 	
 	useEffect(() => {
 		const getClient = async() => {
-			let response = await fetch(`http://127.0.0.1:8000/client/${clientID}`)
+			let response = await fetch(`http://127.0.0.1:8000/client/${clientID}`, {
+				method:'GET',
+				headers:{
+					'Content-Type':'application/json',
+					'Authorization':'Bearer ' + String(authTokens.access)
+				}
+			})
 			let clientData = await response.json()
 			console.log(clientData)
 			setData(clientData)

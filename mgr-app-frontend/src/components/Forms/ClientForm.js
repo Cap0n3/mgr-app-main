@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
 import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./ClientForm.style"
 
 /**
@@ -7,6 +8,7 @@ import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./Clie
  */
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
+	const {authTokens} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
@@ -15,7 +17,13 @@ const ClientFormComponent = (props) => {
 	useEffect(() => {
 		if (props.target === "update") {
 			const getClient = async () => {
-				let response = await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`)
+				let response = await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
+					method:'GET',
+					headers:{
+						'Content-Type':'application/json',
+						'Authorization':'Bearer ' + String(authTokens.access)
+					}
+				})
 				let data = await response.json()
 				let clientObject = {
 					"first_name": data.first_name,
@@ -56,7 +64,10 @@ const ClientFormComponent = (props) => {
 	const createClient = async () => {
 		await fetch(`http://127.0.0.1:8000/client/create/`, {
 			method: "POST",
-			headers: { "Content-Type": "application/json" },
+			headers: {
+				'Content-Type':'application/json',
+				'Authorization':'Bearer ' + String(authTokens.access)
+			},
 			body: JSON.stringify({
 				first_name: inputs.first_name,
 				last_name: inputs.last_name,
@@ -82,7 +93,6 @@ const ClientFormComponent = (props) => {
 				invoice_country: inputs.invoice_country,
 				payment_option: inputs.payment_option,
 				notes: inputs.notes,
-				teacher: 1,
 			}),
 		})
 	}
@@ -90,7 +100,10 @@ const ClientFormComponent = (props) => {
 	const updateClient =  async () => {
 		await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
 			method: "PUT",
-			headers: { "Content-Type": "application/json" },
+			headers: {
+				'Content-Type':'application/json',
+				'Authorization':'Bearer ' + String(authTokens.access)
+			},
 			body: JSON.stringify({
 				first_name: inputs.first_name,
 				last_name: inputs.last_name,
@@ -116,7 +129,6 @@ const ClientFormComponent = (props) => {
 				invoice_country: inputs.invoice_country,
 				payment_option: inputs.payment_option,
 				notes: inputs.notes,
-				teacher: 1,
 			}),
 		})
 	}

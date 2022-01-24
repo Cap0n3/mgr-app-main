@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../../layout.css";
 import { FaRegBell } from "react-icons/fa"
 import { RiArrowDownSLine } from "react-icons/ri"
@@ -17,11 +17,13 @@ import {
 	ProfileRole
 } from "./Header.elements";
 import { isMenuClicked } from "./isMenuClicked";
+import AuthContext from "../../context/AuthContext";
 
 
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
+	const {user} = useContext(AuthContext)
 	const profilMenuRef = useRef(null)
 	const notifListRef = useRef(null)
 
@@ -73,7 +75,7 @@ const Header = (props) => {
 		<ProfileWrapper>
 			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>Al Castro</ProfileName>
+				<ProfileName>{user.fname.charAt(0)}. {user.lname}</ProfileName>
 				<ProfileRole>Admin</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -83,8 +85,8 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>Al Castro</ProfileName>
-						<ProfileRole>Admin</ProfileRole>
+						<ProfileName>{user.fname.charAt(0)}. {user.lname}</ProfileName>
+						<ProfileRole>AdminBibi</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>

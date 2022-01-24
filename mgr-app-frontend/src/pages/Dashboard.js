@@ -5,7 +5,7 @@ import { EditButton } from "./Dashboard.style";
 
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
-	const { authTokens } = useContext(AuthContext)
+	const { authTokens, user } = useContext(AuthContext)
 	const navigate = useNavigate();
 	
 	useEffect(() => {
@@ -13,7 +13,6 @@ const Dashboard = () => {
 	}, [])
 	
 	const getClients = async () => {
-		console.log(authTokens.access)
 		let response = await fetch('http://127.0.0.1:8000/clients/', {
 			method: 'GET',
 			headers: {
@@ -25,7 +24,7 @@ const Dashboard = () => {
 		let data = await response.json()
 		
 		if (response.status === 200) {
-			console.log("Success")
+			console.log(user.fname + " " + user.lname + " successfully identified !")
 			setData(data)
 			console.log(data)
 		} else if (response.statusText === 'Unauthorized') {
@@ -36,8 +35,10 @@ const Dashboard = () => {
 	const deleteClient = async (clientID) => {
 		await fetch(`http://127.0.0.1:8000/client/delete/${clientID}`, {
 			method: "DELETE",
-			headers: { "Content-Type": "application/json" },
-			body: ""
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + String(authTokens.access)
+			},
 		})
 	}
 	
