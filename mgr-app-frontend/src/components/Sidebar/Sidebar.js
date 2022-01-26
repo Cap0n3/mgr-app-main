@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { GoDashboard, GoServer, GoCloudUpload } from "react-icons/go";
 import { FaMagento } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5"
 import "../../layout.css";
 import { StyledLink } from "./Sidebar.elements";
+import AuthContext from '../../context/AuthContext';
 
 const Sidebar = (props) => {
+	const { logoutUser } = useContext(AuthContext)
 	// Check window width
 	const isSmallScreen = () => {
 		return (window.innerWidth <= 960) ? true : false;
+	}
+	const logoutEvent = () => {
+		if (isSmallScreen()) {
+			props.setOpenCallback(false)
+		}
+		logoutUser()
 	}
 	return (
 		<>
@@ -48,7 +56,7 @@ const Sidebar = (props) => {
 					</li>
 				</ul>
 				<div className="logoutIcon-wrapper">
-					<IoLogOutOutline className="logout-icon" size="30" onClick={() => isSmallScreen() ? props.setOpenCallback(false) : null} />
+					<IoLogOutOutline className="logout-icon" size="30" onClick={logoutEvent} />
 				</div>
 				
 			</div>

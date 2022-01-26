@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router';
 import jwt_decode from "jwt-decode";
 
 const AuthContext = createContext()
@@ -6,9 +7,10 @@ const AuthContext = createContext()
 export default AuthContext;
 
 export const AuthProvider = ({ children }) => {
-	let [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-	let [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
-	let [loading, setLoading] = useState(true)
+	const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+	const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
+	const [loading, setLoading] = useState(true)
+	const navigate = useNavigate();
 	
 	const loginUser = async (e) => {
 		e.preventDefault()
@@ -27,24 +29,25 @@ export const AuthProvider = ({ children }) => {
 			setUser(jwt_decode(data.access))
 			// Set Cookie
 			localStorage.setItem('authTokens', JSON.stringify(data))
-			//history.push('/')
+			navigate('/')
 		} else {
 			alert('Something went wrong!')
 		}
-		
-		// For DEBUG
-		console.log("username : " + e.target.username.value)
-		console.log("password : " + e.target.password.value)
-		console.log("autTokens : " + Object.values(authTokens))
-		console.log("user token : " + Object.values(user))
 	}
 	
+	const logoutUser = () => {
+        setAuthTokens(null)
+        setUser(null)
+        localStorage.removeItem('authTokens')
+		navigate('/login')
+    }
+
 	// Send vars and funcs to context (App component and children)
 	let contextData = {
 		user: user,
 		authTokens: authTokens,
 		loginUser: loginUser,
-		//logoutUser: logoutUser,
+		logoutUser: logoutUser,
 	}
 
 	return (

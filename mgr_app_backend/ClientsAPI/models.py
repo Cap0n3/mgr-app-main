@@ -30,7 +30,7 @@ class Teacher(models.Model):
 	teacher_dueDays = models.IntegerField(default=10)
 
 	def __str__(self):
-		return self.teacher_lname + " " + self.teacher_fname
+		return self.teacher_lname + " " + self.teacher_fname + " (" + str(self.id) + ")"
 
 # ====== CLIENTS (STUDENTS) ====== #
 class Clients(models.Model):

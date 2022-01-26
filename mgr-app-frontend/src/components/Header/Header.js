@@ -75,7 +75,7 @@ const Header = (props) => {
 		<ProfileWrapper>
 			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>{user.fname.charAt(0)}. {user.lname}</ProfileName>
+				<ProfileName>To Change</ProfileName>
 				<ProfileRole>Admin</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -85,7 +85,7 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>{user.fname.charAt(0)}. {user.lname}</ProfileName>
+						<ProfileName>To Change</ProfileName>
 						<ProfileRole>AdminBibi</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
@@ -100,3 +100,5 @@ const Header = (props) => {
 };
 
 export default Header;
+
+// use this for user name profile {user.fname.charAt(0)}. {user.lname} 
