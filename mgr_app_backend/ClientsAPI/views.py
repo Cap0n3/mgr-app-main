@@ -20,7 +20,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 		else:
 			token['fname'] = user.teacher.teacher_fname
 			token['lname'] = user.teacher.teacher_lname
-			token['role'] = "user"
+			token['role'] = "User"
 		# ...
 
 		return token

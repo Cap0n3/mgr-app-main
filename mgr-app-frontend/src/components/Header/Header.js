@@ -75,8 +75,8 @@ const Header = (props) => {
 		<ProfileWrapper>
 			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>To Change</ProfileName>
-				<ProfileRole>Admin</ProfileRole>
+				<ProfileName>{ user.username ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+				<ProfileRole>{ user.role }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
 		<div>
@@ -85,8 +85,8 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>To Change</ProfileName>
-						<ProfileRole>AdminBibi</ProfileRole>
+						<ProfileName>{ user.username ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+						<ProfileRole>{ user.role }</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>
@@ -101,4 +101,4 @@ const Header = (props) => {
 
 export default Header;
 
-// use this for user name profile {user.fname.charAt(0)}. {user.lname} 
+// use this for user name profile { user.username ? user.username : user.fname.charAt(0) + "." + user.lname } 
