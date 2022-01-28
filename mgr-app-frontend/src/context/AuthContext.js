@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
 			},
 			body: JSON.stringify({ 'username': e.target.username.value, 'password': e.target.password.value })
 		})
+
 		let data = await response.json()
 
 		if (response.status === 200) {
@@ -42,6 +43,32 @@ export const AuthProvider = ({ children }) => {
 		navigate('/login')
     }
 
+	const updateToken = async ()=> {
+
+        let response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({'refresh':authTokens?.refresh})
+        })
+
+        let data = await response.json()
+        
+        if (response.status === 200){
+            setAuthTokens(data)
+            setUser(jwt_decode(data.access))
+			// Set cookie
+            localStorage.setItem('authTokens', JSON.stringify(data))
+        } else {
+            logoutUser()
+        }
+
+        if (loading) {
+            setLoading(false)
+        }
+    }
+
 	// Send vars and funcs to context (App component and children)
 	let contextData = {
 		user: user,
@@ -50,10 +77,28 @@ export const AuthProvider = ({ children }) => {
 		logoutUser: logoutUser,
 	}
 
+	useEffect(()=> {
+
+        if(loading){
+            updateToken()
+        }
+
+        let fourMinutes = 1000 * 60 * 1
+
+        let interval =  setInterval(()=> {
+            if(authTokens){
+                updateToken()
+            }
+        }, fourMinutes)
+
+        return () => clearInterval(interval)
+
+    }, [authTokens, loading])
+
 	return (
 		<AuthContext.Provider value={contextData} >
 			{/* "children" passes everything between AuthProvider tags in App.js => So entire App (app div) */}
-			{children}
+			{loading ? null : children}
 		</AuthContext.Provider>
 	)
 }

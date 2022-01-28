@@ -1,46 +1,60 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
+import { getClients, deleteClient } from "../functions/ApiCalls"
 import { EditButton } from "./Dashboard.style"; 
 
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
-	const { authTokens, user } = useContext(AuthContext)
+	const { authTokens, user, logoutUser } = useContext(AuthContext)
 	const navigate = useNavigate();
 	
 	useEffect(() => {
-		getClients();
+		// getClients();
+		
+		let processData = (data) => {
+			setData(data)
+		}
+
+		let fetchFail = (err) => {
+			console.log(err);
+		}
+
+		getClients(authTokens, user, logoutUser).then(processData).catch(fetchFail);
+		
+		//setData(data)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 	
-	const getClients = async () => {
-		let response = await fetch('http://127.0.0.1:8000/clients/', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + String(authTokens.access)
-			}
-		})
+	// const getClients = async () => {
+	// 	let response = await fetch('http://127.0.0.1:8000/clients/', {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Authorization': 'Bearer ' + String(authTokens.access)
+	// 		}
+	// 	})
 		
-		let data = await response.json()
+	// 	let data = await response.json()
 		
-		if (response.status === 200) {
-			console.log(user.fname + " " + user.lname + " successfully identified !")
-			setData(data)
-			console.log(data)
-		} else if (response.statusText === 'Unauthorized') {
-			console.log("Unauthorized")
-		}	
-	}
+	// 	if (response.status === 200) {
+	// 		console.log(user.fname + " " + user.lname + " successfully identified !")
+	// 		setData(data)
+	// 		console.log(data)
+	// 	} else if (response.statusText === 'Unauthorized') {
+	// 		console.log("Unauthorized")
+	// 	}	
+	// }
 	
-	const deleteClient = async (clientID) => {
-		await fetch(`http://127.0.0.1:8000/client/delete/${clientID}`, {
-			method: "DELETE",
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + String(authTokens.access)
-			},
-		})
-	}
+	// const deleteClient = async (clientID) => {
+	// 	await fetch(`http://127.0.0.1:8000/client/delete/${clientID}`, {
+	// 		method: "DELETE",
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Authorization': 'Bearer ' + String(authTokens.access)
+	// 		},
+	// 	})
+	// }
 	
 	const handleEditClick = (e) => {
 		let btnName = e.target.name
@@ -54,7 +68,7 @@ const Dashboard = () => {
 			navigate(`/client/update/${clientID}`);
 		}
 		else if (btnName === "delete") {
-			deleteClient(clientID);
+			deleteClient(authTokens, clientID);
 			// To refresh client list
 			window.location.reload();
 		}

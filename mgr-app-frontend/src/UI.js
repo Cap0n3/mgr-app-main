@@ -1,16 +1,14 @@
 import "./layout.css";
-import { BrowserRouter as Router } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Container from "./components/Container";
 import { FaBars } from "react-icons/fa";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { useState, useContext } from "react";
-import AuthContext, { AuthProvider } from "./context/AuthContext";
+import AuthContext from "./context/AuthContext";
 
 const UI = () => {
 	const [isOpen, setOpen] = useState(false);
-	const { authTokens, user } = useContext(AuthContext)
-    console.log(user)
+	const { user } = useContext(AuthContext)
     if(user === null) {
         return <LoginPage />
     } else {
