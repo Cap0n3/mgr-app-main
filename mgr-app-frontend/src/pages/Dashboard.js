@@ -9,53 +9,22 @@ const Dashboard = () => {
 	const { authTokens, user, logoutUser } = useContext(AuthContext)
 	const navigate = useNavigate();
 	
-	useEffect(() => {
-		// getClients();
-		
+	useEffect(() => {	
+		// If getClient() is a success	
 		let processData = (data) => {
 			setData(data)
 		}
 
+		// If error occured catch it
 		let fetchFail = (err) => {
 			console.log(err);
 		}
 
+		// Necessary syntax (.then) for external async funcs
 		getClients(authTokens, user, logoutUser).then(processData).catch(fetchFail);
-		
-		//setData(data)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-	
-	// const getClients = async () => {
-	// 	let response = await fetch('http://127.0.0.1:8000/clients/', {
-	// 		method: 'GET',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 			'Authorization': 'Bearer ' + String(authTokens.access)
-	// 		}
-	// 	})
-		
-	// 	let data = await response.json()
-		
-	// 	if (response.status === 200) {
-	// 		console.log(user.fname + " " + user.lname + " successfully identified !")
-	// 		setData(data)
-	// 		console.log(data)
-	// 	} else if (response.statusText === 'Unauthorized') {
-	// 		console.log("Unauthorized")
-	// 	}	
-	// }
-	
-	// const deleteClient = async (clientID) => {
-	// 	await fetch(`http://127.0.0.1:8000/client/delete/${clientID}`, {
-	// 		method: "DELETE",
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 			'Authorization': 'Bearer ' + String(authTokens.access)
-	// 		},
-	// 	})
-	// }
-	
+
 	const handleEditClick = (e) => {
 		let btnName = e.target.name
 		let clientID = e.target.value
