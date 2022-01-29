@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
+import { updateClient } from "../../functions/ApiCalls";
 import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./ClientForm.style"
 
 /**
@@ -97,41 +98,41 @@ const ClientFormComponent = (props) => {
 		})
 	}
 	
-	const updateClient =  async () => {
-		await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
-			method: "PUT",
-			headers: {
-				'Content-Type':'application/json',
-				'Authorization':'Bearer ' + String(authTokens.access)
-			},
-			body: JSON.stringify({
-				first_name: inputs.first_name,
-				last_name: inputs.last_name,
-				invoice_fname: inputs.invoice_fname,
-				invoice_lname: inputs.invoice_lname,
-				student_birth: inputs.student_birth,
-				lesson_day: inputs.lesson_day,
-				lesson_hour: inputs.lesson_hour,
-				lesson_duration: inputs.lesson_duration,
-				lesson_frequency: inputs.lesson_frequency,
-				instrument: inputs.instrument,
-				student_level: inputs.student_level,
-				student_email: inputs.student_email,
-				student_phone: inputs.student_phone,
-				billing_rate: inputs.billing_rate,
-				billing_currency: inputs.billing_currency,
-				invoice_numbering: inputs.invoice_numbering,
-				invoice_email: inputs.invoice_email,
-				invoice_phone: inputs.invoice_phone,
-				invoice_address: inputs.invoice_address,
-				invoice_postal: inputs.invoice_postal,
-				invoice_city: inputs.invoice_city,
-				invoice_country: inputs.invoice_country,
-				payment_option: inputs.payment_option,
-				notes: inputs.notes,
-			}),
-		})
-	}
+	// const updateClient =  async () => {
+	// 	await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
+	// 		method: "PUT",
+	// 		headers: {
+	// 			'Content-Type':'application/json',
+	// 			'Authorization':'Bearer ' + String(authTokens.access)
+	// 		},
+	// 		body: JSON.stringify({
+	// 			first_name: inputs.first_name,
+	// 			last_name: inputs.last_name,
+	// 			invoice_fname: inputs.invoice_fname,
+	// 			invoice_lname: inputs.invoice_lname,
+	// 			student_birth: inputs.student_birth,
+	// 			lesson_day: inputs.lesson_day,
+	// 			lesson_hour: inputs.lesson_hour,
+	// 			lesson_duration: inputs.lesson_duration,
+	// 			lesson_frequency: inputs.lesson_frequency,
+	// 			instrument: inputs.instrument,
+	// 			student_level: inputs.student_level,
+	// 			student_email: inputs.student_email,
+	// 			student_phone: inputs.student_phone,
+	// 			billing_rate: inputs.billing_rate,
+	// 			billing_currency: inputs.billing_currency,
+	// 			invoice_numbering: inputs.invoice_numbering,
+	// 			invoice_email: inputs.invoice_email,
+	// 			invoice_phone: inputs.invoice_phone,
+	// 			invoice_address: inputs.invoice_address,
+	// 			invoice_postal: inputs.invoice_postal,
+	// 			invoice_city: inputs.invoice_city,
+	// 			invoice_country: inputs.invoice_country,
+	// 			payment_option: inputs.payment_option,
+	// 			notes: inputs.notes,
+	// 		}),
+	// 	})
+	// }
 	
 	//===========================//
 	//====== FORM HANDLING ======//
@@ -167,7 +168,8 @@ const ClientFormComponent = (props) => {
 			setTimeout(() => navigate('/'), 50);
 		}
 		else if (props.target === "update") {
-			updateClient();
+			//updateClient();
+			updateClient(authTokens, props.clientID, inputs)
 			// Wait a bit for server to make ressource available
 			setTimeout(() => navigate('/'), 50);
 		}

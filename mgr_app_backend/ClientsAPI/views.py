@@ -18,6 +18,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 			token['username'] = user.username
 			token['role'] = "Admin"
 		else:
+			token['username'] = user.username
 			token['fname'] = user.teacher.teacher_fname
 			token['lname'] = user.teacher.teacher_lname
 			token['role'] = "User"

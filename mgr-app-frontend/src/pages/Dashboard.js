@@ -8,18 +8,18 @@ const Dashboard = () => {
 	const [clientData, setData] = useState([])
 	const { authTokens, user, logoutUser } = useContext(AuthContext)
 	const navigate = useNavigate();
+
+	// If API call is success, populate clientData
+	const processData = (data) => {
+		setData(data)
+	}
+
+	// If API call error
+	const fetchFail = (err) => {
+		console.error(err);
+	}
 	
 	useEffect(() => {	
-		// If getClient() is a success	
-		let processData = (data) => {
-			setData(data)
-		}
-
-		// If error occured catch it
-		let fetchFail = (err) => {
-			console.log(err);
-		}
-
 		// Necessary syntax (.then) for external async funcs
 		getClients(authTokens, user, logoutUser).then(processData).catch(fetchFail);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,9 +37,9 @@ const Dashboard = () => {
 			navigate(`/client/update/${clientID}`);
 		}
 		else if (btnName === "delete") {
-			deleteClient(authTokens, clientID);
+			deleteClient(authTokens, user, clientID).then().catch(fetchFail);;
 			// To refresh client list
-			window.location.reload();
+			//window.location.reload();
 		}
 	}
 	
