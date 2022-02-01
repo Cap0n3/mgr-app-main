@@ -9,10 +9,20 @@ import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./Clie
  */
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
-	const {authTokens} = useContext(AuthContext)
+	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
+
+	// If API call is success, populate clientData
+	const processData = (data) => {
+		// Fill form inputs with client data
+	}
+
+	// If API call error
+	const fetchFail = (err) => {
+		console.error(err);
+	}
 
 	// On first render check if it's an update (to get client infos)
 	useEffect(() => {
@@ -169,7 +179,7 @@ const ClientFormComponent = (props) => {
 		}
 		else if (props.target === "update") {
 			//updateClient();
-			updateClient(authTokens, props.clientID, inputs)
+			updateClient(authTokens, user, props.clientID, inputs).then().catch(fetchFail);
 			// Wait a bit for server to make ressource available
 			setTimeout(() => navigate('/'), 50);
 		}

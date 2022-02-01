@@ -1,3 +1,44 @@
+// ==================== //
+// ====== CREATE ====== //
+// ==================== //
+export const createClient = async (authTokens, user, inputs) => {
+    let response = await fetch(`http://127.0.0.1:8000/client/create/`, {
+        method: "POST",
+        headers: {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + String(authTokens.access)
+        },
+        body: JSON.stringify({
+            first_name: inputs.first_name,
+            last_name: inputs.last_name,
+            invoice_fname: inputs.invoice_fname,
+            invoice_lname: inputs.invoice_lname,
+            student_birth: inputs.student_birth,
+            lesson_day: inputs.lesson_day,
+            lesson_hour: inputs.lesson_hour,
+            lesson_duration: inputs.lesson_duration,
+            lesson_frequency: inputs.lesson_frequency,
+            instrument: inputs.instrument,
+            student_level: inputs.student_level,
+            student_email: inputs.student_email,
+            student_phone: inputs.student_phone,
+            billing_rate: inputs.billing_rate,
+            billing_currency: inputs.billing_currency,
+            invoice_numbering: inputs.invoice_numbering,
+            invoice_email: inputs.invoice_email,
+            invoice_phone: inputs.invoice_phone,
+            invoice_address: inputs.invoice_address,
+            invoice_postal: inputs.invoice_postal,
+            invoice_city: inputs.invoice_city,
+            invoice_country: inputs.invoice_country,
+            payment_option: inputs.payment_option,
+            notes: inputs.notes,
+        }),
+    })
+
+    return checkErrors(response, user, "CREATE")
+}
+
 // ================== //
 // ====== READ ====== //
 // ================== //
@@ -12,15 +53,15 @@ export const getClients = async (authTokens, user) => {
 
     let data = await response.json()
 
-    if (checkErrors(response, user)) return data;	
+    if (checkErrors(response, user, "READ")) return data;	
 }
 
 // ==================== //
 // ====== UPDATE ====== //
 // ==================== //
 
-export const updateClient =  async (authTokens, clientID, inputs) => {
-    await fetch(`http://127.0.0.1:8000/client/update/${clientID}`, {
+export const updateClient =  async (authTokens, user, clientID, inputs) => {
+    let response = await fetch(`http://127.0.0.1:8000/client/update/${clientID}`, {
         method: "PUT",
         headers: {
             'Content-Type':'application/json',
@@ -53,6 +94,8 @@ export const updateClient =  async (authTokens, clientID, inputs) => {
                 notes: inputs.notes,
             }),
     })
+
+    return checkErrors(response, user, "UPDATE")
 }
 
 
@@ -68,29 +111,30 @@ export const deleteClient = async (authTokens, user, clientID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         },
     })
-    return checkErrors(response, user)
+    return checkErrors(response, user, "DELETE")
 }
 
 // ============================ //
 // ====== ERROR HANDLING ====== //
 // ============================ //
-const checkErrors = (httpResponse, user) => {
+const checkErrors = (httpResponse, user, operation) => {
     if (httpResponse.status === 200) 
     {
-        console.info("[User : " + user.username + "(" + user.user_id + ")] " + " Successfully identified !")
+        console.info(`[User : ${user.username} (${user.user_id})] ${operation} operation successfully completed !`)
         return true
         
     }
     else if (httpResponse.status === 204)
     {
-        console.info("[User : " + user.username + "(" + user.user_id + ")] " + "Client successfully deleted !")
+        console.info(`[User : ${user.username} (${user.user_id})] Client successfully deleted !`)
+        return true
     }
     else if (httpResponse.statusText === 'Unauthorized') 
     {
-        throw new Error("[User : " + user.username + "(" + user.user_id + ")] " + "Code 401 - Unauthorized");
+        throw new Error(`[User : ${user.username} (${user.user_id})] ${operation} operation has failed => Code 401 (Unauthorized)`);
     }
     else
     {
-        throw new Error("[User : " + user.username + "(" + user.user_id + ")] " + "An error occured : " + httpResponse.statusText);
+        throw new Error(`[User : ${user.username} (${user.user_id})] ${operation} operation has failed => An error occured : ${httpResponse.statusText}`);
     }
 }
