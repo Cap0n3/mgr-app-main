@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
-import { updateClient } from "../../functions/ApiCalls";
+import { getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./ClientForm.style"
 
 /**
@@ -14,9 +14,39 @@ const ClientFormComponent = (props) => {
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
-	// If API call is success, populate clientData
+	// If API call is success, populate clientData & fill form
 	const processData = (data) => {
 		// Fill form inputs with client data
+		let clientObject = {
+			"first_name": data.first_name,
+			"last_name": data.last_name,
+			"invoice_fname": data.invoice_fname,
+			"invoice_lname": data.invoice_lname,
+			"student_birth": data.student_birth,
+			"lesson_day": data.lesson_day,
+			"lesson_hour": data.lesson_hour,
+			"lesson_duration": data.lesson_duration,
+			"lesson_frequency": data.lesson_frequency,
+			"instrument": data.instrument,
+			"student_level": data.student_level,
+			"student_email": data.student_email,
+			"student_phone": data.student_phone,
+			"billing_rate": data.billing_rate,
+			"billing_currency": data.billing_currency,
+			"invoice_numbering": data.invoice_numbering,
+			"invoice_email": data.invoice_email,
+			"invoice_phone": data.invoice_phone,
+			"invoice_address": data.invoice_address,
+			"invoice_postal": data.invoice_postal,
+			"invoice_city": data.invoice_city,
+			"invoice_country": data.invoice_country,
+			"payment_option": data.payment_option,
+			"notes": data.notes,
+		}
+
+		setInputs(inputs => ({
+			...clientObject,
+		}))
 	}
 
 	// If API call error
@@ -27,47 +57,7 @@ const ClientFormComponent = (props) => {
 	// On first render check if it's an update (to get client infos)
 	useEffect(() => {
 		if (props.target === "update") {
-			const getClient = async () => {
-				let response = await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
-					method:'GET',
-					headers:{
-						'Content-Type':'application/json',
-						'Authorization':'Bearer ' + String(authTokens.access)
-					}
-				})
-				let data = await response.json()
-				let clientObject = {
-					"first_name": data.first_name,
-					"last_name": data.last_name,
-					"invoice_fname": data.invoice_fname,
-					"invoice_lname": data.invoice_lname,
-					"student_birth": data.student_birth,
-					"lesson_day": data.lesson_day,
-					"lesson_hour": data.lesson_hour,
-					"lesson_duration": data.lesson_duration,
-					"lesson_frequency": data.lesson_frequency,
-					"instrument": data.instrument,
-					"student_level": data.student_level,
-					"student_email": data.student_email,
-					"student_phone": data.student_phone,
-					"billing_rate": data.billing_rate,
-					"billing_currency": data.billing_currency,
-					"invoice_numbering": data.invoice_numbering,
-					"invoice_email": data.invoice_email,
-					"invoice_phone": data.invoice_phone,
-					"invoice_address": data.invoice_address,
-					"invoice_postal": data.invoice_postal,
-					"invoice_city": data.invoice_city,
-					"invoice_country": data.invoice_country,
-					"payment_option": data.payment_option,
-					"notes": data.notes,
-				}
-				// Fill inputs with client data
-				setInputs(inputs => ({
-					...clientObject,
-				}));
-			}
-			getClient();
+			getClient(authTokens, user, props.clientID).then(processData).catch(fetchFail);
 		}
 	}, [props.target, props.clientID])
 
@@ -107,42 +97,6 @@ const ClientFormComponent = (props) => {
 			}),
 		})
 	}
-	
-	// const updateClient =  async () => {
-	// 	await fetch(`http://127.0.0.1:8000/client/update/${props.clientID}`, {
-	// 		method: "PUT",
-	// 		headers: {
-	// 			'Content-Type':'application/json',
-	// 			'Authorization':'Bearer ' + String(authTokens.access)
-	// 		},
-	// 		body: JSON.stringify({
-	// 			first_name: inputs.first_name,
-	// 			last_name: inputs.last_name,
-	// 			invoice_fname: inputs.invoice_fname,
-	// 			invoice_lname: inputs.invoice_lname,
-	// 			student_birth: inputs.student_birth,
-	// 			lesson_day: inputs.lesson_day,
-	// 			lesson_hour: inputs.lesson_hour,
-	// 			lesson_duration: inputs.lesson_duration,
-	// 			lesson_frequency: inputs.lesson_frequency,
-	// 			instrument: inputs.instrument,
-	// 			student_level: inputs.student_level,
-	// 			student_email: inputs.student_email,
-	// 			student_phone: inputs.student_phone,
-	// 			billing_rate: inputs.billing_rate,
-	// 			billing_currency: inputs.billing_currency,
-	// 			invoice_numbering: inputs.invoice_numbering,
-	// 			invoice_email: inputs.invoice_email,
-	// 			invoice_phone: inputs.invoice_phone,
-	// 			invoice_address: inputs.invoice_address,
-	// 			invoice_postal: inputs.invoice_postal,
-	// 			invoice_city: inputs.invoice_city,
-	// 			invoice_country: inputs.invoice_country,
-	// 			payment_option: inputs.payment_option,
-	// 			notes: inputs.notes,
-	// 		}),
-	// 	})
-	// }
 	
 	//===========================//
 	//====== FORM HANDLING ======//

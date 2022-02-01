@@ -51,9 +51,26 @@ export const getClients = async (authTokens, user) => {
         }
     })
 
-    let data = await response.json()
+    if (checkErrors(response, user, "READ")) {
+        let data = await response.json()
+        return data;
+    } 
+}
 
-    if (checkErrors(response, user, "READ")) return data;	
+// Get a single client
+export const getClient = async (authTokens, user, clientID) => {
+    let response = await fetch(`http://127.0.0.1:8000/client/${clientID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens.access)
+        }
+    })
+
+    if (checkErrors(response, user, "READ")) {
+        let data = await response.json()
+        return data;
+    } 
 }
 
 // ==================== //
@@ -111,6 +128,7 @@ export const deleteClient = async (authTokens, user, clientID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         },
     })
+    
     return checkErrors(response, user, "DELETE")
 }
 
@@ -122,7 +140,6 @@ const checkErrors = (httpResponse, user, operation) => {
     {
         console.info(`[User : ${user.username} (${user.user_id})] ${operation} operation successfully completed !`)
         return true
-        
     }
     else if (httpResponse.status === 204)
     {
@@ -135,6 +152,6 @@ const checkErrors = (httpResponse, user, operation) => {
     }
     else
     {
-        throw new Error(`[User : ${user.username} (${user.user_id})] ${operation} operation has failed => An error occured : ${httpResponse.statusText}`);
+        throw new Error(`[User : ${user.username} (${user.user_id})] ${operation} operation has failed : ${httpResponse.status} ${httpResponse.statusText}`);
     }
 }
