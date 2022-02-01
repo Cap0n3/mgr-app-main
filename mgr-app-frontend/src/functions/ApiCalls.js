@@ -1,3 +1,7 @@
+/**
+ * CRUD API custom calls functions.
+ */
+
 // ==================== //
 // ====== CREATE ====== //
 // ==================== //
@@ -115,7 +119,6 @@ export const updateClient =  async (authTokens, user, clientID, inputs) => {
     return checkErrors(response, user, "UPDATE")
 }
 
-
 // ==================== //
 // ====== DELETE ====== //
 // ==================== //
@@ -128,7 +131,7 @@ export const deleteClient = async (authTokens, user, clientID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         },
     })
-    
+
     return checkErrors(response, user, "DELETE")
 }
 
@@ -136,14 +139,18 @@ export const deleteClient = async (authTokens, user, clientID) => {
 // ====== ERROR HANDLING ====== //
 // ============================ //
 const checkErrors = (httpResponse, user, operation) => {
-    if (httpResponse.status === 200) 
+    if (httpResponse.status === 200 || httpResponse.status === 201) 
     {
-        console.info(`[User : ${user.username} (${user.user_id})] ${operation} operation successfully completed !`)
+        console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
+        `${operation} operation was a success !\n` +
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
         return true
     }
     else if (httpResponse.status === 204)
     {
-        console.info(`[User : ${user.username} (${user.user_id})] Client successfully deleted !`)
+        console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
+        `${operation} operation was a success ! Client successfully deleted !\n` +
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
         return true
     }
     else if (httpResponse.statusText === 'Unauthorized') 
