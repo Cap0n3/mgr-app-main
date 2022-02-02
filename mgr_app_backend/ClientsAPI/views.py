@@ -15,14 +15,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 		# Add custom claims
 		if user.is_superuser:
+			token['isAdmin'] = True
 			token['username'] = user.username
 			token['role'] = "Admin"
 		else:
+			token['isAdmin'] = False
 			token['username'] = user.username
 			token['fname'] = user.teacher.teacher_fname
 			token['lname'] = user.teacher.teacher_lname
 			token['role'] = "User"
-		# ...
 
 		return token
 
@@ -36,20 +37,27 @@ class TeachersView(generics.ListAPIView):
 	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
-		userID = self.request.user.id
-		queryset = Teacher.objects.all()
 		isAdmin = self.request.user.is_superuser
-		return queryset if isAdmin else queryset.filter(user=userID)
+		currentUser = self.request.user
+		allTeachers = Teacher.objects.all()
+		if not isAdmin:
+			# Get teacher linked to user
+			linkedTeacher = Teacher.objects.filter(user=currentUser)
+		return allTeachers if isAdmin else linkedTeacher
 
 class ClientsView(generics.ListAPIView):
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
-		userID = self.request.user.id
-		queryset = Clients.objects.all()
 		isAdmin = self.request.user.is_superuser
-		return queryset if isAdmin else queryset.filter(teacher=userID)
+		currentUser = self.request.user
+		# Admin should not have a teacher associated
+		if not isAdmin:
+			# Get teacher linked to user
+			linkedTeacher = Teacher.objects.get(user=currentUser)
+		allClients = Clients.objects.all()
+		return allClients if isAdmin else allClients.filter(teacher=linkedTeacher.id)
 
 class ClientDetailView(generics.RetrieveAPIView):
 	queryset = Clients.objects.all()
@@ -62,10 +70,10 @@ class CreateClientView(generics.CreateAPIView):
 	permission_classes = [IsAuthenticated]
 
 	def perform_create(self, serializer):
-		userID = self.request.user.id
+		currentUser = self.request.user
 		# Must send instance and not just pk
-		teacherObj = Teacher.objects.get(pk=userID)
-		serializer.save(teacher=teacherObj)
+		linkedTeacher = Teacher.objects.get(user=currentUser)
+		serializer.save(teacher=linkedTeacher)
 
 class UpdateClientView(generics.RetrieveUpdateAPIView):
 	queryset = Clients.objects.all()

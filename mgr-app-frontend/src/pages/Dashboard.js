@@ -39,7 +39,7 @@ const Dashboard = () => {
 		else if (btnName === "delete") {
 			deleteClient(authTokens, user, clientID).then().catch(fetchFail);;
 			// To refresh client list
-			//window.location.reload();
+			window.location.reload();
 		}
 	}
 	

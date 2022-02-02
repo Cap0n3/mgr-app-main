@@ -75,7 +75,7 @@ const Header = (props) => {
 		<ProfileWrapper>
 			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>{ user.username ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+				<ProfileName>{ user.isAdmin ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
 				<ProfileRole>{ user.role }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -85,7 +85,7 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>{ user.username ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+						<ProfileName>{ user.isAdmin ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
 						<ProfileRole>{ user.role }</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>

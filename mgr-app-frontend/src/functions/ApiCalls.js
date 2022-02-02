@@ -142,6 +142,7 @@ const checkErrors = (httpResponse, user, operation) => {
     if (httpResponse.status === 200 || httpResponse.status === 201) 
     {
         console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
+        `[Teacher : ${user.fname} ${user.lname}]\n` +
         `${operation} operation was a success !\n` +
         `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
         return true
@@ -149,16 +150,20 @@ const checkErrors = (httpResponse, user, operation) => {
     else if (httpResponse.status === 204)
     {
         console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
+        `[Teacher : ${user.fname} ${user.lname}]\n` +
         `${operation} operation was a success ! Client successfully deleted !\n` +
         `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
         return true
     }
     else if (httpResponse.statusText === 'Unauthorized') 
     {
-        throw new Error(`[User : ${user.username} (${user.user_id})] ${operation} operation has failed => Code 401 (Unauthorized)`);
+        throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n` +
+            `${operation} operation has failed => Code 401 (Unauthorized)`
+        );
     }
     else
     {
-        throw new Error(`[User : ${user.username} (${user.user_id})] ${operation} operation has failed : ${httpResponse.status} ${httpResponse.statusText}`);
+        throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n`+ 
+            `${operation} operation has failed : ${httpResponse.status} ${httpResponse.statusText}`);
     }
 }

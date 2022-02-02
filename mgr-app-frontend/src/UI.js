@@ -11,20 +11,11 @@ const UI = () => {
 	const { user } = useContext(AuthContext)
     if(user === null) {
         return <LoginPage />
-    } else {
+    } 
+    else 
+    {
         return (
             <>
-                {
-                    (() => {
-                        if (user === null) {
-                            return <p>HELLO</p>
-                        }
-                        else {
-                            return <p>GOODBYE</p>
-                        }
-
-                    })
-                }
                 <FaBars
                     className={isOpen ? "menuButton menuButton-active" : "menuButton"}
                     onClick={() => setOpen(!isOpen)}
