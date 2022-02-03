@@ -2,7 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
 import { getClients, deleteClient } from "../functions/ApiCalls"
-import { EditButton } from "./Dashboard.style"; 
+import { EditButton } from "./pagesStyles/Dashboard.style";
+import { ClientTable, HeaderCell, FooterCell, Cell, Line, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
@@ -25,56 +26,75 @@ const Dashboard = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const handleEditClick = (e) => {
-		let btnName = e.target.name
-		let clientID = e.target.value
+	const handleEditClick = (callToAction, clientID ) => {
 
-		if (btnName === "detail") {
+		if (callToAction === "detail") {
 			// Go to update page (with ID)
 			navigate(`/client/${clientID}`);
 		}
-		else if (btnName === "update") {
+		else if (callToAction === "update") {
 			navigate(`/client/update/${clientID}`);
 		}
-		else if (btnName === "delete") {
+		else if (callToAction === "delete") {
 			deleteClient(authTokens, user, clientID).then().catch(fetchFail);;
 			// To refresh client list
 			window.location.reload();
 		}
 	}
+
+	const handleEditClick_test = (foo1, foo2) => {
+		console.log(foo1 + " " + foo2)
+	}
 	
 	return (
 		<>
 			<Link to="/client/create">Create New Client</Link>
-			<table>
+			<ClientTable>
 				<thead>
 					<tr>
-						<th scope="col">Prénom</th>
-						<th scope="col">Nom</th>
-						<th scope="col">Jour du cours</th>
-						<th scope="col">Heure du cours</th>
-						<th scope="col">Durée du cours</th>
-						<th scope="col">Fréquence du cours</th>
-						<th scope="col">Instument</th>
+						<HeaderCell scope="col">Prénom</HeaderCell>
+						<HeaderCell scope="col">Nom</HeaderCell>
+						<HeaderCell scope="col">Jour du cours</HeaderCell>
+						<HeaderCell scope="col">Heure du cours</HeaderCell>
+						<HeaderCell scope="col">Durée du cours</HeaderCell>
+						<HeaderCell scope="col">Fréquence du cours</HeaderCell>
+						<HeaderCell scope="col">Instument</HeaderCell>
+						<HeaderCell scope="col"></HeaderCell>
+						<HeaderCell scope="col"></HeaderCell>
+						<HeaderCell scope="col"></HeaderCell>
 					</tr>
 				</thead>
 				<tbody>
 					{clientData.map(info => (
-						<tr key={info.id}>
-							<td>{info.first_name}</td>
-							<td>{info.last_name}</td>
-							<td>{info.lesson_day}</td>
-							<td>{info.lesson_hour}</td>
-							<td>{info.lesson_duration} minutes</td>
-							<td>{info.lesson_frequency}</td>
-							<td>{info.instrument}</td>
-							<td><EditButton name="detail" value={info.id} onClick={handleEditClick}>Detail</EditButton></td>
-							<td><EditButton name="update" value={info.id} onClick={handleEditClick}>Update</EditButton></td>
-							<td><EditButton name="delete" value={info.id} onClick={handleEditClick}>Delete</EditButton></td>
-						</tr>
+						<Line key={info.id}>
+							<Cell>{info.first_name}</Cell>
+							<Cell>{info.last_name}</Cell>
+							<Cell>{info.lesson_day}</Cell>
+							<Cell>{info.lesson_hour}</Cell>
+							<Cell>{info.lesson_duration} minutes</Cell>
+							<Cell>{info.lesson_frequency}</Cell>
+							<Cell>{info.instrument}</Cell>
+							<Cell><EyeIcon size="1.5em" onClick={() => handleEditClick("detail", info.id)}/></Cell>
+							<Cell><EditIcon size="1.3em" onClick={() => handleEditClick("update", info.id)}/></Cell>
+							<Cell><TrashIcon size="1.3em" onClick={() => handleEditClick("delete", info.id)}/></Cell>
+						</Line>
 					))}
 				</tbody>
-			</table>		
+				<tfoot>
+					<tr>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+						<FooterCell></FooterCell>
+					</tr>
+				</tfoot>
+			</ClientTable>		
 		</>
 	);
 }

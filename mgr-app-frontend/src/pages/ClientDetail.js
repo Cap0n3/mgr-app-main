@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate} from "react-router-dom";
 import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
-import { EditButton } from "./Dashboard.style";
+import { EditButton } from "./pagesStyles/Dashboard.style";
 
 const Cloud = () => {
 	const [clientData, setData ] = useState([])
