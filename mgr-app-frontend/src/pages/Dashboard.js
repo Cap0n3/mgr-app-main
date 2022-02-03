@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
 import { getClients, deleteClient } from "../functions/ApiCalls"
-import { EditButton } from "./pagesStyles/Dashboard.style";
 import { ClientTable, HeaderCell, FooterCell, Cell, Line, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
 const Dashboard = () => {
@@ -40,10 +39,6 @@ const Dashboard = () => {
 			// To refresh client list
 			window.location.reload();
 		}
-	}
-
-	const handleEditClick_test = (foo1, foo2) => {
-		console.log(foo1 + " " + foo2)
 	}
 	
 	return (
