@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
 import { getClients, deleteClient } from "../functions/ApiCalls"
-import { ClientTable, HeaderCell, FooterCell, Cell, Line, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
+import { ClientTable, HeaderCell, FooterCell, Cell, Line, ProfilePic, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
@@ -47,28 +47,26 @@ const Dashboard = () => {
 			<ClientTable>
 				<thead>
 					<tr>
-						<HeaderCell scope="col">Prénom</HeaderCell>
-						<HeaderCell scope="col">Nom</HeaderCell>
-						<HeaderCell scope="col">Jour du cours</HeaderCell>
-						<HeaderCell scope="col">Heure du cours</HeaderCell>
-						<HeaderCell scope="col">Durée du cours</HeaderCell>
-						<HeaderCell scope="col">Fréquence du cours</HeaderCell>
-						<HeaderCell scope="col">Instument</HeaderCell>
-						<HeaderCell scope="col"></HeaderCell>
-						<HeaderCell scope="col"></HeaderCell>
-						<HeaderCell scope="col"></HeaderCell>
+						<HeaderCell></HeaderCell>
+						<HeaderCell>CLIENT</HeaderCell>
+						<HeaderCell >TEL</HeaderCell>
+						<HeaderCell >EMAIL</HeaderCell>
+						<HeaderCell >JOUR</HeaderCell>
+						<HeaderCell >HEURE</HeaderCell>
+						<HeaderCell >FREQUENCE</HeaderCell>
+						<HeaderCell colSpan={3} ></HeaderCell>
 					</tr>
 				</thead>
 				<tbody>
 					{clientData.map(info => (
 						<Line key={info.id}>
-							<Cell>{info.first_name}</Cell>
-							<Cell>{info.last_name}</Cell>
+							<Cell><ProfilePic src={info.student_pic} /></Cell>
+							<Cell>{info.first_name} {info.last_name}</Cell>
+							<Cell>{info.student_phone}</Cell>
+							<Cell>{info.student_email}</Cell>
 							<Cell>{info.lesson_day}</Cell>
-							<Cell>{info.lesson_hour}</Cell>
-							<Cell>{info.lesson_duration} minutes</Cell>
+							<Cell>{info.lesson_hour.split(':')[0]+ ":" + info.lesson_hour.split(':')[1]}</Cell>
 							<Cell>{info.lesson_frequency}</Cell>
-							<Cell>{info.instrument}</Cell>
 							<Cell><EyeIcon size="1.5em" onClick={() => handleEditClick("detail", info.id)}/></Cell>
 							<Cell><EditIcon size="1.3em" onClick={() => handleEditClick("update", info.id)}/></Cell>
 							<Cell><TrashIcon size="1.3em" onClick={() => handleEditClick("delete", info.id)}/></Cell>
@@ -84,9 +82,7 @@ const Dashboard = () => {
 						<FooterCell></FooterCell>
 						<FooterCell></FooterCell>
 						<FooterCell></FooterCell>
-						<FooterCell></FooterCell>
-						<FooterCell></FooterCell>
-						<FooterCell></FooterCell>
+						<FooterCell colSpan={3}></FooterCell>
 					</tr>
 				</tfoot>
 			</ClientTable>		

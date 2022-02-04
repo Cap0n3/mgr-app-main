@@ -17,16 +17,14 @@ export const ClientTable = styled.table`
     border-collapse: collapse;
     width: 100%;
     margin: 20px 0px 20px 0px;
-    
 `;
 
 export const HeaderCell = styled.th`
     text-align: left;
     height: 50px;
-    padding: 8px;
-    color: white;
+    padding: 8px 8px 8px 20px;
     background-color: #202750ff;
-
+    
     &:first-child {
         border-top-left-radius: 10px;
     }
@@ -37,9 +35,17 @@ export const HeaderCell = styled.th`
 `;
 
 export const Cell = styled.td`
-    background-color: #191f3f;
     text-align: left;
-    padding: 8px;
+    padding: 8px 8px 8px 20px;
+    background-color: #191f3f;
+`;
+
+export const ProfilePic = styled.img`
+    overflow: hidden;
+    vertical-align: middle;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
 `;
 
 export const FooterCell = styled.td`
@@ -66,13 +72,4 @@ export const Line = styled.tr`
     // &:nth-child(even) {
     //     background-color: #202750ff;
     // }
-`;
-
-export const TableControls = styled.div`
-    display: flex;
-    justify-content: center;
-    width: 30px;
-    padding: 8px 0px 8px 0px;
-    text-decoration: none;
-    border: 1px solid yellow;
 `;

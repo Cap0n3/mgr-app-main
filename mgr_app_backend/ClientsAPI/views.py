@@ -7,6 +7,8 @@ from .permissions import IsAdminOrOwner
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from rest_framework.parsers import MultiPartParser
+
 # === JWT TOKEN CUSTOM VIEWS === #
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 	@classmethod
@@ -65,6 +67,7 @@ class ClientDetailView(generics.RetrieveAPIView):
 	permission_classes = [IsAuthenticated, IsAdminOrOwner]
 
 class CreateClientView(generics.CreateAPIView):
+	parser_classes = [MultiPartParser]
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated]

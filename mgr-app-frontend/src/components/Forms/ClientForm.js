@@ -9,6 +9,7 @@ import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./Clie
  */
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
+	const [myFile, setMyFile] = useState(null);
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
@@ -68,7 +69,28 @@ const ClientFormComponent = (props) => {
 	// Get values from inputs
 	const handleChange = (e) => {
 		const inputName = e.target.name;
-		const	inputValue = e.target.value;
+		//const inputValue = e.target.value;
+		let inputValue;
+		if(e.target.name === "student_pic") {
+			// If it's a file
+			inputValue = e.target.files[0]
+			// const reader = new FileReader();
+			// reader.onloadend = () => {
+			// 	// use a regex to remove data url part
+			// 	const base64String = reader.result
+			// 	  .replace("data:", "")
+			// 	  .replace(/^.+,/, "");
+		  
+			// 	// log to console
+			// 	// logs wL2dvYWwgbW9yZ...
+			// 	inputValue = base64String
+			// 	setInputs(values => ({ ...values, [inputName]: inputValue }))
+			// };
+			// reader.readAsDataURL(inputValue);
+			
+		} else {
+			inputValue = e.target.value;
+		}
 		// See JS spread operator
 		setInputs(values => ({ ...values, [inputName]: inputValue }))
 	}
@@ -107,12 +129,28 @@ const ClientFormComponent = (props) => {
 		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
 		return firstToUpper
 	}
+
+	// === DEBUGGING ===
+	const debugFunc = (e) => {
+		setMyFile(e.target.files[0])
+		debugFuncTwo();
+	}
+
+	const debugFuncTwo = () => {
+		const formData = new FormData();
+		formData.selectedFile = myFile;
+		//formData.test = "This is a test"
+		console.log(formData)
+	}
 	
 	return (
 		<>
+			<button onClick={debugFuncTwo}>Click me</button>
 			<Form onSubmit={handleSubmit}>
 				{/* Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs */}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
+				<Label>Photo :</Label>
+				<Input type="file" name="student_pic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
 				<Input type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>

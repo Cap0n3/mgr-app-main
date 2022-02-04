@@ -27,6 +27,7 @@ export const Legend = styled.legend`
 `;
 
 export const Input = styled.input`
+	&[type="file"], 
 	&[type="text"], 
 	&[type="email"],
 	&[type="number"],

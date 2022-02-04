@@ -13,6 +13,7 @@ export const createClient = async (authTokens, user, inputs) => {
             'Authorization':'Bearer ' + String(authTokens.access)
         },
         body: JSON.stringify({
+            student_pic: inputs.student_pic,
             first_name: inputs.first_name,
             last_name: inputs.last_name,
             invoice_fname: inputs.invoice_fname,
