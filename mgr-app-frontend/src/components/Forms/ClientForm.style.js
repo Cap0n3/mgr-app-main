@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { ProfilePic } from "../../pages/pagesStyles/Tables.style";
 
 export const Form = styled.form`
 	max-width: 500px;
@@ -124,4 +125,17 @@ export const Textarea = styled.textarea`
 	&:focus {
 		background: #109177;
 	}
+`;
+
+export const Avatar = styled.img`
+	width: 200px;
+	height: auto;
+	border-radius: 50%;
+`;
+
+export const AvatarWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 30px;
 `;

@@ -10,8 +10,11 @@ export const createClient = async (authTokens, user, inputs) => {
             For image uploading, I choosed multipart/form-data instead of base64 encoding.
             Multipart/form-data is standard, faster and consumes less bandwidth.
         */
+        let profilePic = inputs.student_pic;
         let formData = new FormData();
-        formData.append("student_pic", inputs.student_pic);
+        if(profilePic != undefined){
+            formData.append("student_pic", profilePic);
+        }
         formData.append("first_name", inputs.first_name);
         formData.append("last_name", inputs.last_name);
         formData.append("invoice_fname", inputs.invoice_fname);

@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
-import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./ClientForm.style"
+import { Form, Label, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
  */
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
+	const [pic, setPic] = useState();
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
@@ -18,6 +19,7 @@ const ClientFormComponent = (props) => {
 	const processData = (data) => {
 		// Fill form inputs with client data
 		let clientObject = {
+			"student_pic": data.student_pic,
 			"first_name": data.first_name,
 			"last_name": data.last_name,
 			"invoice_fname": data.invoice_fname,
@@ -47,6 +49,8 @@ const ClientFormComponent = (props) => {
 		setInputs(inputs => ({
 			...clientObject,
 		}))
+
+		setPic(data.student_pic)
 	}
 
 	// If API call error
@@ -71,8 +75,11 @@ const ClientFormComponent = (props) => {
 		//const inputValue = e.target.value;
 		let inputValue;
 		if(e.target.name === "student_pic") {
-			// If it's a file
+			// If it's a file (Profile pic)
 			inputValue = e.target.files[0];
+			// Update
+			console.log(inputValue.src)
+			setPic(inputValue.src)
 		} else {
 			inputValue = e.target.value;
 		}
@@ -121,6 +128,7 @@ const ClientFormComponent = (props) => {
 				{/* Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs */}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
 				<Label>Photo :</Label>
+				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
 				<Input type="file" name="student_pic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
 				<Input type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
