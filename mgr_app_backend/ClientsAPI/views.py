@@ -67,6 +67,7 @@ class ClientDetailView(generics.RetrieveAPIView):
 	permission_classes = [IsAuthenticated, IsAdminOrOwner]
 
 class CreateClientView(generics.CreateAPIView):
+	# Parser => To handle multipart/form-data HTTP request 
 	parser_classes = [MultiPartParser]
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer

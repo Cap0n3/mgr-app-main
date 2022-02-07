@@ -9,7 +9,6 @@ import { Form, Label, RadioLabel, Legend, Input, Select, Textarea } from "./Clie
  */
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
-	const [myFile, setMyFile] = useState(null);
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
@@ -73,26 +72,12 @@ const ClientFormComponent = (props) => {
 		let inputValue;
 		if(e.target.name === "student_pic") {
 			// If it's a file
-			inputValue = e.target.files[0]
-			// const reader = new FileReader();
-			// reader.onloadend = () => {
-			// 	// use a regex to remove data url part
-			// 	const base64String = reader.result
-			// 	  .replace("data:", "")
-			// 	  .replace(/^.+,/, "");
-		  
-			// 	// log to console
-			// 	// logs wL2dvYWwgbW9yZ...
-			// 	inputValue = base64String
-			// 	setInputs(values => ({ ...values, [inputName]: inputValue }))
-			// };
-			// reader.readAsDataURL(inputValue);
-			
+			inputValue = e.target.files[0];
 		} else {
 			inputValue = e.target.value;
 		}
 		// See JS spread operator
-		setInputs(values => ({ ...values, [inputName]: inputValue }))
+		setInputs(values => ({ ...values, [inputName]: inputValue }));
 	}
 	
 	const handleRadioBtn = (e) => {
@@ -112,7 +97,7 @@ const ClientFormComponent = (props) => {
 		event.preventDefault();
 		// Evaluate if it's an update or a creation
 		if (props.target === "create") {
-			createClient(authTokens, user, inputs).then().catch(fetchFail);;
+			createClient(authTokens, user, inputs).then().catch(fetchFail);
 			// Wait a bit for server to make ressource available
 			setTimeout(() => navigate('/'), 50);
 		}
@@ -129,23 +114,9 @@ const ClientFormComponent = (props) => {
 		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
 		return firstToUpper
 	}
-
-	// === DEBUGGING ===
-	const debugFunc = (e) => {
-		setMyFile(e.target.files[0])
-		debugFuncTwo();
-	}
-
-	const debugFuncTwo = () => {
-		const formData = new FormData();
-		formData.selectedFile = myFile;
-		//formData.test = "This is a test"
-		console.log(formData)
-	}
 	
 	return (
 		<>
-			<button onClick={debugFuncTwo}>Click me</button>
 			<Form onSubmit={handleSubmit}>
 				{/* Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs */}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>

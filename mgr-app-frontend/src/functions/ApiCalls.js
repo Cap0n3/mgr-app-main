@@ -6,43 +6,35 @@
 // ====== CREATE ====== //
 // ==================== //
 export const createClient = async (authTokens, user, inputs) => {
-    let response = await fetch(`http://127.0.0.1:8000/client/create/`, {
-        method: "POST",
-        headers: {
-            'Content-Type':'application/json',
-            'Authorization':'Bearer ' + String(authTokens.access)
-        },
-        body: JSON.stringify({
-            student_pic: inputs.student_pic,
-            first_name: inputs.first_name,
-            last_name: inputs.last_name,
-            invoice_fname: inputs.invoice_fname,
-            invoice_lname: inputs.invoice_lname,
-            student_birth: inputs.student_birth,
-            lesson_day: inputs.lesson_day,
-            lesson_hour: inputs.lesson_hour,
-            lesson_duration: inputs.lesson_duration,
-            lesson_frequency: inputs.lesson_frequency,
-            instrument: inputs.instrument,
-            student_level: inputs.student_level,
-            student_email: inputs.student_email,
-            student_phone: inputs.student_phone,
-            billing_rate: inputs.billing_rate,
-            billing_currency: inputs.billing_currency,
-            invoice_numbering: inputs.invoice_numbering,
-            invoice_email: inputs.invoice_email,
-            invoice_phone: inputs.invoice_phone,
-            invoice_address: inputs.invoice_address,
-            invoice_postal: inputs.invoice_postal,
-            invoice_city: inputs.invoice_city,
-            invoice_country: inputs.invoice_country,
-            payment_option: inputs.payment_option,
-            notes: inputs.notes,
-        }),
-    })
-
-    return checkErrors(response, user, "CREATE")
-}
+        /*
+            For image uploading, I choosed multipart/form-data instead of base64 encoding.
+            Multipart/form-data is standard, faster and consumes less bandwidth.
+        */
+        let formData = new FormData();
+        formData.append("student_pic", inputs.student_pic);
+        formData.append("first_name", inputs.first_name);
+        formData.append("last_name", inputs.last_name);
+        formData.append("invoice_fname", inputs.invoice_fname);
+        formData.append("invoice_lname", inputs.invoice_lname);
+        formData.append("lesson_frequency", inputs.lesson_frequency);
+        formData.append("lesson_hour", inputs.lesson_hour);
+        formData.append("invoice_email", inputs.invoice_email);
+        formData.append("invoice_address", inputs.invoice_address);
+        formData.append("invoice_postal", inputs.invoice_postal);
+        formData.append("invoice_city", inputs.invoice_city);
+        
+        let response = await fetch(`http://127.0.0.1:8000/client/create/`, {
+            method: "POST",
+            headers: {
+                // Do not put Content-Type: multipart/form-data ! FormData() doesn't handle "boundary" ...
+                // The trick here is to let server find right according to body content type.
+                'Authorization':'Bearer ' + String(authTokens.access)
+            },
+            body: formData
+        })
+    
+        return checkErrors(response, user, "CREATE")
+    }
 
 // ================== //
 // ====== READ ====== //
