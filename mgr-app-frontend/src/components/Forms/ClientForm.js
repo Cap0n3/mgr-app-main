@@ -58,9 +58,14 @@ const ClientFormComponent = (props) => {
 		console.error(err);
 	}
 
-	// On first render check if it's an update (to get client infos)
 	useEffect(() => {
-		if (props.target === "update") {
+		if (props.target === "create") {
+			// Set default value of radio btn "invoice numbering" to false in inputs
+			//  => If radio btn isn't touched value is set to "undefined"
+			setInputs(values => ({ ...values, "invoice_numbering": false }))
+		}
+		else if (props.target === "update") {
+			// On first render check if it's an update (to get client infos)
 			getClient(authTokens, user, props.clientID).then(processData).catch(fetchFail);
 		}
 	}, [props.target, props.clientID])
@@ -77,13 +82,19 @@ const ClientFormComponent = (props) => {
 		if(e.target.name === "student_pic") {
 			// If it's a file (Profile pic)
 			inputValue = e.target.files[0];
-			// Update
-			console.log(inputValue.src)
-			setPic(inputValue.src)
+			// Convert file object to readable format
+			var reader  = new FileReader();
+    		reader.onload = function(e) {
+				// Set updated image
+				setPic(e.target.result);
+			}
+			reader.readAsDataURL(inputValue);
+			
 		} else {
 			inputValue = e.target.value;
 		}
-		// See JS spread operator
+		// Set new values in inputs
+		// (See JS spread operator)
 		setInputs(values => ({ ...values, [inputName]: inputValue }));
 	}
 	
