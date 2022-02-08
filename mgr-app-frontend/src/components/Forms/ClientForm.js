@@ -76,39 +76,32 @@ const ClientFormComponent = (props) => {
 	
 	// Get values from inputs
 	const handleChange = (e) => {
-		const inputName = e.target.name;
-		//const inputValue = e.target.value;
+		let inputType = e.target.type;
+		let inputName = e.target.name;
 		let inputValue;
-		if(e.target.name === "student_pic") {
-			// If it's a file (Profile pic)
+
+		if (inputType === "file") {
 			inputValue = e.target.files[0];
 			// Convert file object to readable format
-			var reader  = new FileReader();
+			let reader  = new FileReader();
     		reader.onload = function(e) {
 				// Set updated image
 				setPic(e.target.result);
 			}
 			reader.readAsDataURL(inputValue);
-			
-		} else {
-			inputValue = e.target.value;
+			// See JS spread operator
+			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
-		// Set new values in inputs
-		// (See JS spread operator)
-		setInputs(values => ({ ...values, [inputName]: inputValue }));
-	}
-	
-	const handleRadioBtn = (e) => {
-		/*
-			**Function to handle Radio button**
-			=> Radio buttons must be handled diffently that regular inputs
-			due to the booleean nature of them-
-		*/
-		const inputName = e.target.name;
-		// convert string "true"/"false" to actual booleean
-		const inputValue = (e.target.id === "true") ? true : false;
-		// See JS spread operator
-		setInputs(values => ({ ...values, [inputName]: inputValue }))
+		else if (inputType === "radio") {
+			// convert string "true"/"false" to actual booleean
+			inputValue = (e.target.id === "true") ? true : false;
+			setInputs(values => ({ ...values, [inputName]: inputValue }))
+		}
+		else {
+			// It's a standard input (text, email, tel, select-one, etc...)
+			inputValue = e.target.value;
+			setInputs(values => ({ ...values, [inputName]: inputValue }));
+		}
 	}
 
 	const handleSubmit = (event) => {
@@ -226,9 +219,9 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Label>Référence facture * :</Label>
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
-				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
+				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleChange} />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
-				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleRadioBtn} />
+				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
 				<Legend>Notes</Legend>
 				<Textarea name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				<Input type="submit" value={upperFirstChar(props.target)} />

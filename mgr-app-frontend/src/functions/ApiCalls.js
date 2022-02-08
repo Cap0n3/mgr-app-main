@@ -16,7 +16,7 @@ export const createClient = async (authTokens, user, inputs) => {
         let formData = new FormData();
 
         // Append data to object
-        if(profilePic != undefined){
+        if(profilePic !== undefined){
             formData.append("student_pic", profilePic);
         }
         formData.append("first_name", inputs.first_name);
@@ -105,7 +105,7 @@ export const updateClient =  async (authTokens, user, clientID, inputs) => {
         Basically, it means that user have not updated his/her profile pic so don't update value of 
         this var with a string because a file object is expected by the server.
     */ 
-    if(profilePic != undefined && typeof(profilePic) != "string"){
+    if(profilePic !== undefined && typeof(profilePic) != "string"){
         formData.append("student_pic", profilePic);
     }
     formData.append("first_name", inputs.first_name);

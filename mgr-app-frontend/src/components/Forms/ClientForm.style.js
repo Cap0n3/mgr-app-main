@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { ProfilePic } from "../../pages/pagesStyles/Tables.style";
 
 export const Form = styled.form`
 	max-width: 500px;
@@ -129,7 +128,7 @@ export const Textarea = styled.textarea`
 
 export const Avatar = styled.img`
 	width: 200px;
-	height: auto;
+	height: 200px;
 	border-radius: 50%;
 `;
 

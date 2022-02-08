@@ -43,8 +43,8 @@ export const Cell = styled.td`
 export const ProfilePic = styled.img`
     overflow: hidden;
     vertical-align: middle;
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
 `;
 
