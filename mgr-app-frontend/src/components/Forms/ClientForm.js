@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
-import { Form, Label, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
+import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -133,7 +133,8 @@ const ClientFormComponent = (props) => {
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
 				<Label>Photo :</Label>
 				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
-				<Input type="file" name="student_pic" onChange={handleChange} />
+				<LabelPic for="img_upload">Upload Client Pic</LabelPic>
+				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
 				<Input type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>
@@ -157,7 +158,7 @@ const ClientFormComponent = (props) => {
 					<option value="Dimanche">Dimanche</option>
 				</Select>
 				<Label>Heure du cours * :</Label>
-				<Input type="time" name="lesson_hour" value={inputs.lesson_hour || ""} onChange={handleChange} />
+				<Input type="time" name="lesson_hour" min="00:00" max="23:00" value={inputs.lesson_hour || ""} onChange={handleChange} />
 				<Label>Durée du cours (min) * :</Label>
 				<Input type="number" name="lesson_duration" value={inputs.lesson_duration || ""} onChange={handleChange} />
 				<Label>Fréquence du cours * :</Label>

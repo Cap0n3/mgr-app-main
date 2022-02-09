@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
-import { getClients, deleteClient } from "../functions/ApiCalls"
+import { getClients, deleteClient } from "../functions/ApiCalls";
+import { Button } from "./pagesStyles/Global.style";
 import { ClientTable, HeaderCell, FooterCell, Cell, Line, ProfilePic, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
 const Dashboard = () => {
@@ -43,7 +44,7 @@ const Dashboard = () => {
 	
 	return (
 		<>
-			<Link to="/client/create">Create New Client</Link>
+			<Link to="/client/create"><Button btnWidth="30" fontSize="15">Créer un client</Button></Link>
 			<ClientTable>
 				<thead>
 					<tr>

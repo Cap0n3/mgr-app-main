@@ -1,14 +1,19 @@
 import styled from "styled-components";
 
+// FORM COLOR PALETTE
+const FORM_BCKG_COLOR = "#202750ff";
+const INPUTS_BCKG_COLOR = "#313D73"
+const INPUTS_FOCUS_COLOR = "#3B4989"
+const INPUTS_TEXT_COLOR = "#94A0D6"
+
+
 export const Form = styled.form`
 	max-width: 500px;
 	padding: 10px 20px;
-	background: #f4f7f8;
 	margin: 10px auto;
 	padding: 20px;
-	background: #f4f7f8;
+	background-color: ${FORM_BCKG_COLOR};
 	border-radius: 8px;
-	color: black;
 `;
 
 export const Label = styled.label`
@@ -34,7 +39,6 @@ export const Input = styled.input`
 	&[type="tel"],
 	&[type="date"],
 	&[type="time"] {
-		background: rgba(255,255,255,.1);
 		border: none;
 		border-radius: 4px;
 		font-size: 15px;
@@ -45,20 +49,24 @@ export const Input = styled.input`
 		box-sizing: border-box; 
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box; 
-		background-color: #e8eeef;
+		background-color: ${INPUTS_BCKG_COLOR};
 		color:#8a97a0;
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		margin-bottom: 30px;
-		color: black;
+		color: ${INPUTS_TEXT_COLOR};
 	}
 
 	&:focus {
-		background: #d2d9dd;
+		background: ${INPUTS_FOCUS_COLOR};
 	}
 
 	&[type="checkbox"] {
 		margin-bottom: 30px;
+	}
+
+	&[type="file"] {
+		display: none;
 	}
 
 	&[type="submit"] {
@@ -67,23 +75,47 @@ export const Input = styled.input`
 		padding: 19px 39px 18px 39px;
 		color: #FFF;
 		margin: 0 auto;
-		background: #1abc9c;
+		background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
 		font-size: 18px;
 		text-align: center;
 		font-style: normal;
 		width: 100%;
-		border: 1px solid #16a085;
-		border-width: 1px 1px 3px;
+		border-radius: 8px;
+		border-style: none;
+		outline: none;
+		white-space: nowrap;
 		margin-bottom: 10px;
+		cursor: pointer;
 	}
 
 	&[type="submit"]:hover {
-		background: #109177;
+		box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+  		transition-duration: .1s;
+	}
+`;
+
+export const LabelPic = styled.label`
+	display: inline-block;
+	box-sizing: border-box;
+	margin: 0 auto;
+	margin-bottom: 30px;
+	background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+	padding: 12px 0px 12px 0px;
+	text-align: center;
+	width: 100%;
+	border-radius: 8px;
+	border-style: none;
+	outline: none;
+	white-space: nowrap;
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+  		transition-duration: .1s;
 	}
 `;
 
 export const Select = styled.select`
-	background: rgba(255,255,255,.1);
 	border: none;
 	border-radius: 4px;
 	font-size: 15px;
@@ -94,16 +126,15 @@ export const Select = styled.select`
 	box-sizing: border-box; 
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box; 
-	background-color: #e8eeef;
+	background-color: ${INPUTS_BCKG_COLOR};
 	color:#8a97a0;
 	-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 	box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 	margin-bottom: 30px;
-	color: black;
+	color: ${INPUTS_TEXT_COLOR};
 `;
 
 export const Textarea = styled.textarea`
-	background: rgba(255,255,255,.1);
 	border: none;
 	border-radius: 4px;
 	font-size: 15px;
@@ -111,18 +142,19 @@ export const Textarea = styled.textarea`
 	outline: 0;
 	padding: 10px;
 	width: 100%;
+  	height: 150px;
 	box-sizing: border-box; 
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box; 
-	background-color: #e8eeef;
-	color:#8a97a0;
+	background-color: ${INPUTS_BCKG_COLOR};
+	color: #8a97a0;
 	-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 	box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 	margin-bottom: 30px;
-	color: black;
+	color: ${INPUTS_TEXT_COLOR};
 
 	&:focus {
-		background: #109177;
+		background: ${INPUTS_FOCUS_COLOR};
 	}
 `;
 

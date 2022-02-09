@@ -236,6 +236,11 @@ for icon.
 	color: var(--dark-icon);
 }
 
+/* ========================= */
+/* ====== MOBILE VIEW ====== */
+/* ========================= */
+
+
 @media screen and (max-width: 960px) {
 	.overlay {
 		box-sizing: border-box;
