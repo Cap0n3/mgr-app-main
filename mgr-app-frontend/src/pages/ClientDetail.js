@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate} from "react-router-dom";
 import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
-import { MainWrapper, Aside, Section } from "./pagesStyles/ClientDetail.style";
+import { MainWrapper, Aside, Section, ClientPic, ClientInfoWrapper, InfoList, Li, Label } from "./pagesStyles/ClientDetail.style";
 
 const Cloud = () => {
 	const [clientData, setData ] = useState([])
@@ -34,7 +34,18 @@ const Cloud = () => {
 	return (
 		
 		<MainWrapper>
-			<Aside></Aside>
+			<Aside>
+				<ClientPic src={clientData.student_pic} />
+				<ClientInfoWrapper>
+					<InfoList>
+						<Li><Label>Cours :</Label>{clientData.instrument}</Li>
+						<Li><Label>Jour :</Label>{clientData.lesson_day}</Li>
+						<Li><Label>Heure :</Label>{clientData.lesson_hour}</Li>
+						<Li><Label>Durée :</Label>{clientData.lesson_duration} min.</Li>
+						<Li><Label>Fréqu. :</Label>{clientData.lesson_frequency}</Li>
+					</InfoList>
+				</ClientInfoWrapper>
+			</Aside>
 			<Section></Section>
 		</MainWrapper>
 	);
