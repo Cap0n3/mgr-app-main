@@ -1,5 +1,6 @@
 import styled from "styled-components";
-
+import { HiOutlineMail, HiPhone } from "react-icons/hi";
+import { FaBirthdayCake } from "react-icons/fa";
 
 export const MainWrapper = styled.div`
     display: flex;
@@ -41,10 +42,14 @@ export const Li = styled.li`
     margin-bottom: 10px;
 `;
 
-export const Label = styled.span`
+export const Label = styled.div`
+    display: inline-block;
+    width: 80px;
     text-transform: uppercase;
-    border: 1px solid red;
-    margin-right: 15px;
+    font-weight: bold;
+    border: 1px solid brown;
+    white-space: nowrap;
+    overflow: hidden;
 `;
 
 export const Section = styled.section`
@@ -53,4 +58,43 @@ export const Section = styled.section`
     height: 100%;
     padding: 15px;
     box-sizing: border-box;
+`;
+
+export const HeaderWrapper = styled.div`
+    border: 1px solid white;
+    width: 100%;
+    padding: 0px;
+    box-sizing: border-box;
+    height: ${(props) => props.height}px;
+`;
+
+export const Title = styled.h1`
+    line-height: 15px; 
+    margin: 0px 0px 25px 0px;
+    padding-top: 0px;
+    font-size: 2em;
+    border: 1px solid purple;
+`;
+
+export const ContactInfo = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid yellow;
+    margin-bottom: 10px;
+`;
+
+export const EmailIcon = styled(HiOutlineMail)`
+    margin-right: 15px;
+    font-size: 1.5em;
+`;
+
+export const PhoneIcon = styled(HiPhone)`
+    margin-right: 15px;
+    font-size: 1.5em;
+`;
+
+export const BirthdayIcon = styled(FaBirthdayCake)`
+    margin-right: 15px;
+    font-size: 1.5em;
 `;
