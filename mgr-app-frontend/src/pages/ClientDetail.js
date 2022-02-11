@@ -12,15 +12,19 @@ import {
 	Li, 
 	Label,
 	HeaderWrapper,
+	InfosSubWrapper,
 	Title,
+	ButtonGroup,
+	Tab,
 	ContactInfo,
 	EmailIcon,
 	PhoneIcon,
-	BirthdayIcon
+	BirthdayIcon,
+	BodyWrapper
 } from "./pagesStyles/ClientDetail.style";
-import { HiOutlineMail } from "react-icons/hi";
 
 const Cloud = () => {
+
 	const [clientData, setData ] = useState([])
 	const [picWidth, setWidth] = useState(0);
 	const { clientID } = useParams()
@@ -69,6 +73,28 @@ const Cloud = () => {
 		
 	}, []);
 
+	const types = {
+		"Infos Facture" : 
+			<InfoList>
+				<Li><Label width="150">Prénom :</Label>{clientData.invoice_fname}</Li>
+				<Li><Label width="150">Nom :</Label>{clientData.invoice_lname}</Li>
+				<Li><Label width="150">Email :</Label>{clientData.invoice_email}</Li>
+				<Li><Label width="150">Tél :</Label>{clientData.invoice_phone}</Li>
+				<Li><Label width="150">Adresse :</Label>{clientData.invoice_address}</Li>
+				<Li><Label width="150">Ville/Code :</Label>{clientData.invoice_city}, {clientData.invoice_postal}</Li>
+				<Li><Label width="150">Pays :</Label>{clientData.invoice_country}</Li>
+			</InfoList>,
+		"Facturation" : 
+			<InfoList>
+				<Li><Label width="200">Facture numérotée :</Label>{(clientData.nvoice_numbering) ? "Oui" : "Non"}</Li>
+				<Li><Label width="200">Taux horaire :</Label>{clientData.billing_rate} {clientData.billing_currency}</Li>
+				<Li><Label width="200">Monnaie :</Label>{clientData.billing_currency}</Li>
+				<Li><Label width="200">Option paiement :</Label>{clientData.payment_option}</Li>
+			</InfoList>,
+		"Notes" : clientData.notes,
+	}
+	const [active, setActive] = useState(Object.keys(types)[0]);
+
 	return (
 		
 		<MainWrapper>
@@ -81,16 +107,33 @@ const Cloud = () => {
 						<Li><Label>Heure :</Label>{clientData.lesson_hour}</Li>
 						<Li><Label>Durée :</Label>{clientData.lesson_duration} min.</Li>
 						<Li><Label>Fréqu :</Label>{clientData.lesson_frequency}</Li>
+						<Li><Label>Niveau :</Label>{clientData.student_level}</Li>
 					</InfoList>
 				</ClientInfoWrapper>
 			</Aside>
 			<Section>
 				<HeaderWrapper height={picWidth}>
-					<Title>{clientData.first_name} {clientData.last_name}</Title>
-					<ContactInfo><EmailIcon />{clientData.student_email}</ContactInfo>
-					<ContactInfo><PhoneIcon />{clientData.student_phone}</ContactInfo>
-					<ContactInfo><BirthdayIcon />{clientData.student_birth}</ContactInfo>
+					<InfosSubWrapper>
+						<Title>{clientData.first_name} {clientData.last_name}</Title>
+						<ContactInfo><EmailIcon />{clientData.student_email}</ContactInfo>
+						<ContactInfo><PhoneIcon />{clientData.student_phone}</ContactInfo>
+						<ContactInfo><BirthdayIcon />{clientData.student_birth}</ContactInfo>
+					</InfosSubWrapper>
+					<ButtonGroup>
+						{Object.keys(types).map(type => (
+							<Tab
+								key={type}
+								active={active === type}
+								onClick={() => setActive(type)}
+							>
+								{type}
+							</Tab>
+							))}
+					</ButtonGroup>
 				</HeaderWrapper>
+				<BodyWrapper>
+					<p>{types[active]} </p>
+				</BodyWrapper>
 			</Section>
 		</MainWrapper>
 	);
