@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
 import {
@@ -34,7 +33,6 @@ const Cloud = () => {
 	const [picWidth, setWidth] = useState(0);
 	const { clientID } = useParams()
 	const {authTokens} = useContext(AuthContext)
-	const navigate = useNavigate();
 	const clientPicRef = useRef();
 	
 	useEffect(() => {

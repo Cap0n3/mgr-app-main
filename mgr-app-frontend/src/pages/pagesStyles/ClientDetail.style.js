@@ -204,7 +204,7 @@ export const Title = styled.h1`
         "block"
     };
     line-height: 15px; 
-    margin: 0px 0px 45px 0px;
+    margin: 0px 0px 55px 0px;
     padding-top: 0px;
     font-size: 2em;
     ${(DEBUG) ? "border: 1px solid purple;" : ""}
