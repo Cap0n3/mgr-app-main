@@ -1,8 +1,23 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { HiOutlineMail, HiPhone } from "react-icons/hi";
 import { FaBirthdayCake } from "react-icons/fa";
+import { IoIosArrowBack } from "react-icons/io"
+import { BiEdit } from "react-icons/bi"
 
+// To see all borders (design debug)
 var DEBUG = false
+
+export const StyledLink = styled(Link)`
+    margin-left: 10px;
+    text-decoration: none;
+`;
+
+export const PreviousIcon = styled(IoIosArrowBack)`
+    color: #44578eff;
+    font-size: 1.5em;
+    ${(DEBUG) ? "border: 1px solid lightblue;" : ""}
+`;
 
 export const MainWrapper = styled.div`
     display: flex;
@@ -33,20 +48,6 @@ export const Aside = styled.aside`
 
     @media screen and (max-width: 960px) {
         width: 100%;
-    }
-`;
-
-// For Mobile view
-export const HiddenTitle = styled.h1`
-    display: none;
-    text-align: center;
-    margin: 0px 0px 25px 0px;
-    padding-top: 0px;
-    font-size: 2em;
-    ${(DEBUG) ? "border: 1px solid purple;" : ""}
-
-    @media screen and (max-width: 960px) {
-        display: block;
     }
 `;
 
@@ -210,11 +211,12 @@ export const Title = styled.h1`
 
     @media screen and (max-width: 960px) {
         display: ${(props) => 
-            (props.mobile === "show" && "block") ||
+            (props.mobile === "show" && "flex") ||
             (props.mobile === "hide" && "none") ||
-            "block"
+            "flex"
         };
-        text-align: center;
+        justify-content: center;
+        align-items: center;
         margin: 15px 0px 15px 0px;
         padding-top: 0px;
         font-size: 2em;
@@ -222,6 +224,14 @@ export const Title = styled.h1`
     }
 `;
 
+export const EditButton = styled(BiEdit)`
+    color: #44578eff;
+    font-size: 0.6em;
+    margin-left: 10px;
+    ${(DEBUG) ? "border: 1px solid lightblue;" : ""}
+`;
+
+// === TABS === //
 export const ButtonGroup = styled.div`
     display: flex;
     
@@ -281,7 +291,7 @@ export const BirthdayIcon = styled(FaBirthdayCake)`
 
 export const BodyWrapper = styled.div`
     width: 100%;
-    height: 300px;
+    min-height: 200px;
     padding: 0px;
     margin: 0px;
     ${(DEBUG) ? "border: 1px solid brown;" : ""}

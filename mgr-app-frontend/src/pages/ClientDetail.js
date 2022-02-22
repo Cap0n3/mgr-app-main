@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
-import { 
+import {
+	StyledLink,
+	PreviousIcon,
 	MainWrapper, 
 	Aside, 
 	Section,
 	ClientPic,
-	HiddenTitle,
 	AsideTitle,
 	ClientInfoWrapper, 
 	InfoList, 
@@ -16,6 +17,7 @@ import {
 	HeaderWrapper,
 	InfosSubWrapper,
 	Title,
+	EditButton,
 	ButtonGroup,
 	Tab,
 	ContactInfo,
@@ -24,6 +26,7 @@ import {
 	BirthdayIcon,
 	BodyWrapper
 } from "./pagesStyles/ClientDetail.style";
+
 
 const Cloud = () => {
 
@@ -98,34 +101,14 @@ const Cloud = () => {
 	const [active, setActive] = useState(Object.keys(tabContent)[0]);
 
 	return (
-		
-		<MainWrapper>
-			<Aside>
-				<ClientPic src={clientData.student_pic} ref={clientPicRef}/>
-				<Title mobile="show">{clientData.first_name} {clientData.last_name}</Title>
-				<AsideTitle mobile="hide">Cours</AsideTitle>
-				<ClientInfoWrapper mobile="hide">
-					<InfoList>
-						<Li><Label>Cours :</Label>{clientData.instrument}</Li>
-						<Li><Label>Jour :</Label>{clientData.lesson_day}</Li>
-						<Li><Label>Heure :</Label>{clientData.lesson_hour}</Li>
-						<Li><Label>Durée :</Label>{clientData.lesson_duration} min.</Li>
-						<Li><Label>Fréqu :</Label>{clientData.lesson_frequency}</Li>
-						<Li><Label>Niveau :</Label>{clientData.student_level}</Li>
-					</InfoList>
-				</ClientInfoWrapper>
-			</Aside>
-			<Section>
-				<HeaderWrapper height={picWidth}>
-					<InfosSubWrapper>
-						<Title mobile="hide">{clientData.first_name} {clientData.last_name}</Title>
-						<ContactInfo><EmailIcon />{clientData.student_email}</ContactInfo>
-						<ContactInfo><PhoneIcon />{clientData.student_phone}</ContactInfo>
-						<ContactInfo><BirthdayIcon />{clientData.student_birth}</ContactInfo>
-					</InfosSubWrapper>
-					{/* Only appears for mobile */}
-					<AsideTitle mobile="show">Cours</AsideTitle>
-					<ClientInfoWrapper mobile="show">
+		<>
+			<StyledLink to="/"><PreviousIcon /></StyledLink>
+			<MainWrapper>
+				<Aside>
+					<ClientPic src={clientData.student_pic} ref={clientPicRef}/>
+					<Title mobile="show">{clientData.first_name} {clientData.last_name} <StyledLink to={`/client/update/${clientData.id}`}><EditButton /></StyledLink></Title>
+					<AsideTitle mobile="hide">Cours</AsideTitle>
+					<ClientInfoWrapper mobile="hide">
 						<InfoList>
 							<Li><Label>Cours :</Label>{clientData.instrument}</Li>
 							<Li><Label>Jour :</Label>{clientData.lesson_day}</Li>
@@ -135,23 +118,45 @@ const Cloud = () => {
 							<Li><Label>Niveau :</Label>{clientData.student_level}</Li>
 						</InfoList>
 					</ClientInfoWrapper>
-					<ButtonGroup>
-						{Object.keys(tabContent).map(type => (
-							<Tab
-								key={type}
-								active={active === type}
-								onClick={() => setActive(type)}
-							>
-								{type}
-							</Tab>
-							))}
-					</ButtonGroup>
-				</HeaderWrapper>
-				<BodyWrapper>
-					<div>{tabContent[active]} </div>
-				</BodyWrapper>
-			</Section>
-		</MainWrapper>
+				</Aside>
+				<Section>
+					<HeaderWrapper height={picWidth}>
+						<InfosSubWrapper>
+							<Title mobile="hide">{clientData.first_name} {clientData.last_name}<StyledLink to={`/client/update/${clientData.id}`}><EditButton /></StyledLink></Title>
+							<ContactInfo><EmailIcon />{clientData.student_email}</ContactInfo>
+							<ContactInfo><PhoneIcon />{clientData.student_phone}</ContactInfo>
+							<ContactInfo><BirthdayIcon />{clientData.student_birth}</ContactInfo>
+						</InfosSubWrapper>
+						{/* Only appears for mobile */}
+						<AsideTitle mobile="show">Cours</AsideTitle>
+						<ClientInfoWrapper mobile="show">
+							<InfoList>
+								<Li><Label>Cours :</Label>{clientData.instrument}</Li>
+								<Li><Label>Jour :</Label>{clientData.lesson_day}</Li>
+								<Li><Label>Heure :</Label>{clientData.lesson_hour}</Li>
+								<Li><Label>Durée :</Label>{clientData.lesson_duration} min.</Li>
+								<Li><Label>Fréqu :</Label>{clientData.lesson_frequency}</Li>
+								<Li><Label>Niveau :</Label>{clientData.student_level}</Li>
+							</InfoList>
+						</ClientInfoWrapper>
+						<ButtonGroup>
+							{Object.keys(tabContent).map(type => (
+								<Tab
+									key={type}
+									active={active === type}
+									onClick={() => setActive(type)}
+								>
+									{type}
+								</Tab>
+								))}
+						</ButtonGroup>
+					</HeaderWrapper>
+					<BodyWrapper>
+						<div>{tabContent[active]} </div>
+					</BodyWrapper>
+				</Section>
+			</MainWrapper>
+		</>
 	);
 }
 
