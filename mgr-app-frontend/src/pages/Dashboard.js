@@ -8,6 +8,7 @@ import { ClientTable, HeaderCell, FooterCell, Cell, Line, ProfilePic, EyeIcon, E
 const Dashboard = () => {
 	const [clientData, setData] = useState([])
 	const { authTokens, user, logoutUser } = useContext(AuthContext)
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 	const navigate = useNavigate();
 
 	// If API call is success, populate clientData
@@ -25,6 +26,15 @@ const Dashboard = () => {
 		getClients(authTokens, user, logoutUser).then(processData).catch(fetchFail);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	useEffect(() => {
+		// Listen to window width
+		const updateWidth = () => {
+			setWindowWidth(window.innerWidth)
+		}
+		window.addEventListener("resize", updateWidth);
+		return () => window.removeEventListener("resize", updateWidth);
+	});
 
 	const handleEditClick = (callToAction, clientID ) => {
 
@@ -49,13 +59,15 @@ const Dashboard = () => {
 				<thead>
 					<tr>
 						<HeaderCell></HeaderCell>
-						<HeaderCell>CLIENT</HeaderCell>
-						<HeaderCell >TEL</HeaderCell>
-						<HeaderCell >EMAIL</HeaderCell>
-						<HeaderCell >JOUR</HeaderCell>
-						<HeaderCell >HEURE</HeaderCell>
-						<HeaderCell >FREQUENCE</HeaderCell>
-						<HeaderCell colSpan={3} ></HeaderCell>
+						<HeaderCell>{windowWidth <= 720 ? "" : "CLIENT"}</HeaderCell>
+						<HeaderCell hide="1120">TEL</HeaderCell>
+						<HeaderCell hide="720">EMAIL</HeaderCell>
+						<HeaderCell hide="720">JOUR</HeaderCell>
+						<HeaderCell hide="780">HEURE</HeaderCell>
+						<HeaderCell hide="880">FREQUENCE</HeaderCell>
+						<HeaderCell></HeaderCell>
+						<HeaderCell hide="720"></HeaderCell>
+						<HeaderCell></HeaderCell>
 					</tr>
 				</thead>
 				<tbody>
@@ -63,13 +75,13 @@ const Dashboard = () => {
 						<Line key={info.id}>
 							<Cell><ProfilePic src={info.student_pic} /></Cell>
 							<Cell>{info.first_name} {info.last_name}</Cell>
-							<Cell>{info.student_phone}</Cell>
-							<Cell>{info.student_email}</Cell>
-							<Cell>{info.lesson_day}</Cell>
-							<Cell>{info.lesson_hour.split(':')[0]+ ":" + info.lesson_hour.split(':')[1]}</Cell>
-							<Cell>{info.lesson_frequency}</Cell>
+							<Cell hide="1120">{info.student_phone}</Cell>
+							<Cell hide="720">{info.student_email}</Cell>
+							<Cell hide="720">{info.lesson_day}</Cell>
+							<Cell hide="780">{info.lesson_hour.split(':')[0]+ ":" + info.lesson_hour.split(':')[1]}</Cell>
+							<Cell hide="880">{info.lesson_frequency}</Cell>
 							<Cell><EyeIcon size="1.5em" onClick={() => handleEditClick("detail", info.id)}/></Cell>
-							<Cell><EditIcon size="1.3em" onClick={() => handleEditClick("update", info.id)}/></Cell>
+							<Cell hide="720"><EditIcon size="1.3em" onClick={() => handleEditClick("update", info.id)}/></Cell>
 							<Cell><TrashIcon size="1.3em" onClick={() => handleEditClick("delete", info.id)}/></Cell>
 						</Line>
 					))}
@@ -78,12 +90,14 @@ const Dashboard = () => {
 					<tr>
 						<FooterCell></FooterCell>
 						<FooterCell></FooterCell>
+						<FooterCell hide="1120"></FooterCell>
+						<FooterCell hide="720"></FooterCell>
+						<FooterCell hide="720"></FooterCell>
+						<FooterCell hide="780"></FooterCell>
+						<FooterCell hide="880"></FooterCell>
 						<FooterCell></FooterCell>
+						<FooterCell hide="720"></FooterCell>
 						<FooterCell></FooterCell>
-						<FooterCell></FooterCell>
-						<FooterCell></FooterCell>
-						<FooterCell></FooterCell>
-						<FooterCell colSpan={3}></FooterCell>
 					</tr>
 				</tfoot>
 			</ClientTable>		

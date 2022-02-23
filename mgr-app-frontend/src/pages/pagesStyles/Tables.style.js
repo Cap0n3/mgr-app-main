@@ -32,12 +32,75 @@ export const HeaderCell = styled.th`
     &:last-child {
         border-top-right-radius: 10px;
     }
+
+    @media screen and (max-width: 1120px) {
+        display: ${(props) => (props.hide === "1120" ? "none" : "table-cell")};
+    }
+
+    @media screen and (max-width: 880px) {
+        display: ${(props) => 
+            (props.hide === "880" && "none") ||
+            (props.hide === "1120" && "none") || 
+            "table-cell"
+        };
+    }
+
+    @media screen and (max-width: 780px) {
+        display: ${(props) => 
+            (props.hide === "780" && "none") ||
+            (props.hide === "880" && "none") ||
+            (props.hide === "1120" && "none") || 
+            "table-cell"
+        };
+    }
+
+    @media screen and (max-width: 720px) {
+        display: ${(props) => 
+            (props.hide === "720" && "none") ||
+            (props.hide === "780" && "none") ||
+            (props.hide === "880" && "none") || 
+            (props.hide === "1120" && "none") ||
+            "table-cell"
+        };
+        height: 30px;
+    }
 `;
 
 export const Cell = styled.td`
     text-align: left;
     padding: 8px 8px 8px 20px;
     background-color: #191f3f;
+
+    @media screen and (max-width: 1120px) {
+        display: ${(props) => (props.hide === "1120" ? "none" : "table-cell")};
+    }
+
+    @media screen and (max-width: 880px) {
+        display: ${(props) => 
+            (props.hide === "880" && "none") ||
+            (props.hide === "1120" && "none") || 
+            "table-cell"
+        };
+    }
+
+    @media screen and (max-width: 780px) {
+        display: ${(props) => 
+            (props.hide === "780" && "none") ||
+            (props.hide === "880" && "none") ||
+            (props.hide === "1120" && "none") || 
+            "table-cell"
+        };
+    }
+
+    @media screen and (max-width: 720px) {
+        display: ${(props) => 
+            (props.hide === "720" && "none") ||
+            (props.hide === "780" && "none") ||
+            (props.hide === "880" && "none") || 
+            (props.hide === "1120" && "none") ||
+            "table-cell"
+        };
+    }
 `;
 
 export const ProfilePic = styled.img`
@@ -59,6 +122,37 @@ export const FooterCell = styled.td`
 
     &:last-child {
         border-bottom-right-radius: 10px;
+    }
+
+    @media screen and (max-width: 1120px) {
+        display: ${(props) => (props.hide === "1120" ? "none" : "table-cell")};
+    }
+
+    @media screen and (max-width: 880px) {
+        display: ${(props) => 
+            (props.hide === "880" && "none") ||
+            (props.hide === "1120" && "none") || 
+            "table-cell"
+        };
+    }
+
+    @media screen and (max-width: 780px) {
+        display: ${(props) => 
+            (props.hide === "780" && "none") ||
+            (props.hide === "880" && "none") ||
+            (props.hide === "1120" && "none") || 
+            "table-cell"
+        };
+    }
+
+    @media screen and (max-width: 720px) {
+        display: ${(props) => 
+            (props.hide === "720" && "none") ||
+            (props.hide === "780" && "none") ||
+            (props.hide === "880" && "none") || 
+            (props.hide === "1120" && "none") ||
+            "table-cell"
+        };
     }
 `;
 
