@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdminOrOwner
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 from rest_framework.parsers import MultiPartParser
 
 # === JWT TOKEN CUSTOM VIEWS === #
@@ -31,6 +30,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
 	serializer_class = MyTokenObtainPairSerializer
+
 
 # === APP VIEW CLASSES === #
 class TeachersView(generics.ListAPIView):
@@ -74,10 +74,20 @@ class CreateClientView(generics.CreateAPIView):
 	permission_classes = [IsAuthenticated]
 
 	def perform_create(self, serializer):
+		isAdmin = self.request.user.is_superuser
 		currentUser = self.request.user
 		# Must send instance and not just pk
-		linkedTeacher = Teacher.objects.get(user=currentUser)
-		serializer.save(teacher=linkedTeacher)
+		if not isAdmin:
+			linkedTeacher = Teacher.objects.get(user=currentUser)
+			serializer.save(teacher=linkedTeacher)
+		else:
+			# Admin can choose to create a client for any teacher/user
+			chosenTeacherId = self.request.POST['teacher']
+			teacherInstance = Teacher.objects.get(id=chosenTeacherId)
+			# Get user linked to specific teacher
+			userID = teacherInstance.user.id
+			linkedTeacher = Teacher.objects.get(user=userID)
+			serializer.save(teacher=linkedTeacher)
 
 class UpdateClientView(generics.RetrieveUpdateAPIView):
 	queryset = Clients.objects.all()

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .CustomValidators import validateCharField, validateEmailField
 
 #GLOBAL LISTS (FOR CHOICES)
 
@@ -90,24 +91,24 @@ class Clients(models.Model):
 
 	teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
 	student_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True)
-	first_name = models.CharField(max_length=200)
-	last_name = models.CharField(max_length=200)
+	first_name = models.CharField(max_length=50, validators=[validateCharField])
+	last_name = models.CharField(max_length=50, validators=[validateCharField])
 	lesson_day = models.CharField(max_length=20, default="Lundi", choices=DAY_LIST)
 	lesson_hour = models.TimeField(blank=True)
 	lesson_duration = models.CharField(max_length=15, default=60, choices=LESSON_DURATION)
-	lesson_frequency = models.CharField(max_length=100, choices=LESSONS_FREQ)
-	instrument = models.CharField(max_length=40, blank=True)
-	student_email = models.EmailField(blank=True)
+	lesson_frequency = models.CharField(max_length=50, choices=LESSONS_FREQ)
+	instrument = models.CharField(max_length=40, blank=True, validators=[validateCharField])
+	student_email = models.EmailField(blank=True, validators=[validateEmailField])
 	student_phone = models.CharField(max_length=200, blank=True)
 	student_level = models.CharField(max_length=100, blank=True, choices=STUDENT_LEVEL)
 	student_birth = models.DateField(blank=True, null=True)
-	invoice_fname = models.CharField(max_length=200)
-	invoice_lname = models.CharField(max_length=200)
-	invoice_email = models.EmailField()
+	invoice_fname = models.CharField(max_length=50, validators=[validateCharField])
+	invoice_lname = models.CharField(max_length=50, validators=[validateCharField])
+	invoice_email = models.EmailField(validators=[validateEmailField])
 	invoice_phone = models.CharField(max_length=100, blank=True)
-	invoice_address = models.CharField(max_length=200)
-	invoice_postal = models.CharField(max_length=200)
-	invoice_city = models.CharField(max_length=200)
+	invoice_address = models.CharField(max_length=100)
+	invoice_postal = models.CharField(max_length=100)
+	invoice_city = models.CharField(max_length=50, validators=[validateCharField])
 	invoice_country = models.CharField(max_length=200, default="Suisse", choices=COUNTRY)
 	invoice_numbering = models.BooleanField(default=False)
 	billing_rate = models.IntegerField(default=50)
