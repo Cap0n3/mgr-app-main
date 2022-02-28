@@ -26,3 +26,11 @@ def validateEmailField(value):
 	if match == None:
 		raise ValidationError("Email is invalid !")
 	
+def validatePhoneField(value):
+	
+	# For Swiss format only ...
+	swissPhone = re.search(r'(^0[27][0-9]\s[0-9]{3}[\s.][0-9]{2}\s[0-9]{2}$)', value)
+	
+	if swissPhone == None:
+
+		raise ValidationError("Phone number is invalid !")
