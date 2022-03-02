@@ -1,6 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .CustomValidators import validateCharField, validateEmailField, validatePhoneField
+from .CustomValidators import (
+	validateCharField,
+	validateBusinessName,
+	validateEmailField, 
+	validatePhoneField, 
+	validateAddress, 
+	validatePostal,
+	validateNote,
+	validateBankNumber,
+	validateBankIban,
+	validateBankSwift
+)
 
 #GLOBAL LISTS (FOR CHOICES)
 
@@ -12,21 +23,21 @@ COUNTRY = (
 # ====== TEACHER ====== #
 class Teacher(models.Model):
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-	business_name = models.CharField(max_length=200, default='My School', blank=True)
+	business_name = models.CharField(max_length=50, default='My School', blank=True, validators=[validateBusinessName])
 	business_logo = models.ImageField(default='genericLogo.png', null=True, blank=True)
-	business_website = models.CharField(max_length=200, default='www.myschool.com', blank=True)
-	teacher_fname = models.CharField(max_length=200, default='Pierre')
-	teacher_lname = models.CharField(max_length=200, default='Dupont')
-	teacher_email = models.EmailField(default='myschool@mymail.com')
-	teacher_phone = models.CharField(max_length=200, blank=True)
-	teacher_address = models.CharField(max_length=200, default='6 chemin de Nullepart')
-	teacher_postal = models.CharField(max_length=200, default='1200')
-	teacher_city = models.CharField(max_length=200, default='Genève')
-	teacher_country = models.CharField(max_length=200, default='Suisse', choices=COUNTRY)
-	teacher_bankNumber = models.CharField(max_length=200, default='45-875468-3')
-	teacher_iban = models.CharField(max_length=200, default='CH65 7654 5221 0000 4587 5468 3')
-	teacher_bicSwift = models.CharField(max_length=200, default='POSXF')
-	teacher_taxLabel = models.CharField(max_length=50, default="Taxe")
+	business_website = models.CharField(max_length=100, default='www.myschool.com', blank=True)
+	teacher_fname = models.CharField(max_length=50, default='Pierre', validators=[validateCharField])
+	teacher_lname = models.CharField(max_length=50, default='Dupont', validators=[validateCharField])
+	teacher_email = models.EmailField(default='myschool@mymail.com', validators=[validateEmailField])
+	teacher_phone = models.CharField(max_length=50, blank=True, validators=[validatePhoneField])
+	teacher_address = models.CharField(max_length=80, default='6 chemin de Nullepart', validators=[validateAddress])
+	teacher_postal = models.CharField(max_length=50, default='1200', validators=[validatePostal])
+	teacher_city = models.CharField(max_length=80, default='Genève', validators=[validateCharField])
+	teacher_country = models.CharField(max_length=50, default='Suisse', choices=COUNTRY)
+	teacher_bankNumber = models.CharField(max_length=100, default='45-875468-3', validators=[validateBankNumber])
+	teacher_iban = models.CharField(max_length=100, default='CH65 7654 5221 0000 4587 5468 3', validators=[validateBankIban])
+	teacher_bicSwift = models.CharField(max_length=200, default='POSXF', validators=[validateBankSwift])
+	teacher_taxLabel = models.CharField(max_length=50, default="Taxe", validators=[validateCharField])
 	teacher_tax = models.IntegerField(default=0)
 	teacher_dueDays = models.IntegerField(default=10)
 
@@ -97,24 +108,24 @@ class Clients(models.Model):
 	lesson_hour = models.TimeField(blank=True)
 	lesson_duration = models.CharField(max_length=15, default=60, choices=LESSON_DURATION)
 	lesson_frequency = models.CharField(max_length=50, choices=LESSONS_FREQ)
-	instrument = models.CharField(max_length=40, blank=True, validators=[validateCharField])
+	instrument = models.CharField(max_length=50, blank=True, validators=[validateCharField])
 	student_email = models.EmailField(blank=True, validators=[validateEmailField])
 	student_phone = models.CharField(max_length=50, blank=True, validators=[validatePhoneField])
-	student_level = models.CharField(max_length=100, blank=True, choices=STUDENT_LEVEL)
+	student_level = models.CharField(max_length=50, blank=True, choices=STUDENT_LEVEL)
 	student_birth = models.DateField(blank=True, null=True)
 	invoice_fname = models.CharField(max_length=50, validators=[validateCharField])
 	invoice_lname = models.CharField(max_length=50, validators=[validateCharField])
 	invoice_email = models.EmailField(validators=[validateEmailField])
 	invoice_phone = models.CharField(max_length=50, blank=True, validators=[validatePhoneField])
-	invoice_address = models.CharField(max_length=100)
-	invoice_postal = models.CharField(max_length=100)
-	invoice_city = models.CharField(max_length=50, validators=[validateCharField])
-	invoice_country = models.CharField(max_length=200, default="Suisse", choices=COUNTRY)
+	invoice_address = models.CharField(max_length=80, validators=[validateAddress])
+	invoice_postal = models.CharField(max_length=40, validators=[validatePostal])
+	invoice_city = models.CharField(max_length=80, validators=[validateCharField])
+	invoice_country = models.CharField(max_length=80, default="Suisse", choices=COUNTRY)
 	invoice_numbering = models.BooleanField(default=False)
 	billing_rate = models.IntegerField(default=50)
 	billing_currency = models.CharField(max_length=20, default="CHF", choices=CURRENCY)
 	payment_option = models.CharField(max_length=100, default="Versement", choices=PAYMENT_OPTION)
-	notes = models.TextField(blank=True)
+	notes = models.TextField(blank=True, validators=[validateNote])
 	creation_date = models.DateField(auto_now_add=True)
 
 	def __str__(self):

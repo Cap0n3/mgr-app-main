@@ -42,15 +42,33 @@ def isFrenchNumber(phoneNumber):
 
 def validateCharField(value):
 	'''
-	Purpose : 
-		Func to validate text inputs. No numbers and no special chars.
-	Note :
-		match var contains all special chars/numbers used in input.
+		Func to validate text inputs. 
+		@isValid - Letters, spaces and [-] (no numbers or special chars.)
+		@Note - Match var contains all special chars/numbers used in input.
 	'''
-	match = re.findall(r'[^A-Za-z\s\-\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ]', value)
+	forbidChars = re.findall(r'[^A-Za-z\s\-\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ]', value)
 	
-	if len(match) != 0:
+	if len(forbidChars) != 0:
+		raise ValidationError("No special characters or numbers please !")
+
+def validateBusinessName(value):
+	'''
+		Func to validate business name.
+		@isNOTValid : [*%#<>="+\t\r\n\] are not valid chars.
+	'''
+	forbidChars = re.findall(r'[*%#<>="+\t\r\n\\\\]+', value)
+
+	if len(forbidChars) != 0:
 		raise ValidationError("No special characters please !")
+
+def validateWebsite(value):
+	'''
+		Func to validate business website format.
+	'''
+	match = re.search(r'(^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$)', value)
+
+	if match == None:
+		raise ValidationError("Domain name for website is invalid !")
 
 def validateEmailField(value):
 	'''
@@ -63,10 +81,70 @@ def validateEmailField(value):
 	
 def validatePhoneField(value):
 	'''
-		Func to check phones input
-		@isValid : only digits, spaces and '+' at beginning (optional)
+		Func to validate phones input.
+		@isValid : only digits, spaces and optional '+' at the beginning (+33, +41, etc...).
 	'''
 	isPhoneValid = re.search(r'^\+?[\d, \s]+$', value)
 	
 	if isPhoneValid == None:
-		raise ValidationError("Phone number is invalid ! Only digits, spaces and '+' at beginning (optional).")
+		raise ValidationError("Phone number is invalid ! Only digits, spaces and optional '+' at beginning (+33, +41, etc...).")
+
+def validateAddress(value):
+	'''
+		Func to validate address input.
+		@isValid : Letters, space, digits and [.,-:].
+	'''
+	specialChars = re.findall(r'[^\w\s.,:-]+', value)
+
+	if len(specialChars) != 0:
+		raise ValidationError("No special characters please ! Only [.,-:] are accepted.")
+
+def validatePostal(value):
+	'''
+		Func to validate postal input.
+		@isValid : All caps letters, number and [-].
+	'''
+	forbidChars = re.findall(r'[^A-Z0-9\s-]+', value)
+
+	if len(forbidChars) != 0:
+		raise ValidationError("Postal code is invalid !")
+
+def validateNote(value):
+	'''
+		Func to validate note textarea.
+		@isNOTValid : [*#<>='+\t\] are not valid chars.
+	'''
+	forbidChars = re.findall(r"[*#<>=+\t\\\\]+", value)
+
+	if len(forbidChars) != 0:
+		raise ValidationError("No special characters please !")
+
+def validateBankNumber(value):
+	'''
+		Func to validate bank account number.
+		@isValid : Letters (upper, lower), spaces, numbers and [-].
+	'''
+	forbidChars = re.findall(r'[^\d-A-Za-z\s]+', value)
+
+	if len(forbidChars) != 0:
+		raise ValidationError("Bank account number is invalid !")
+
+def validateBankIban(value):
+	'''
+		Func to validate bank IBAN number.
+		@isValid : Letters (upper, lower), spaces and numbers.
+	'''
+	forbidChars = re.findall(r'[^\dA-Za-z\s]+', value)
+
+	if len(forbidChars) != 0:
+		raise ValidationError("Bank IBAN number is invalid !")
+
+def validateBankSwift(value):
+	'''
+		Func to validate bank Bic/Swift number.
+		@isValid : Letters (upper), spaces and numbers.
+	'''
+	forbidChars = re.findall(r'[^\dA-Z\s]+', value)
+
+	if len(forbidChars) != 0:
+		raise ValidationError("Swift number is invalid !")
