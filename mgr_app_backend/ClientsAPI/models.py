@@ -2,7 +2,6 @@ from wsgiref.validate import validator
 from django.db import models
 from django.contrib.auth.models import User
 from .CustomValidators import (
-	validateFile,
 	validateCharField,
 	validateBusinessName,
 	validateEmailField, 
@@ -103,7 +102,7 @@ class Clients(models.Model):
 	)
 
 	teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
-	student_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True, validators=[validateFile])
+	student_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True)
 	first_name = models.CharField(max_length=50, validators=[validateCharField])
 	last_name = models.CharField(max_length=50, validators=[validateCharField])
 	lesson_day = models.CharField(max_length=20, default="Lundi", choices=DAY_LIST)

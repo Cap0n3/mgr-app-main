@@ -3,23 +3,14 @@
 # ========================================================================= #
 from django.core.exceptions import ValidationError
 import re
-from .magicNumber import determine_filetype
+
 # ========================================== #
 # =============== VALIDATORS =============== #
 # ========================================== #
-
-def validateFile(value):
-	# File extension for file image only is done by Django with ImageField
-
-	# Get first 4 bytes of file
-	fileBytes = value.file.read()
-	magicNumbers = fileBytes[0:4]
-	print(magicNumbers.hex())
-	
-	#Error
-	#test = determine_filetype(value.file.read())
-	raise ValidationError("File mime is : ")
-
+'''
+	Note: No need for a image validation, Django does a pretty good job with this !
+	It does even more than magic numbers & file extension validation.
+'''
 
 def validateCharField(value):
 	'''
