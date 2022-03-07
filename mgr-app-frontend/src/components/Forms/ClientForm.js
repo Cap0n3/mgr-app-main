@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
+import { inputValidation } from "./FormValidation";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -10,6 +11,7 @@ import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, Ava
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
 	const [pic, setPic] = useState();
+	const [inputFocus, setInputFocus] = useState({});
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
@@ -100,6 +102,16 @@ const ClientFormComponent = (props) => {
 		else {
 			// It's a standard input (text, email, tel, select-one, etc...)
 			inputValue = e.target.value;
+
+			// Check if input is valid (no special chars)
+			// setInputFocus(inputValidation(inputValue, inputType))
+			let isValid = inputValidation(inputValue, inputType)
+			let updateVal = {'name' : inputName, 'isValid' : isValid}
+			setInputFocus(inputFocus => ({
+				...inputFocus,
+				...updateVal
+			}));
+
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
 	}
@@ -133,12 +145,12 @@ const ClientFormComponent = (props) => {
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
 				<Label>Photo :</Label>
 				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
-				<LabelPic for="img_upload">Upload Client Pic</LabelPic>
+				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
-				<Input type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
+				<Input validity={(!inputFocus.isValid && inputFocus.name === "first_name") ? "isNotValid" : "isValid" } type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>
-				<Input type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
+				<Input validity={(!inputFocus.isValid && inputFocus.name === "last_name") ? "isNotValid" : "isValid" } type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
 				<Label>Email client :</Label>
 				<Input type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
 				<Label>Téléphone client :</Label>

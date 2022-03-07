@@ -58,7 +58,11 @@ export const Input = styled.input`
 	}
 
 	&:focus {
-		background: ${INPUTS_FOCUS_COLOR};
+		background: ${({validity}) => 
+			(validity === "isValid" && `${INPUTS_FOCUS_COLOR}`) || 
+			(validity === "isNotValid" && "red") ||
+        	"white"
+		}
 	}
 
 	&[type="checkbox"] {
