@@ -48,13 +48,8 @@ export const Input = styled.input`
 		width: 100%;
 		box-sizing: border-box; 
 		-webkit-box-sizing: border-box;
-		-moz-box-sizing: border-box; 
-		background-color: ${({validity}) => 
-			(validity === null && `${INPUTS_BCKG_COLOR}`) || 
-			(validity === "isNotValid" && "red") ||
-        	`${INPUTS_BCKG_COLOR}`
-		};
-		color: #8a97a0;
+		-moz-box-sizing: border-box;
+		background-color: ${({isValid}) => (isValid === true ? `${INPUTS_BCKG_COLOR}` : "red")};
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		margin-bottom: 30px;
@@ -63,16 +58,8 @@ export const Input = styled.input`
 	
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
-		border: ${({validity}) => 
-			(validity === null && "none") || 
-			(validity === "isNotValid" && "1px solid red") ||
-        	"none"
-		};
-		color: ${({validity}) => 
-			(validity === null && `${INPUTS_TEXT_COLOR}`) || 
-			(validity === "isNotValid" && "red") ||
-        	`${INPUTS_TEXT_COLOR}`
-		};
+		border: ${({isValid}) => (isValid === true ? "none" : "1px solid red")};
+		color: ${({isValid}) => (isValid  === true ? `${INPUTS_TEXT_COLOR}` : "red")};
 	}
 
 	&[type="checkbox"] {

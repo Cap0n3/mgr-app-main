@@ -12,7 +12,6 @@ import { getCookie } from "../../functions/cookieUtils";
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
 	const [pic, setPic] = useState();
-	const [inputFocus, setInputFocus] = useState({});
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const radioBtnTrue = useRef();
@@ -76,7 +75,19 @@ const ClientFormComponent = (props) => {
 	//===========================//
 	//====== FORM HANDLING ======//
 	//===========================//
-	
+	const checkInput = (inputName) => {
+		/**
+		 * If input is not valid, a cookie will be created with key 'input name' an value 'false'.
+		 * Cookie is created in handleChange with inputValidation().
+		 * @param {str} - Name of input to check
+		 * @returns {bol} - True if cookie doesn't exists (means input haven't been touched or is OK)
+		 */ 
+		let isValid = getCookie(inputName);
+		// If cookie doesn't exists, then input is ok.
+		if (isValid === null) isValid = true;
+		return isValid;
+	}
+
 	// Get values from inputs
 	const handleChange = (e) => {
 		let inputType = e.target.type;
@@ -103,18 +114,8 @@ const ClientFormComponent = (props) => {
 		else {
 			// It's a standard input (text, email, tel, select-one, etc...)
 			inputValue = e.target.value;
-
-			// === TO DELETE HERE (if cookie based validation is OK) ===
-			
-			// Check if input is valid (no special chars)
-			let isValid = inputValidation(inputValue, inputType, inputName)
-			// Set state object with input name and validation state
-			let updateVal = {'name' : inputName, 'isValid' : isValid}
-			setInputFocus(inputFocus => ({
-				...inputFocus,
-				...updateVal
-			}));
-			// ===========================================================
+			// Check if input is valid (no special chars etc...)
+			inputValidation(inputValue, inputType, inputName);
 			
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
@@ -144,7 +145,6 @@ const ClientFormComponent = (props) => {
 	
 	return (
 		<>
-			{console.log(getCookie("first_name"))}
 			<Form onSubmit={handleSubmit}>
 				{/* Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs */}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
@@ -154,15 +154,15 @@ const ClientFormComponent = (props) => {
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
 				{/* {(!inputFocus.isValid && inputFocus.name === "first_name") ? "isNotValid" : "isValid"} */}
-				<Input validity={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
+				<Input isValid={checkInput("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>
-				<Input validity={getCookie("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
+				<Input isValid={checkInput("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
 				<Label>Email client :</Label>
-				<Input validity={getCookie("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
+				<Input isValid={checkInput("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
 				<Label>Téléphone client :</Label>
-				<Input type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
+				<Input isValid={checkInput("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
 				<Label>Date de naissance :</Label>
-				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
+				<Input isValid={checkInput("student_birth")} type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
 				<Legend>Infos cours</Legend>
 				<Label>Jour du cours * :</Label>
 				<Select name="lesson_day" defaultValue={"DEFAULT"} value={inputs.lesson_day} onChange={handleChange}>
