@@ -4,6 +4,7 @@ import AuthContext from "../../context/AuthContext";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
 import { inputValidation } from "./FormValidation";
+import { getCookie } from "../../functions/cookieUtils";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -104,14 +105,14 @@ const ClientFormComponent = (props) => {
 			inputValue = e.target.value;
 
 			// Check if input is valid (no special chars)
-			// setInputFocus(inputValidation(inputValue, inputType))
-			let isValid = inputValidation(inputValue, inputType)
+			let isValid = inputValidation(inputValue, inputType, inputName)
+			// Set state object with input name and validation state
 			let updateVal = {'name' : inputName, 'isValid' : isValid}
 			setInputFocus(inputFocus => ({
 				...inputFocus,
 				...updateVal
 			}));
-
+			
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
 	}
@@ -140,6 +141,7 @@ const ClientFormComponent = (props) => {
 	
 	return (
 		<>
+			{console.log(getCookie("first_name"))}
 			<Form onSubmit={handleSubmit}>
 				{/* Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs */}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
@@ -148,11 +150,12 @@ const ClientFormComponent = (props) => {
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
-				<Input validity={(!inputFocus.isValid && inputFocus.name === "first_name") ? "isNotValid" : "isValid" } type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
+				{/* {(!inputFocus.isValid && inputFocus.name === "first_name") ? "isNotValid" : "isValid"} */}
+				<Input validity={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>
-				<Input validity={(!inputFocus.isValid && inputFocus.name === "last_name") ? "isNotValid" : "isValid" } type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
+				<Input validity={getCookie("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
 				<Label>Email client :</Label>
-				<Input type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
+				<Input validity={getCookie("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
 				<Label>Téléphone client :</Label>
 				<Input type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
 				<Label>Date de naissance :</Label>

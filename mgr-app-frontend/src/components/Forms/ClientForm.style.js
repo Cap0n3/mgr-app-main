@@ -49,20 +49,30 @@ export const Input = styled.input`
 		box-sizing: border-box; 
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box; 
-		background-color: ${INPUTS_BCKG_COLOR};
+		background-color: ${({validity}) => 
+			(validity === null && `${INPUTS_BCKG_COLOR}`) || 
+			(validity === "isNotValid" && "red") ||
+        	`${INPUTS_BCKG_COLOR}`
+		};
 		color: #8a97a0;
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		margin-bottom: 30px;
 		color: ${INPUTS_TEXT_COLOR};
 	}
-
+	
 	&:focus {
-		background: ${({validity}) => 
-			(validity === "isValid" && `${INPUTS_FOCUS_COLOR}`) || 
+		background: ${INPUTS_FOCUS_COLOR};
+		border: ${({validity}) => 
+			(validity === null && "none") || 
+			(validity === "isNotValid" && "1px solid red") ||
+        	"none"
+		};
+		color: ${({validity}) => 
+			(validity === null && `${INPUTS_TEXT_COLOR}`) || 
 			(validity === "isNotValid" && "red") ||
-        	"white"
-		}
+        	`${INPUTS_TEXT_COLOR}`
+		};
 	}
 
 	&[type="checkbox"] {
