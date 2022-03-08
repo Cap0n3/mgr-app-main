@@ -104,6 +104,8 @@ const ClientFormComponent = (props) => {
 			// It's a standard input (text, email, tel, select-one, etc...)
 			inputValue = e.target.value;
 
+			// === TO DELETE HERE (if cookie based validation is OK) ===
+			
 			// Check if input is valid (no special chars)
 			let isValid = inputValidation(inputValue, inputType, inputName)
 			// Set state object with input name and validation state
@@ -112,6 +114,7 @@ const ClientFormComponent = (props) => {
 				...inputFocus,
 				...updateVal
 			}));
+			// ===========================================================
 			
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
