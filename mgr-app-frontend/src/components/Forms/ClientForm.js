@@ -4,7 +4,7 @@ import AuthContext from "../../context/AuthContext";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
 import { inputValidation } from "./FormValidation";
-import { getCookie } from "../../functions/cookieUtils";
+import { getCookie, deleteCookie } from "../../functions/cookieUtils";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -14,6 +14,7 @@ const ClientFormComponent = (props) => {
 	const [pic, setPic] = useState();
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
+	const formRef = useRef();
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
@@ -61,9 +62,23 @@ const ClientFormComponent = (props) => {
 	}
 
 	useEffect(() => {
+		// Clear all form related cookies when refresh.
+		// Get all input names through references
+		const form = formRef.current;
+		const inputNames = [];
+		Object.keys(form).forEach(key => {inputNames.push(form[key].name)});
+		// Clear cookies
+		inputNames.forEach(inputName => {
+			if(getCookie(inputName) !== null){
+				deleteCookie(inputName)
+			}
+		});
+	}, []);
+
+	useEffect(() => {
 		if (props.target === "create") {
 			// Set default value of radio btn "invoice numbering" to false in inputs
-			//  => If radio btn isn't touched value is set to "undefined"
+			//  => If radio btn isn't touched value is set to "undefined" (which isn't good)
 			setInputs(values => ({ ...values, "invoice_numbering": false }))
 		}
 		else if (props.target === "update") {
@@ -145,7 +160,7 @@ const ClientFormComponent = (props) => {
 	
 	return (
 		<>
-			<Form onSubmit={handleSubmit}>
+			<Form ref={formRef} onSubmit={handleSubmit}>
 				{/* Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs */}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
 				<Label>Photo :</Label>
