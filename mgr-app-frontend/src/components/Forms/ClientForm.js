@@ -18,8 +18,11 @@ const ClientFormComponent = (props) => {
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
-	// If API call is success, populate clientData & fill form
 	const processData = (data) => {
+		/**
+		 * If API call is success, populate clientData & fill form
+		 */
+
 		// Fill form inputs with client data
 		let clientObject = {
 			"student_pic": data.student_pic,
@@ -56,13 +59,18 @@ const ClientFormComponent = (props) => {
 		setPic(data.student_pic)
 	}
 
-	// If API call error
 	const fetchFail = (err) => {
+		/**
+		 * If API call failed
+		 */
 		console.error(err);
 	}
 
 	useEffect(() => {
-		// Clear all form related cookies when refresh.
+		/**
+		 * Clear all form related cookies (used for input validation) when refresh.
+		 */
+
 		// Get all input names through references
 		const form = formRef.current;
 		const inputNames = [];
@@ -76,6 +84,10 @@ const ClientFormComponent = (props) => {
 	}, []);
 
 	useEffect(() => {
+		/**
+		 * Define if it'll be the form for creation or update based on passed props.
+		 */
+
 		if (props.target === "create") {
 			// Set default value of radio btn "invoice numbering" to false in inputs
 			//  => If radio btn isn't touched value is set to "undefined" (which isn't good)
@@ -96,15 +108,20 @@ const ClientFormComponent = (props) => {
 		 * Cookie is created in handleChange with inputValidation().
 		 * @param {str} - Name of input to check
 		 * @returns {bol} - True if cookie doesn't exists (means input haven't been touched or is OK)
-		 */ 
+		 */
+
 		let isValid = getCookie(inputName);
 		// If cookie doesn't exists, then input is ok.
 		if (isValid === null) isValid = true;
 		return isValid;
 	}
 
-	// Get values from inputs
 	const handleChange = (e) => {
+		/**
+		 * Get values from inputs on keyboard press
+		 * @param {object} - event object passed by input
+		 */
+
 		let inputType = e.target.type;
 		let inputName = e.target.name;
 		let inputValue;
