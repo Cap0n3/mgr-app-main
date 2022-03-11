@@ -49,7 +49,11 @@ export const Input = styled.input`
 		box-sizing: border-box; 
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
-		background-color: ${({isValid}) => (isValid === true ? `${INPUTS_BCKG_COLOR}` : "red")};
+		background-color: ${({isValid}) => 
+			(isValid === "true" && `${INPUTS_BCKG_COLOR}`) || 
+			(isValid === "false" &&  "red") ||
+			`${INPUTS_BCKG_COLOR}` /* If isValid prop is not setup */
+		};
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		margin-bottom: 30px;
@@ -58,8 +62,17 @@ export const Input = styled.input`
 	
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
-		border: ${({isValid}) => (isValid === true ? "none" : "1px solid red")};
-		color: ${({isValid}) => (isValid  === true ? `${INPUTS_TEXT_COLOR}` : "red")};
+		border: ${({isValid}) => 
+			(isValid === "true" && "none") || 
+			(isValid === "false" &&  "1px solid red") ||
+			"none"
+		};
+		color: ${({isValid}) => 
+			(isValid === "true" && `${INPUTS_TEXT_COLOR}`) || 
+			(isValid === "false" &&  "red") ||
+			`${INPUTS_TEXT_COLOR}`
+		};
+
 	}
 
 	&[type="checkbox"] {
@@ -147,7 +160,11 @@ export const Textarea = styled.textarea`
 	box-sizing: border-box; 
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box; 
-	background-color: ${INPUTS_BCKG_COLOR};
+	background-color: ${({isValid}) => 
+		(isValid === "true" && `${INPUTS_BCKG_COLOR}`) || 
+		(isValid === "false" &&  "red") ||
+		`${INPUTS_BCKG_COLOR}` /* If isValid prop is not setup */
+	};
 	color: #8a97a0;
 	-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 	box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
@@ -156,6 +173,11 @@ export const Textarea = styled.textarea`
 
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
+		border: ${({isValid}) => 
+			(isValid === "true" && "none") || 
+			(isValid === "false" &&  "1px solid red") ||
+			"none"
+		};
 	}
 `;
 

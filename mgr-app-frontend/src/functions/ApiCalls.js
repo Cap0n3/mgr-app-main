@@ -1,6 +1,6 @@
-/**
- * CRUD API custom calls functions.
- */
+/*
+    CRUD API custom calls functions.
+*/
 
 const SERVER = "http://127.0.0.1:8000"
 

@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar } from "./ClientForm.style"
-import { inputValidation } from "./FormValidation";
-import { getCookie, deleteCookie } from "../../functions/cookieUtils";
+import { inputValidation, clearFormCookies } from "./FormValidation";
+import { getCookie } from "../../functions/cookieUtils";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -18,11 +18,11 @@ const ClientFormComponent = (props) => {
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
+	/**
+	 * If API call is success, populate clientData & fill form.
+	 * @param {object} data	Data object returned by getClient API Call.
+	 */
 	const processData = (data) => {
-		/**
-		 * If API call is success, populate clientData & fill form
-		 */
-
 		// Fill form inputs with client data
 		let clientObject = {
 			"student_pic": data.student_pic,
@@ -59,35 +59,25 @@ const ClientFormComponent = (props) => {
 		setPic(data.student_pic)
 	}
 
+	/**
+	 * What to do if API call failed.
+	 * @param {str} err	Error message to print.
+	 */
 	const fetchFail = (err) => {
-		/**
-		 * If API call failed
-		 */
 		console.error(err);
 	}
 
+	/**
+	 * Clear all form related cookies (used for input validation) when refresh or on first render (just in case).
+	 */
 	useEffect(() => {
-		/**
-		 * Clear all form related cookies (used for input validation) when refresh.
-		 */
-
-		// Get all input names through references
-		const form = formRef.current;
-		const inputNames = [];
-		Object.keys(form).forEach(key => {inputNames.push(form[key].name)});
-		// Clear cookies
-		inputNames.forEach(inputName => {
-			if(getCookie(inputName) !== null){
-				deleteCookie(inputName)
-			}
-		});
+		clearFormCookies(formRef.current)
 	}, []);
 
+	/**
+	 * Define if it'll be the form for creation or update based on passed props.
+	 */
 	useEffect(() => {
-		/**
-		 * Define if it'll be the form for creation or update based on passed props.
-		 */
-
 		if (props.target === "create") {
 			// Set default value of radio btn "invoice numbering" to false in inputs
 			//  => If radio btn isn't touched value is set to "undefined" (which isn't good)
@@ -102,30 +92,29 @@ const ClientFormComponent = (props) => {
 	//===========================//
 	//====== FORM HANDLING ======//
 	//===========================//
-	const checkInput = (inputName) => {
-		/**
-		 * If input is not valid, a cookie will be created with key 'input name' an value 'false'.
-		 * Cookie is created in handleChange with inputValidation().
-		 * @param {str} - Name of input to check
-		 * @returns {bol} - True if cookie doesn't exists (means input haven't been touched or is OK)
-		 */
 
+	/**
+	 * If input is not valid, a cookie will be created with key 'input name' an value 'false'.
+	 * Cookie is created in handleChange with inputValidation().
+	 * @param {str} inputName Names of input to check
+	 * @returns {bol} True if cookie doesn't exists (means input haven't been touched or is OK)
+	 */
+	const checkInput = (inputName) => {
 		let isValid = getCookie(inputName);
 		// If cookie doesn't exists, then input is ok.
 		if (isValid === null) isValid = true;
 		return isValid;
 	}
 
+	/**
+	 * Get values from inputs on keyboard press and polulate state "inputs".
+	 * @param {object} e Event object passed by input
+	 */
 	const handleChange = (e) => {
-		/**
-		 * Get values from inputs on keyboard press
-		 * @param {object} - event object passed by input
-		 */
-
 		let inputType = e.target.type;
 		let inputName = e.target.name;
 		let inputValue;
-
+		
 		if (inputType === "file") {
 			inputValue = e.target.files[0];
 			// Convert file object to readable format
@@ -146,6 +135,7 @@ const ClientFormComponent = (props) => {
 		else {
 			// It's a standard input (text, email, tel, select-one, etc...)
 			inputValue = e.target.value;
+
 			// Check if input is valid (no special chars etc...)
 			inputValidation(inputValue, inputType, inputName);
 			
@@ -169,7 +159,11 @@ const ClientFormComponent = (props) => {
 		}
 	}
 	
-	// For props formatting (ex : create => Create)
+	/**
+	 * For props formatting (ex : create => Create).
+	 * @param {str} str String to format. 
+	 * @returns {str} Formatted string.
+	 */
 	const upperFirstChar = (str) => {
 		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
 		return firstToUpper
@@ -185,7 +179,6 @@ const ClientFormComponent = (props) => {
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
-				{/* {(!inputFocus.isValid && inputFocus.name === "first_name") ? "isNotValid" : "isValid"} */}
 				<Input isValid={checkInput("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>
 				<Input isValid={checkInput("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
@@ -194,7 +187,7 @@ const ClientFormComponent = (props) => {
 				<Label>Téléphone client :</Label>
 				<Input isValid={checkInput("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
 				<Label>Date de naissance :</Label>
-				<Input isValid={checkInput("student_birth")} type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
+				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
 				<Legend>Infos cours</Legend>
 				<Label>Jour du cours * :</Label>
 				<Select name="lesson_day" defaultValue={"DEFAULT"} value={inputs.lesson_day} onChange={handleChange}>
@@ -220,7 +213,7 @@ const ClientFormComponent = (props) => {
 					<option value="Libre">A la carte</option>
 				</Select>
 				<Label>Instrument :</Label>
-				<Input type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
+				<Input isValid={checkInput("instrument")} type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
 				<Label>Niveau :</Label>
 				<Select name="student_level" defaultValue={"DEFAULT"} value={inputs.student_level} onChange={handleChange}>
 					<option value="DEFAULT" disabled>Choisir un niveau ...</option>
@@ -236,21 +229,21 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Legend>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
-				<Input type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} />
 				<Label>Nom Facturation * :</Label>
-				<Input type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} />
 				<Label>Email Facturation * :</Label>
-				<Input type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} />
 				<Label>Téléphone client :</Label>
-				<Input type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} />
 				<Label>Adresse facturation * :</Label>
-				<Input type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} />
 				<Label>Code postal * :</Label>
-				<Input type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} />
 				<Label>Ville * :</Label>
-				<Input type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} />
 				<Label>Pays * :</Label>
-				<Input type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} />
+				<Input isValid={checkInput("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} />
 				<Legend>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
 				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} />
@@ -274,7 +267,7 @@ const ClientFormComponent = (props) => {
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
 				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
 				<Legend>Notes</Legend>
-				<Textarea name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
+				<Textarea isValid={checkInput("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				<Input type="submit" value={upperFirstChar(props.target)} />
 			</Form>
 		</>);

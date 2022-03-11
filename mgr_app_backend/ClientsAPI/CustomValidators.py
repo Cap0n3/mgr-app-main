@@ -18,7 +18,7 @@ def validateCharField(value):
 		@isValid - Letters, spaces and [-] (no numbers or special chars.)
 		@Note - Match var contains all special chars/numbers used in input.
 	'''
-	forbidChars = re.findall(r'[^A-Za-z\s\-\'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ]', value)
+	forbidChars = re.findall(r'[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ\-\']', value)
 	
 	if len(forbidChars) != 0:
 		raise ValidationError("No special characters or numbers please !")
@@ -66,7 +66,7 @@ def validateAddress(value):
 		Func to validate address input.
 		@isValid : Letters, space, digits and [.,-:].
 	'''
-	specialChars = re.findall(r'[^\w\s.,:-]+', value)
+	specialChars = re.findall(r'[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.,°:\-]+', value)
 
 	if len(specialChars) != 0:
 		raise ValidationError("No special characters please ! Only [.,-:] are accepted.")
@@ -86,7 +86,7 @@ def validateNote(value):
 		Func to validate note textarea.
 		@isNOTValid : [*#<>='+\t\] are not valid chars.
 	'''
-	forbidChars = re.findall(r"[*#<>=+\t\\\\]+", value)
+	forbidChars = re.findall(r"[*#<>{}\[\]\t\\\\]+", value)
 
 	if len(forbidChars) != 0:
 		raise ValidationError("No special characters please !")
