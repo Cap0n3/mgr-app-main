@@ -9,49 +9,60 @@ import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils"
 // ===================================== //
 
 /**
- * Utility function for inputValidation() to stay DRY. 
- * It controls if there's any bad characters in bad_chars arg and set or delete 'form cookie'.
- * @param {str} input_name  Input name property.
- * @param {int} bad_chars   Result of regex search (if OK = -1 or else it returns int for position of bad char).
- * @returns {bool}          True / False.
+ * Utility function for inputValidation() to stay DRY. It controls input state with cookies, they can be :
+ * null (input is empty, no cookie set), true (value ok, cookie set to true) or false (bad char entered, cookie set to false).
+ * @param {str} input_name      Input name property.
+ * @param {str} input_value     Input value to check.
+ * @param {int} bad_chars       Result of regex search (if OK = -1 or else it returns int for position of bad char).
+ * @returns {bool}              True / False.
  */
-const badCharReturnVerif = (input_name, bad_chars) => { 
-    // Returned value must be -1 or else there's bad characters
+const badCharReturnVerif = (input_name, input_value, bad_chars) => {
+    // If input value is empty, erase cookie to reinit input state
+    if(input_value === "") {
+        deleteCookie(input_name);
+        return true
+    }
     if(bad_chars >= 0) {
-        setCookie(input_name, false)
+        // There's a bad character, delete previously set cookies and set new one with 'false'
+        deleteCookie(input_name);
+        setCookie(input_name, false);
         return false;
     }
-    // If input is ok then delete cookie (if there's one)
+    // If input is ok then delete previously set cookie and set a new one with 'true'
     deleteCookie(input_name);
+    setCookie(input_name, true);
     return true;
 }
 
 /**
- * Utility function for inputValidation() to stay DRY. 
- * Control if input is empty to avoid false negative and set or delete 'form cookie'.
+ * Utility function for inputValidation() to stay DRY. Same as badCharReturnVerif but with matching search instead.
+ * It controls input state with cookies, they can be : null (input is empty, no cookie set), true (value ok, cookie set to true) 
+ * or false (bad char entered, cookie set to false).
  * @param {str} input_name      Input name property.
  * @param {str} input_value     Value of input. 
  * @param {int} matching        Result of regex search (if OK = 0 or else negative number.)
  * @returns {bool}              True / False.
  */
 const matchReturnVerif = (input_name, input_value, matching) => {
-    // Check if input is empty to avoid false negative
+    // If input value is empty, erase cookie to reinit input state
     if(input_value === "") {
         deleteCookie(input_name);
         return true
     }
 
     if(matching !== 0){
-        setCookie(input_name, false)
+        deleteCookie(input_name);
+        setCookie(input_name, false);
         return false;
     }
-    // If input is ok then delete cookie (if there's one)
+
     deleteCookie(input_name);
+    setCookie(input_name, true);
     return true;
 }
 
 /**
- * This function deletes form related cookies (used for input validation).
+ * This function deletes ALL form related cookies (used for input validation) to reinit all inputs.
  * @param {*} formRef Form reference (hook useRef)
  */
  export const clearFormCookies = (formRef) => {
@@ -94,7 +105,7 @@ export const inputValidation = (inputValue, inputType, inputName) => {
                 badChars = inputValue.search(/[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ'-]+/);
         }
         // Check regex return value & set/remove cookie
-        return badCharReturnVerif(inputName, badChars)
+        return badCharReturnVerif(inputName, inputValue, badChars)
     }
     else if(inputType === "email"){
         match = inputValue.search(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
@@ -105,7 +116,7 @@ export const inputValidation = (inputValue, inputType, inputName) => {
     else if(inputType === "textarea"){
         badChars = inputValue.search(/[*#<>{}\[\]\t\\\\]+/);
 
-        return badCharReturnVerif(inputName, badChars)
+        return badCharReturnVerif(inputName, inputValue, badChars)
     }
     else if(inputType === "tel") {
         match = inputValue.search(/^\+?[\d, \s]+$/);

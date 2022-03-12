@@ -94,19 +94,6 @@ const ClientFormComponent = (props) => {
 	//===========================//
 
 	/**
-	 * If input is not valid, a cookie will be created with key 'input name' an value 'false'.
-	 * Cookie is created in handleChange with inputValidation().
-	 * @param {str} inputName Names of input to check
-	 * @returns {bol} True if cookie doesn't exists (means input haven't been touched or is OK)
-	 */
-	const checkInput = (inputName) => {
-		let isValid = getCookie(inputName);
-		// If cookie doesn't exists, then input is ok.
-		if (isValid === null) isValid = true;
-		return isValid;
-	}
-
-	/**
 	 * Get values from inputs on keyboard press and polulate state "inputs".
 	 * @param {object} e Event object passed by input
 	 */
@@ -179,13 +166,13 @@ const ClientFormComponent = (props) => {
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				<Label>Prénom * :</Label>
-				<Input isValid={checkInput("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
+				<Input isValid={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				<Label>Nom * :</Label>
-				<Input isValid={checkInput("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
+				<Input isValid={getCookie("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
 				<Label>Email client :</Label>
-				<Input isValid={checkInput("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
+				<Input isValid={getCookie("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
 				<Label>Téléphone client :</Label>
-				<Input isValid={checkInput("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
+				<Input isValid={getCookie("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
 				<Label>Date de naissance :</Label>
 				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
 				<Legend>Infos cours</Legend>
@@ -213,7 +200,7 @@ const ClientFormComponent = (props) => {
 					<option value="Libre">A la carte</option>
 				</Select>
 				<Label>Instrument :</Label>
-				<Input isValid={checkInput("instrument")} type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
+				<Input isValid={getCookie("instrument")} type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
 				<Label>Niveau :</Label>
 				<Select name="student_level" defaultValue={"DEFAULT"} value={inputs.student_level} onChange={handleChange}>
 					<option value="DEFAULT" disabled>Choisir un niveau ...</option>
@@ -229,21 +216,21 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Legend>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
-				<Input isValid={checkInput("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} />
 				<Label>Nom Facturation * :</Label>
-				<Input isValid={checkInput("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} />
 				<Label>Email Facturation * :</Label>
-				<Input isValid={checkInput("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} />
 				<Label>Téléphone client :</Label>
-				<Input isValid={checkInput("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} />
 				<Label>Adresse facturation * :</Label>
-				<Input isValid={checkInput("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} />
 				<Label>Code postal * :</Label>
-				<Input isValid={checkInput("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} />
 				<Label>Ville * :</Label>
-				<Input isValid={checkInput("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} />
 				<Label>Pays * :</Label>
-				<Input isValid={checkInput("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} />
 				<Legend>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
 				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} />
@@ -267,7 +254,7 @@ const ClientFormComponent = (props) => {
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
 				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
 				<Legend>Notes</Legend>
-				<Textarea isValid={checkInput("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
+				<Textarea isValid={getCookie("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				<Input type="submit" value={upperFirstChar(props.target)} />
 			</Form>
 		</>);

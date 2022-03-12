@@ -63,7 +63,7 @@ export const Input = styled.input`
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
 		border: ${({isValid}) => 
-			(isValid === "true" && "none") || 
+			(isValid === "true" && "1px solid green") || 
 			(isValid === "false" &&  "1px solid red") ||
 			"none"
 		};
@@ -174,7 +174,7 @@ export const Textarea = styled.textarea`
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
 		border: ${({isValid}) => 
-			(isValid === "true" && "none") || 
+			(isValid === "true" && "1px solid green") || 
 			(isValid === "false" &&  "1px solid red") ||
 			"none"
 		};
