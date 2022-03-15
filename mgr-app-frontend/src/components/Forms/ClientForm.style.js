@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { RiErrorWarningLine } from "react-icons/ri";
 
 // FORM COLOR PALETTE
 const FORM_BCKG_COLOR = "#202750ff";
@@ -42,7 +43,7 @@ export const Input = styled.input`
 		border: none;
 		border-radius: 4px;
 		font-size: 15px;
-		margin: 0;
+		margin: 0px 0px 30px 0px;
 		outline: 0;
 		padding: 10px;
 		width: 100%;
@@ -56,7 +57,6 @@ export const Input = styled.input`
 		};
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
-		margin-bottom: 30px;
 		color: ${INPUTS_TEXT_COLOR};
 	}
 	
@@ -192,4 +192,26 @@ export const AvatarWrapper = styled.div`
 	justify-content: center;
 	width: 100%;
 	margin-bottom: 30px;
+`;
+
+export const WarningBox = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 10px 0px 10px 0px;
+	margin-bottom: 30px;
+	border: 1px dotted red;
+	border-radius: 4px;
+
+	& > p {
+		color: red;
+		font-size: 0.9em;
+		margin: 0px;
+	}
+`;
+
+export const WarnIcon = styled(RiErrorWarningLine)`
+	font-size: 1.2em;
+	color: red;
+	margin: 0px 5px 0px 0px;
 `;
