@@ -8,6 +8,66 @@ import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils"
 // ============ UTILS FUNCS ============ //
 // ===================================== //
 
+const getFileBytes = async (file) => {
+    const fileByteArrayHex = [];
+    let reader  = new FileReader();
+    reader.onloadend = (e) => {
+        if (e.target.readyState === FileReader.DONE) {
+            const arrayBuffer = e.target.result,
+            array = new Uint8Array(arrayBuffer);
+            // convert bytes to hex value
+            for (const a of array) {
+                let hexNum = (a).toString(16);
+                fileByteArrayHex.push(hexNum.toUpperCase());
+            }
+        }
+        return fileByteArrayHex;
+    }
+    reader.readAsArrayBuffer(file);
+}
+
+const ValidateFile = (fileObj) => {
+    const mimeType = fileObj.type;
+    const fileSize = fileObj.size;
+    getFileBytes(fileObj).then((value) => {
+        console.log(value);
+    });
+
+    const magicNumbers = {
+        "jpg" : ["FF", "D8", "FF", "E0"],
+        "png" : ["89", "50", "4E", "47", "0D", "0A", "1A", "0A"],
+        "gif" : ""
+    }
+    // Convert file to bytes (to analyse magic numbers)
+    // let reader  = new FileReader();
+    // reader.onloadend = (e) => {
+    //     if (e.target.readyState === FileReader.DONE) {
+    //         const arrayBuffer = e.target.result,
+    //         array = new Uint8Array(arrayBuffer);
+    //         // convert bytes to hex value
+    //         for (const a of array) {
+    //             let hexNum = (a).toString(16);
+    //             fileByteArrayHex.push(hexNum.toUpperCase());
+    //         }
+    //     }
+    // }
+    // reader.readAsArrayBuffer(fileObj);
+
+    // Check magic numbers
+    // if(mimeType === "image/jpeg") {
+    //     let byteSize = magicNumbers["jpg"].length
+    //     for(let i=0; i < byteSize; i++) {
+    //         console.log(fileByteArrayHex[i] + " => " + magicNumbers["jpg"][i])
+    //         if (fileByteArrayHex[i] !== magicNumbers["jpg"][i]){
+    //             console.log("It's NOT a match !!!")
+    //             break;
+    //         }
+    //     }
+    // }
+    return
+}
+
+
 /**
  * Utility function for inputValidation() to stay DRY. It controls input state with cookies, they can be :
  * null (input is empty, no cookie set), true (value ok, cookie set to true) or false (bad char entered, cookie set to false).
@@ -84,6 +144,7 @@ const matchReturnVerif = (input_name, input_value, matching) => {
 /**
  * This function checks form inputs content and use cookies to store invalid input names in order to keep trace of badly formatted infos 
  * that haven't been corrected by user before submission (useful to color inputs and warn user when they're wrong).
+ * For file input, it'll check file mime-type, size and magic numbers (there'll be no cookie involved for file validation, just a bool return value).
  * @param {str} inputValue Input content to verify. 
  * @param {str} inputType Input type (text, email, tel, etc...).
  * @param {str} inputName Input 'name' property.
@@ -92,8 +153,10 @@ const matchReturnVerif = (input_name, input_value, matching) => {
 export const inputValidation = (inputValue, inputType, inputName) => {
     let badChars = ""
     let match = ""
-
-    if (inputType === "text"){
+    if (inputType === "file") {
+        ValidateFile(inputValue);
+    }
+    else if (inputType === "text") {
         switch(inputName) {
             case "invoice_address":
                 badChars = inputValue.search(/[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.,°:-]+/);
@@ -107,13 +170,13 @@ export const inputValidation = (inputValue, inputType, inputName) => {
         // Check regex return value & set/remove cookie
         return badCharReturnVerif(inputName, inputValue, badChars)
     }
-    else if(inputType === "email"){
+    else if(inputType === "email") {
         match = inputValue.search(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
         
         // Check regex return value & set/remove cookie (+ check if empty input)
         return matchReturnVerif(inputName, inputValue, match)
     }
-    else if(inputType === "textarea"){
+    else if(inputType === "textarea") {
         badChars = inputValue.search(/[*#<>{}\[\]\t\\\\]+/);
 
         return badCharReturnVerif(inputName, inputValue, badChars)

@@ -208,10 +208,20 @@ export const WarningBox = styled.div`
 		font-size: 0.9em;
 		margin: 0px;
 	}
+
+	@media screen and (max-width: 960px) {
+		& > p {
+			font-size: 0.8em;
+		}
+	}
 `;
 
 export const WarnIcon = styled(RiErrorWarningLine)`
 	font-size: 1.2em;
 	color: red;
 	margin: 0px 5px 0px 0px;
+
+	@media screen and (max-width: 960px) {
+		font-size: 1.0em;
+	}
 `;

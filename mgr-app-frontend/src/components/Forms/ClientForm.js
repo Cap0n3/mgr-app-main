@@ -12,6 +12,7 @@ import { getCookie } from "../../functions/cookieUtils";
 const ClientFormComponent = (props) => {
 	const [inputs, setInputs] = useState({});
 	const [pic, setPic] = useState();
+	const [picPreview, setPicPreview] = useState();
 	const {authTokens, user} = useContext(AuthContext)
 	const navigate = useNavigate();
 	const formRef = useRef();
@@ -103,14 +104,24 @@ const ClientFormComponent = (props) => {
 		let inputValue;
 		
 		if (inputType === "file") {
+			// Get file object from input
 			inputValue = e.target.files[0];
-			// Convert file object to readable format
+
+			// Validate file (mime-type, magic, size)
+			inputValidation(inputValue, inputType, inputName)
+			
+			// Set image preview for user
+			let file_local_URL = URL.createObjectURL(inputValue);
+			setPicPreview(file_local_URL)
+			
+			// Convert file object to readable format (for upload to server)
 			let reader  = new FileReader();
-    		reader.onload = function(e) {
+    		reader.onload = (e) => {
 				// Set updated image
 				setPic(e.target.result);
 			}
 			reader.readAsDataURL(inputValue);
+
 			// See JS spread operator
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
@@ -132,6 +143,7 @@ const ClientFormComponent = (props) => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+
 		// Evaluate if it's an update or a creation
 		if (props.target === "create") {
 			createClient(authTokens, user, inputs).then().catch(fetchFail);
@@ -155,7 +167,7 @@ const ClientFormComponent = (props) => {
 	 */
 	const warningMessage = (inputName, inputCategory) => {
 		// Correspond to categories of verification in FormValidation.js
-		const warnMessage = {
+		const warnMessages = {
 			"text" : "Les caractères spéciaux ne sont pas autorisés !",
 			"email" : "L'adresse e-mail n'est pas valide !",
 			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
@@ -164,7 +176,7 @@ const ClientFormComponent = (props) => {
 			"textarea" : "Les caractères spéciaux ne sont pas autorisés !"
 		}
 		let cookieStatus = getCookie(inputName)
-		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessage[inputCategory]}</p></WarningBox> : null
+		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
 	}
 	
 	/**
@@ -186,6 +198,7 @@ const ClientFormComponent = (props) => {
 				*/}
 				<Legend>{upperFirstChar(props.target)} Client</Legend>
 				<Label>Photo :</Label>
+				{picPreview &&  props.target === "create" ? <AvatarWrapper><Avatar src={picPreview} /></AvatarWrapper> : null }
 				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
