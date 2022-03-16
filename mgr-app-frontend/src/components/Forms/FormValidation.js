@@ -8,62 +8,63 @@ import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils"
 // ============ UTILS FUNCS ============ //
 // ===================================== //
 
-const getFileBytes = async (file) => {
-    const fileByteArrayHex = [];
-    let reader  = new FileReader();
-    reader.onloadend = (e) => {
-        if (e.target.readyState === FileReader.DONE) {
-            const arrayBuffer = e.target.result,
-            array = new Uint8Array(arrayBuffer);
-            // convert bytes to hex value
-            for (const a of array) {
-                let hexNum = (a).toString(16);
-                fileByteArrayHex.push(hexNum.toUpperCase());
+/**
+ * This function returns an array containing hexadecimal bytes of file passed in parameters.
+ * Note : This func is async, it has to wait that the file reader has finished before returning anything.
+ * @param {object} file     File to convert in hex bytes. 
+ * @returns {array}         Array containing hex bytes of file.
+ */
+const getFileBytes = (file) => {
+    return new Promise((resolve, reject) => {
+        const fileByteArrayHex = [];
+        let reader  = new FileReader();
+        reader.onloadend = (e) => {
+            if (e.target.readyState === FileReader.DONE) {
+                const arrayBuffer = e.target.result,
+                array = new Uint8Array(arrayBuffer);
+                // convert bytes to hex value
+                for (const a of array) {
+                    let hexNum = (a).toString(16);
+                    fileByteArrayHex.push(hexNum.toUpperCase());
+                }
             }
+            if( fileByteArrayHex.length !== 0) {
+                resolve(fileByteArrayHex);
+            } else {
+                reject('An error occured in getFileBytes() ! Array was empty !')
+            }
+            
         }
-        return fileByteArrayHex;
-    }
-    reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(file)
+    });
 }
 
+// HERE !!! NOT FINISHED
 const ValidateFile = (fileObj) => {
     const mimeType = fileObj.type;
     const fileSize = fileObj.size;
-    getFileBytes(fileObj).then((value) => {
-        console.log(value);
-    });
-
     const magicNumbers = {
         "jpg" : ["FF", "D8", "FF", "E0"],
         "png" : ["89", "50", "4E", "47", "0D", "0A", "1A", "0A"],
         "gif" : ""
     }
-    // Convert file to bytes (to analyse magic numbers)
-    // let reader  = new FileReader();
-    // reader.onloadend = (e) => {
-    //     if (e.target.readyState === FileReader.DONE) {
-    //         const arrayBuffer = e.target.result,
-    //         array = new Uint8Array(arrayBuffer);
-    //         // convert bytes to hex value
-    //         for (const a of array) {
-    //             let hexNum = (a).toString(16);
-    //             fileByteArrayHex.push(hexNum.toUpperCase());
-    //         }
-    //     }
-    // }
-    // reader.readAsArrayBuffer(fileObj);
 
-    // Check magic numbers
-    // if(mimeType === "image/jpeg") {
-    //     let byteSize = magicNumbers["jpg"].length
-    //     for(let i=0; i < byteSize; i++) {
-    //         console.log(fileByteArrayHex[i] + " => " + magicNumbers["jpg"][i])
-    //         if (fileByteArrayHex[i] !== magicNumbers["jpg"][i]){
-    //             console.log("It's NOT a match !!!")
-    //             break;
-    //         }
-    //     }
-    // }
+    getFileBytes(fileObj).then(bytesArray => {
+        console.debug(bytesArray)
+        // Check magic numbers
+        if(mimeType === "image/jpeg") {
+            let byteSize = magicNumbers["jpg"].length
+            for(let i=0; i < byteSize; i++) {
+                console.log(bytesArray[i] + " => " + magicNumbers["jpg"][i])
+                if (bytesArray[i] !== magicNumbers["jpg"][i]){
+                    // Alert user, file is corrupted or not valid
+                    console.error("File signature doesn't match !")
+                    break;
+                }
+            }
+        }
+        
+    }).catch(err => console.log(err));
     return
 }
 
