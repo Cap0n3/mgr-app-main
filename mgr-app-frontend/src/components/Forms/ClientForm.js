@@ -108,10 +108,8 @@ const ClientFormComponent = (props) => {
 		if (inputType === "file") {
 			// Get file object from input
 			inputValue = e.target.files[0];
-
-			// Validate file (mime-type, magic numbers, size)
-
-			//let checkFile = inputValidation(inputValue, inputType, inputName);
+			console.log("THERE")
+			// Validate file (mime-type, magic numbers, size) = SIZE TO DO !!!
 			fileValidation(inputValue).then((isValid) => {
 				if(isValid === true)
 				{
