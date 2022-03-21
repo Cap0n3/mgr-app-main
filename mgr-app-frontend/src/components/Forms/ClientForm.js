@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
+import { useAlert } from 'react-alert';
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar, WarningBox, WarnIcon } from "./ClientForm.style"
-import { inputValidation, clearFormCookies } from "./FormValidation";
+import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
 import { getCookie } from "../../functions/cookieUtils";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
  */
 const ClientFormComponent = (props) => {
+	const alert = useAlert()
 	const [inputs, setInputs] = useState({});
 	const [pic, setPic] = useState();
 	const [picPreview, setPicPreview] = useState();
@@ -107,23 +109,33 @@ const ClientFormComponent = (props) => {
 			// Get file object from input
 			inputValue = e.target.files[0];
 
-			// Validate file (mime-type, magic, size)
-			inputValidation(inputValue, inputType, inputName)
-			
-			// Set image preview for user
-			let file_local_URL = URL.createObjectURL(inputValue);
-			setPicPreview(file_local_URL)
-			
-			// Convert file object to readable format (for upload to server)
-			let reader  = new FileReader();
-    		reader.onload = (e) => {
-				// Set updated image
-				setPic(e.target.result);
-			}
-			reader.readAsDataURL(inputValue);
+			// Validate file (mime-type, magic numbers, size)
 
-			// See JS spread operator
-			setInputs(values => ({ ...values, [inputName]: inputValue }));
+			//let checkFile = inputValidation(inputValue, inputType, inputName);
+			fileValidation(inputValue).then((isValid) => {
+				if(isValid === true)
+				{
+					// Set image preview for user
+					let file_local_URL = URL.createObjectURL(inputValue);
+					setPicPreview(file_local_URL)
+					
+					// Convert file object to readable format (for upload to server)
+					let reader  = new FileReader();
+					reader.onload = (e) => {
+						// Set updated image
+						setPic(e.target.result);
+					}
+					reader.readAsDataURL(inputValue);
+
+					// See JS spread operator
+					setInputs(values => ({ ...values, [inputName]: inputValue }));	
+				}
+				else if(isValid === false)
+				{
+					console.log("IS FALSE !!!")
+					alert.show("File is not valid !");
+				}
+			});		
 		}
 		else if (inputType === "radio") {
 			// convert string "true"/"false" to actual booleean

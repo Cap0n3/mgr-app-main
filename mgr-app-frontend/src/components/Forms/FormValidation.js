@@ -11,6 +11,7 @@ import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils"
 /**
  * This function returns an array containing hexadecimal bytes of file passed in parameters.
  * Note : This func is async, it has to wait that the file reader has finished before returning anything.
+ * Note : it's a dependency of fileValidation(), mainly created to stay DRY.
  * @param {object} file     File to convert in hex bytes. 
  * @returns {array}         Array containing hex bytes of file.
  */
@@ -32,50 +33,44 @@ const getFileBytes = (file) => {
                 resolve(fileByteArrayHex);
             } else {
                 reject('An error occured in getFileBytes() ! Array was empty !')
-            }
-            
+            } 
         }
         reader.readAsArrayBuffer(file)
     });
 }
 
-// HERE !!! NOT FINISHED
-const ValidateFile = (fileObj) => {
-    const mimeType = fileObj.type;
-    const fileSize = fileObj.size;
+/**
+ * This utils function compare first bytes of passed file (magic numbers) to reference for validation.
+ * Note : it's a dependency of fileValidation(), mainly created to stay DRY.
+ * @param   {str}   fileType    String representing file type ("jpg", "png", "gif").
+ * @param   {array} bytesArray  String Array of hexadecimal bytes of file for comparison.
+ * @returns {bool}              True/False.
+ */
+const compareFileBytes = (fileType, bytesArray) => {
+    // File signature first bytes reference
     const magicNumbers = {
         "jpg" : ["FF", "D8", "FF", "E0"],
-        "png" : ["89", "50", "4E", "47", "0D", "0A", "1A", "0A"],
-        "gif" : ""
+        "png" : ["89", "50", "4E", "47", "D", "A", "1A", "A"],
+        "gif" : ["47", "49", "46", "38"]
     }
-
-    getFileBytes(fileObj).then(bytesArray => {
-        console.debug(bytesArray)
-        // Check magic numbers
-        if(mimeType === "image/jpeg") {
-            let byteSize = magicNumbers["jpg"].length
-            for(let i=0; i < byteSize; i++) {
-                console.log(bytesArray[i] + " => " + magicNumbers["jpg"][i])
-                if (bytesArray[i] !== magicNumbers["jpg"][i]){
-                    // Alert user, file is corrupted or not valid
-                    console.error("File signature doesn't match !")
-                    break;
-                }
-            }
+    let byteSize = magicNumbers[fileType].length
+    for(let i=0; i < byteSize; i++) {
+        if (bytesArray[i] !== magicNumbers[fileType][i]){
+            // If a bit is off, then return false
+            return false;
         }
-        
-    }).catch(err => console.log(err));
-    return
+    }
+    return true;
 }
 
 
 /**
  * Utility function for inputValidation() to stay DRY. It controls input state with cookies, they can be :
  * null (input is empty, no cookie set), true (value ok, cookie set to true) or false (bad char entered, cookie set to false).
- * @param {str} input_name      Input name property.
- * @param {str} input_value     Input value to check.
- * @param {int} bad_chars       Result of regex search (if OK = -1 or else it returns int for position of bad char).
- * @returns {bool}              True / False.
+ * @param   {str}   input_name      Input name property.
+ * @param   {str}   input_value     Input value to check.
+ * @param   {int}   bad_chars       Result of regex search (if OK = -1 or else it returns int for position of bad char).
+ * @returns {bool}                  True / False.
  */
 const badCharReturnVerif = (input_name, input_value, bad_chars) => {
     // If input value is empty, erase cookie to reinit input state
@@ -99,10 +94,10 @@ const badCharReturnVerif = (input_name, input_value, bad_chars) => {
  * Utility function for inputValidation() to stay DRY. Same as badCharReturnVerif but with matching search instead.
  * It controls input state with cookies, they can be : null (input is empty, no cookie set), true (value ok, cookie set to true) 
  * or false (bad char entered, cookie set to false).
- * @param {str} input_name      Input name property.
- * @param {str} input_value     Value of input. 
- * @param {int} matching        Result of regex search (if OK = 0 or else negative number.)
- * @returns {bool}              True / False.
+ * @param   {str}   input_name      Input name property.
+ * @param   {str}   input_value     Value of input. 
+ * @param   {int}   matching        Result of regex search (if OK = 0 or else negative number.)
+ * @returns {bool}                  True / False.
  */
 const matchReturnVerif = (input_name, input_value, matching) => {
     // If input value is empty, erase cookie to reinit input state
@@ -138,26 +133,53 @@ const matchReturnVerif = (input_name, input_value, matching) => {
     });
 };
 
-// ========================================================== //
-// ============ INPUT VALIDATION FUNCTION (MAIN) ============ //
-// ========================================================== //
+// ============================================================ //
+// ============ INPUTS VALIDATION FUNCTIONS (MAIN) ============ //
+// ============================================================ //
 
 /**
- * This function checks form inputs content and use cookies to store invalid input names in order to keep trace of badly formatted infos 
+ * This async function validates file magic numbers (file signature) to avoid tampered/corrupted files for security.
+ * Func is not bullet proof at all, must have a more complete backend function to check file signature.
+ * @param   {object} fileObj    File to be checked.
+ * @returns {bool}              True/False.
+ */
+ export const fileValidation = async (fileObj) => {
+    const mimeType = fileObj.type;
+    const fileSize = fileObj.size;
+    let isValid;
+
+    await getFileBytes(fileObj).then(bytesArray => {
+        // Check magic numbers
+        if(mimeType === "image/jpeg") {
+            isValid = compareFileBytes("jpg", bytesArray);
+        }
+        else if(mimeType === "image/png") {
+            isValid = compareFileBytes("png", bytesArray);
+        }
+        else if(mimeType === "image/gif") {
+            isValid = compareFileBytes("gif", bytesArray);
+        }
+        else {
+            console.error("File passed is either corrupted of not of the right type !")
+            return false;
+        }
+    }).catch(err => console.log(err));
+    
+    return isValid;
+}
+
+/**
+ * This function checks form text based inputs content and use cookies to store invalid input names in order to keep trace of badly formatted infos 
  * that haven't been corrected by user before submission (useful to color inputs and warn user when they're wrong).
- * For file input, it'll check file mime-type, size and magic numbers (there'll be no cookie involved for file validation, just a bool return value).
- * @param {str} inputValue Input content to verify. 
- * @param {str} inputType Input type (text, email, tel, etc...).
- * @param {str} inputName Input 'name' property.
- * @returns {bool} True if input valid / False if not.
+ * @param   {str}   inputValue  Input content to verify. 
+ * @param   {str}   inputType   Input type (text, email, tel, etc...).
+ * @param   {str}   inputName   Input 'name' property.
+ * @returns {bool}              True if input valid / False if not.
  */
 export const inputValidation = (inputValue, inputType, inputName) => {
     let badChars = ""
     let match = ""
-    if (inputType === "file") {
-        ValidateFile(inputValue);
-    }
-    else if (inputType === "text") {
+    if (inputType === "text") {
         switch(inputName) {
             case "invoice_address":
                 badChars = inputValue.search(/[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ.,°:-]+/);
