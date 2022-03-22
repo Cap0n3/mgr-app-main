@@ -1,5 +1,5 @@
 /*
-    File containing all functions necessary for cookie based input validation (client side).
+    File containing all functions necessary for cookie based text input validation and file validation (on client side).
 */
 
 import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils";
@@ -11,7 +11,7 @@ import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils"
 /**
  * This function returns an array containing hexadecimal bytes of file passed in parameters.
  * Note : This func is async, it has to wait that the file reader has finished before returning anything.
- * Note : it's a dependency of fileValidation(), mainly created to stay DRY.
+ * Note : it's a dependency of fileValidation(), created to stay DRY.
  * @param {object} file     File to convert in hex bytes. 
  * @returns {array}         Array containing hex bytes of file.
  */
@@ -41,7 +41,7 @@ const getFileBytes = (file) => {
 
 /**
  * This utils function compare first bytes of passed file (magic numbers) to reference for validation.
- * Note : it's a dependency of fileValidation(), mainly created to stay DRY.
+ * Note : it's a dependency of fileValidation(), created to stay DRY.
  * @param   {str}   fileType    String representing file type ("jpg", "png", "gif").
  * @param   {array} bytesArray  String Array of hexadecimal bytes of file for comparison.
  * @returns {bool}              True/False.
@@ -65,42 +65,45 @@ const compareFileBytes = (fileType, bytesArray) => {
 
 
 /**
- * Utility function for inputValidation() to stay DRY. It controls input state with cookies, they can be :
- * null (input is empty, no cookie set), true (value ok, cookie set to true) or false (bad char entered, cookie set to false).
+ * Utility function which controls input state with cookies, they can be :
+ * - null (input is empty, no cookie set)
+ * - true (value ok, cookie set to true)
+ * - false (bad char entered, cookie set to false)
+ * Note : it's a dependency of inputValidation(), created to stay DRY.
  * @param   {str}   input_name      Input name property.
  * @param   {str}   input_value     Input value to check.
  * @param   {int}   bad_chars       Result of regex search (if OK = -1 or else it returns int for position of bad char).
  * @returns {bool}                  True / False.
  */
 const badCharReturnVerif = (input_name, input_value, bad_chars) => {
-    // If input value is empty, erase cookie to reinit input state
     if(input_value === "") {
         deleteCookie(input_name);
         return true
     }
     if(bad_chars >= 0) {
-        // There's a bad character, delete previously set cookies and set new one with 'false'
         deleteCookie(input_name);
         setCookie(input_name, false);
         return false;
     }
-    // If input is ok then delete previously set cookie and set a new one with 'true'
+    
     deleteCookie(input_name);
     setCookie(input_name, true);
     return true;
 }
 
 /**
- * Utility function for inputValidation() to stay DRY. Same as badCharReturnVerif but with matching search instead.
- * It controls input state with cookies, they can be : null (input is empty, no cookie set), true (value ok, cookie set to true) 
- * or false (bad char entered, cookie set to false).
+ * Same as badCharReturnVerif but with matching search instead.
+ * It controls input state with cookies, they can be : 
+ * - null (input is empty, no cookie set)
+ * - true (value ok, cookie set to true) 
+ * - false (bad char entered, cookie set to false).
+ * Note : it's a dependency of inputValidation(), created to stay DRY.
  * @param   {str}   input_name      Input name property.
  * @param   {str}   input_value     Value of input. 
  * @param   {int}   matching        Result of regex search (if OK = 0 or else negative number.)
  * @returns {bool}                  True / False.
  */
 const matchReturnVerif = (input_name, input_value, matching) => {
-    // If input value is empty, erase cookie to reinit input state
     if(input_value === "") {
         deleteCookie(input_name);
         return true
@@ -133,9 +136,9 @@ const matchReturnVerif = (input_name, input_value, matching) => {
     });
 };
 
-// ============================================================ //
-// ============ INPUTS VALIDATION FUNCTIONS (MAIN) ============ //
-// ============================================================ //
+// ===================================================== //
+// ============ VALIDATION FUNCTIONS (MAIN) ============ //
+// ===================================================== //
 
 /**
  * This async function validates file magic numbers (file signature) to avoid tampered/corrupted files for security.
