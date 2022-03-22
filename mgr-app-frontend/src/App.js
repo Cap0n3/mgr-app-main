@@ -8,7 +8,7 @@ import AlertTemplate from "react-alert-template-basic";
 // optional configuration for alert popup
 const options = {
 	// you can also just use 'bottom center'
-	position: positions.TOP_CENTER,
+	position: positions.BOTTOM_CENTER,
 	timeout: 8000,
 	offset: '10px',
 	type: 'error',

@@ -152,6 +152,11 @@ const matchReturnVerif = (input_name, input_value, matching) => {
     const fileSize = fileObj.size;
     let isValid;
 
+    if (fileSize > 300000) {
+        setCookie(input_name, false)
+        return false;
+    }
+
     await getFileBytes(fileObj).then(bytesArray => {
         // Check magic numbers
         if(mimeType === "image/jpeg") {
@@ -169,7 +174,7 @@ const matchReturnVerif = (input_name, input_value, matching) => {
         }
     }).catch(err => console.log(err));
     
-    // Set cookie ==> PROBLEM HERE
+    // Set cookie or clear previous one
     isValid ? deleteCookie(input_name):setCookie(input_name, false);
     
     return isValid;

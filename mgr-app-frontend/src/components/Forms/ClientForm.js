@@ -108,12 +108,6 @@ const ClientFormComponent = (props) => {
 		if (inputType === "file") {
 			inputValue = e.target.files[0];
 
-			// Quick size check
-			// if (inputValue.size > 300000) {
-			// 	alert.show("Le fichier est trop lourd !");
-			// 	return;
-			// }
-
 			/* 
 				Condition is here to avoid undefined value to be passed further.
 				Happens if you first choose invalid file, have popup alert and then 
@@ -144,7 +138,20 @@ const ClientFormComponent = (props) => {
 				}
 				else if(isValid === false)
 				{
-					alert.show("Le fichier n'est pas valide !");
+					if(inputValue.size > 300000) {
+						alert.show("Image trop lourde !");
+					}
+					else {
+						alert.show("Image non valide !");
+					}
+					/* 
+						Nasty trick to force re-render on file input to take into
+						account set cookie and display warning message below input.
+					*/
+					setPicPreview(null);
+
+					// Clear value of file input
+					e.target.value = null;
 				}
 			});		
 		}
@@ -174,7 +181,6 @@ const ClientFormComponent = (props) => {
 			setTimeout(() => navigate('/'), 50);
 		}
 		else if (props.target === "update") {
-			//updateClient();
 			updateClient(authTokens, user, props.clientID, inputs).then().catch(fetchFail);
 			// Wait a bit for server to make ressource available
 			setTimeout(() => navigate('/'), 50);
