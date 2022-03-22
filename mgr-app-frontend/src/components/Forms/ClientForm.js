@@ -108,7 +108,7 @@ const ClientFormComponent = (props) => {
 		if (inputType === "file") {
 			// Get file object from input
 			inputValue = e.target.files[0];
-			console.log("THERE")
+
 			// Validate file (mime-type, magic numbers, size) = SIZE TO DO !!!
 			fileValidation(inputValue).then((isValid) => {
 				if(isValid === true)
@@ -130,8 +130,7 @@ const ClientFormComponent = (props) => {
 				}
 				else if(isValid === false)
 				{
-					console.log("IS FALSE !!!")
-					alert.show("File is not valid !");
+					alert.show("Le fichier n'est pas valide !");
 				}
 			});		
 		}
