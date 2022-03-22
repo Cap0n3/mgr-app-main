@@ -142,7 +142,8 @@ const matchReturnVerif = (input_name, input_value, matching) => {
 
 /**
  * This async function validates file magic numbers (file signature) to avoid tampered/corrupted files for security.
- * Func is not bullet proof at all, must have a more complete backend function to check file signature.
+ * It also checks for excessive file size before upload. Sets cookie to false if file is not valid.
+ * Note : this func is not bullet proof at all, must have a more complete backend function to check file signature.
  * @param   {object}    fileObj     File to be checked.
  * @param   {str}       input_name  Input name.
  * @returns {bool}                  True/False.

@@ -117,7 +117,6 @@ const ClientFormComponent = (props) => {
 				return;
 			}
 
-			// Validate file (mime-type, magic numbers)
 			fileValidation(inputValue, inputName).then((isValid) => {
 				if(isValid === true)
 				{
