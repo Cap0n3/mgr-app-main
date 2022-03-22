@@ -143,10 +143,11 @@ const matchReturnVerif = (input_name, input_value, matching) => {
 /**
  * This async function validates file magic numbers (file signature) to avoid tampered/corrupted files for security.
  * Func is not bullet proof at all, must have a more complete backend function to check file signature.
- * @param   {object} fileObj    File to be checked.
- * @returns {bool}              True/False.
+ * @param   {object}    fileObj     File to be checked.
+ * @param   {str}       input_name  Input name.
+ * @returns {bool}                  True/False.
  */
- export const fileValidation = async (fileObj) => {
+ export const fileValidation = async (fileObj, input_name) => {
     const mimeType = fileObj.type;
     const fileSize = fileObj.size;
     let isValid;
@@ -167,6 +168,9 @@ const matchReturnVerif = (input_name, input_value, matching) => {
             return false;
         }
     }).catch(err => console.log(err));
+    
+    // Set cookie ==> PROBLEM HERE
+    isValid ? deleteCookie(input_name):setCookie(input_name, false);
     
     return isValid;
 }
@@ -210,7 +214,6 @@ export const inputValidation = (inputValue, inputType, inputName) => {
     else if(inputType === "tel") {
         match = inputValue.search(/^\+?[\d, \s]+$/);
 
-        return matchReturnVerif(inputName, inputValue, match)
-        
+        return matchReturnVerif(inputName, inputValue, match)  
     }
 }

@@ -106,11 +106,25 @@ const ClientFormComponent = (props) => {
 		let inputValue;
 		
 		if (inputType === "file") {
-			// Get file object from input
 			inputValue = e.target.files[0];
 
-			// Validate file (mime-type, magic numbers, size) = SIZE TO DO !!!
-			fileValidation(inputValue).then((isValid) => {
+			// Quick size check
+			// if (inputValue.size > 300000) {
+			// 	alert.show("Le fichier est trop lourd !");
+			// 	return;
+			// }
+
+			/* 
+				Condition is here to avoid undefined value to be passed further.
+				Happens if you first choose invalid file, have popup alert and then 
+				press upload button and finally click on cancel without choosing new file.
+			*/
+			if (inputValue === undefined){
+				return;
+			}
+
+			// Validate file (mime-type, magic numbers)
+			fileValidation(inputValue, inputName).then((isValid) => {
 				if(isValid === true)
 				{
 					// Set image preview for user
@@ -140,7 +154,7 @@ const ClientFormComponent = (props) => {
 			setInputs(values => ({ ...values, [inputName]: inputValue }))
 		}
 		else {
-			// It's a standard input (text, email, tel, select-one, etc...)
+			// Then it's a standard input (text, email, tel, select-one, etc...)
 			inputValue = e.target.value;
 
 			// Check if input is valid (no special chars etc...)
@@ -170,19 +184,20 @@ const ClientFormComponent = (props) => {
 	/**
 	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
 	 * if it's set to "false" then it displays the message. Input categories are based on FormValidation.js.
-	 * @param {str} inputName		Input name.
-	 * @param {str} inputCategory 	Input category ("text", "email", "tel", "address", "postal", "textarea").
+	 * @param {str} inputName		Input name property.
+	 * @param {str} inputCategory 	Input category ("file", text", "email", "tel", "address", "postal", "textarea").
 	 * @returns {jsx}				JSX with styled-components.
 	 */
 	const warningMessage = (inputName, inputCategory) => {
 		// Correspond to categories of verification in FormValidation.js
 		const warnMessages = {
+			"file" : "L'image choisie est trop lourde ou non valide !",
 			"text" : "Les caractères spéciaux ne sont pas autorisés !",
 			"email" : "L'adresse e-mail n'est pas valide !",
 			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
 			"address" : "L'adresse n'est pas valide !",
 			"postal" : "Le numéro postal n'est pas valide !",
-			"textarea" : "Les caractères spéciaux ne sont pas autorisés !"
+			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
 		}
 		let cookieStatus = getCookie(inputName)
 		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
@@ -211,6 +226,7 @@ const ClientFormComponent = (props) => {
 				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
+				{warningMessage("student_pic", "file")}
 				<Label>Prénom * :</Label>
 				<Input isValid={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
 				{warningMessage("first_name", "text")}
