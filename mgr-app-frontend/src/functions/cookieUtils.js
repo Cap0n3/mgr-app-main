@@ -52,12 +52,12 @@ export const getCookie = (cookieName) => {
 
 /**
  * This function checks if a cookie is set.
- * @param {str} cookieName Name of cookie to check. 
- * @returns {bool} True if it is set.
+ * @param   {str}   cookieName  Name of cookie to check. 
+ * @returns {bool}              True if it is set.
  */
 export const checkCookie = (cookieName) => {
     let cname = getCookie(cookieName);
-    if (cname !== "") {
+    if (cname !== null) {
       return true;
     } else {
       return false; 

@@ -5,7 +5,7 @@ import { useAlert } from 'react-alert';
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar, WarningBox, WarnIcon } from "./ClientForm.style"
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
-import { getCookie } from "../../functions/cookieUtils";
+import { getCookie, checkCookie } from "../../functions/cookieUtils";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -91,10 +91,77 @@ const ClientFormComponent = (props) => {
 			getClient(authTokens, user, props.clientID).then(processData).catch(fetchFail);
 		}
 	}, [props.target, props.clientID])
+	//=================================//
+	//============= UTILS =============//
+	//=================================//
 	
-	//===========================//
-	//====== FORM HANDLING ======//
-	//===========================//
+	/**
+	 * Get all form input properties & current values in an object from submit button event.
+	 * @param 	{object}	event		Submit button event.
+	 * @returns {array}					Array containing input objects with name, type & current value.		
+	 */
+	const getFormInputInfos = (event) => {
+		let inputsArray = []
+
+		// Get input names dynamically
+		for(let i=0; i < 100; i++) {
+			let inputInfos = {
+				"name" : "",
+				"type" : "",
+				"value" : ""
+			};
+
+			let input = event.target[i];
+			// Will reach undefined for other properties present in event target.
+			if(input === undefined){
+				break;
+			}
+			inputInfos["name"] = input.name;
+			inputInfos["type"] = input.type;
+			inputInfos["value"] = input.value;
+
+			inputsArray.push(inputInfos);
+		}
+
+		return inputsArray;
+	}
+
+	/**
+	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
+	 * if it's set to "false" then it displays the message. Input categories are based on FormValidation.js.
+	 * @param {str} inputName		Input name property.
+	 * @param {str} inputCategory 	Input category ("file", text", "email", "tel", "address", "postal", "textarea").
+	 * @returns {jsx}				JSX with styled-components.
+	 */
+	 const warningMessage = (inputName, inputCategory) => {
+		// Correspond to categories of verification in FormValidation.js
+		const warnMessages = {
+			"file" : "L'image choisie est trop lourde ou non valide !",
+			"text" : "Les caractères spéciaux ne sont pas autorisés !",
+			"email" : "L'adresse e-mail n'est pas valide !",
+			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
+			"address" : "L'adresse n'est pas valide !",
+			"postal" : "Le numéro postal n'est pas valide !",
+			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
+		}
+		let cookieStatus = getCookie(inputName)
+		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
+	}
+	
+	/**
+	 * For props formatting (ex : create => Create).
+	 * @param {str} str String to format. 
+	 * @returns {str} Formatted string.
+	 */
+	const upperFirstChar = (str) => {
+		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
+		return firstToUpper
+	}
+
+	
+	//=========================================//
+	//============= FORM HANDLING =============//
+	//=========================================//
 
 	/**
 	 * Get values from inputs on keyboard press and polulate state "inputs".
@@ -175,6 +242,21 @@ const ClientFormComponent = (props) => {
 
 		// Evaluate if it's an update or a creation
 		if (props.target === "create") {
+			
+			// Get inputs infos
+			let allInputs = getFormInputInfos(event);
+			
+			// Check if a cookie is set to false
+			allInputs.forEach(element => {
+				if(checkCookie(element.name) === true) {
+					if(getCookie(element.name) === "false") {
+						console.log(element.name + " is wrong !")
+					}
+				}
+			})
+			
+			return 
+
 			createClient(authTokens, user, inputs).then().catch(fetchFail);
 			// Wait a bit for server to make ressource available
 			setTimeout(() => navigate('/'), 50);
@@ -186,38 +268,6 @@ const ClientFormComponent = (props) => {
 		}
 	}
 
-	/**
-	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
-	 * if it's set to "false" then it displays the message. Input categories are based on FormValidation.js.
-	 * @param {str} inputName		Input name property.
-	 * @param {str} inputCategory 	Input category ("file", text", "email", "tel", "address", "postal", "textarea").
-	 * @returns {jsx}				JSX with styled-components.
-	 */
-	const warningMessage = (inputName, inputCategory) => {
-		// Correspond to categories of verification in FormValidation.js
-		const warnMessages = {
-			"file" : "L'image choisie est trop lourde ou non valide !",
-			"text" : "Les caractères spéciaux ne sont pas autorisés !",
-			"email" : "L'adresse e-mail n'est pas valide !",
-			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
-			"address" : "L'adresse n'est pas valide !",
-			"postal" : "Le numéro postal n'est pas valide !",
-			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
-		}
-		let cookieStatus = getCookie(inputName)
-		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
-	}
-	
-	/**
-	 * For props formatting (ex : create => Create).
-	 * @param {str} str String to format. 
-	 * @returns {str} Formatted string.
-	 */
-	const upperFirstChar = (str) => {
-		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
-		return firstToUpper
-	}
-	
 	return (
 		<>
 			<Form ref={formRef} onSubmit={handleSubmit}>
