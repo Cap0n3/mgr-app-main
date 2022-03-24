@@ -97,7 +97,7 @@ const ClientFormComponent = (props) => {
 	
 	/**
 	 * Get all form input properties & current values in an object from submit button event.
-	 * @param 	{object}	event		Submit button event.
+	 * @param 	{object}	event		Submit button event object.
 	 * @returns {array}					Array containing input objects with name, type & current value.		
 	 */
 	const getFormInputInfos = (event) => {
@@ -243,19 +243,25 @@ const ClientFormComponent = (props) => {
 		// Evaluate if it's an update or a creation
 		if (props.target === "create") {
 			
-			// Get inputs infos
+			// Get inputs infos from submit button
 			let allInputs = getFormInputInfos(event);
 			
-			// Check if a cookie is set to false
+			let wrongInputs = []
+
+			// Check if an input cookie is set to false (last input verification before sending)
 			allInputs.forEach(element => {
 				if(checkCookie(element.name) === true) {
 					if(getCookie(element.name) === "false") {
-						console.log(element.name + " is wrong !")
+						wrongInputs.push(element.name);
 					}
 				}
 			})
-			
-			return 
+
+			// Warn user if inputs are wrong and quit function (without sending data)
+			if (wrongInputs.length !== 0){
+				alert.error("Des entrées ne sont pas valides !")
+				return;
+			}
 
 			createClient(authTokens, user, inputs).then().catch(fetchFail);
 			// Wait a bit for server to make ressource available
@@ -283,10 +289,10 @@ const ClientFormComponent = (props) => {
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				{warningMessage("student_pic", "file")}
 				<Label>Prénom * :</Label>
-				<Input isValid={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} />
+				<Input isValid={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} required />
 				{warningMessage("first_name", "text")}
 				<Label>Nom * :</Label>
-				<Input isValid={getCookie("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} />
+				<Input isValid={getCookie("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} required />
 				{warningMessage("last_name", "text")}
 				<Label>Email client :</Label>
 				<Input isValid={getCookie("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
@@ -298,7 +304,7 @@ const ClientFormComponent = (props) => {
 				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
 				<Legend>Infos cours</Legend>
 				<Label>Jour du cours * :</Label>
-				<Select name="lesson_day" defaultValue={"DEFAULT"} value={inputs.lesson_day} onChange={handleChange}>
+				<Select name="lesson_day" defaultValue={"DEFAULT"} value={inputs.lesson_day} onChange={handleChange} required>
 					<option value="DEFAULT" disabled>Choisir un jour ...</option>
 					<option value="Lundi">Lundi</option>
 					<option value="Mardi">Mardi</option>
@@ -309,11 +315,11 @@ const ClientFormComponent = (props) => {
 					<option value="Dimanche">Dimanche</option>
 				</Select>
 				<Label>Heure du cours * :</Label>
-				<Input type="time" name="lesson_hour" min="00:00" max="23:00" value={inputs.lesson_hour || ""} onChange={handleChange} />
+				<Input type="time" name="lesson_hour" min="00:00" max="23:00" value={inputs.lesson_hour || ""} onChange={handleChange} required/>
 				<Label>Durée du cours (min) * :</Label>
-				<Input type="number" name="lesson_duration" value={inputs.lesson_duration || ""} onChange={handleChange} />
+				<Input type="number" name="lesson_duration" value={inputs.lesson_duration || ""} onChange={handleChange} required />
 				<Label>Fréquence du cours * :</Label>
-				<Select name="lesson_frequency" defaultValue={"DEFAULT"} value={inputs.lesson_frequency} onChange={handleChange}>
+				<Select name="lesson_frequency" defaultValue={"DEFAULT"} value={inputs.lesson_frequency} onChange={handleChange} required>
 					<option value="DEFAULT" disabled>Choisir une fréquence ...</option>
 					<option value="Quotidien">Quotidien</option>
 					<option value="Hebdomadaire">Hebdomadaire</option>
@@ -338,40 +344,40 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Legend>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
-				<Input isValid={getCookie("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} required />
 				{warningMessage("invoice_fname", "text")}
 				<Label>Nom Facturation * :</Label>
-				<Input isValid={getCookie("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} required />
 				{warningMessage("invoice_lname", "text")}
 				<Label>Email Facturation * :</Label>
-				<Input isValid={getCookie("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} required />
 				{warningMessage("invoice_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={getCookie("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} required />
 				{warningMessage("invoice_phone", "tel")}
 				<Label>Adresse facturation * :</Label>
-				<Input isValid={getCookie("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} required />
 				{warningMessage("invoice_address", "address")}
 				<Label>Code postal * :</Label>
-				<Input isValid={getCookie("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} required />
 				{warningMessage("invoice_postal", "postal")}
 				<Label>Ville * :</Label>
-				<Input isValid={getCookie("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} required />
 				{warningMessage("invoice_city", "text")}
 				<Label>Pays * :</Label>
-				<Input isValid={getCookie("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} />
+				<Input isValid={getCookie("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} required />
 				{warningMessage("invoice_country", "text")}
 				<Legend>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
-				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} />
+				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} required />
 				<Label>Monnaie * :</Label>
-				<Select name="billing_currency" defaultValue={"DEFAULT"} value={inputs.billing_currency} onChange={handleChange}>
+				<Select name="billing_currency" defaultValue={"DEFAULT"} value={inputs.billing_currency} onChange={handleChange} required>
 					<option value="DEFAULT" disabled>Choisir une monnaie ...</option>
 					<option value="CHF">CHF - Francs suisse</option>
 					<option value="EUR">EUR - Euros</option>
 				</Select>
 				<Label>Mode de règlement * :</Label>
-				<Select name="payment_option" defaultValue={"DEFAULT"} value={inputs.payment_option} onChange={handleChange}>
+				<Select name="payment_option" defaultValue={"DEFAULT"} value={inputs.payment_option} onChange={handleChange} required>
 					<option value="DEFAULT" disabled>Choisir un mode de règlement ...</option>
 					<option value="Versement">Virement bancaire</option>
 					<option value="Bulletin">Bulletin</option>
@@ -380,7 +386,7 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Label>Référence facture * :</Label>
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
-				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleChange} />
+				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleChange} required />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
 				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
 				<Legend>Notes</Legend>
