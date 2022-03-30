@@ -21,7 +21,7 @@ const ClientFormComponent = (props) => {
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
-	// On refresh, warn user ====> TO DO !!!
+	// On refresh, warn user ====> TO FINISH !
 	window.onbeforeunload = (e) => {
 		e.preventDefault();
 		if (e) {
