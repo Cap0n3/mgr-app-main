@@ -20,7 +20,7 @@ const Content = () => {
 				<Route path="/client/update/:clientID" element={<UpdateClient />} />
 				<Route path="/billing" element={<Billing />} />
 				<Route path="/notes" element={<Notes />} />
-       	</Routes>
+		</Routes>
 		</div>
 	);	
 }

@@ -21,6 +21,16 @@ const ClientFormComponent = (props) => {
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
+	// On refresh, warn user ====> TO DO !!!
+	window.onbeforeunload = (e) => {
+		e.preventDefault();
+		if (e) {
+			console.log("UNLOADED !!!")
+			e.returnValue = '';
+		  }
+		  return '';
+	}
+
 	/**
 	 * If API call is success, populate clientData & fill form.
 	 * @param {object} data	Data object returned by getClient API Call.
@@ -91,6 +101,7 @@ const ClientFormComponent = (props) => {
 			getClient(authTokens, user, props.clientID).then(processData).catch(fetchFail);
 		}
 	}, [props.target, props.clientID])
+	
 	//=================================//
 	//============= UTILS =============//
 	//=================================//
@@ -158,7 +169,6 @@ const ClientFormComponent = (props) => {
 		return firstToUpper
 	}
 
-	
 	//=========================================//
 	//============= FORM HANDLING =============//
 	//=========================================//
