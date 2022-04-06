@@ -36,7 +36,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 # === APP VIEW CLASSES === #
 class TeachersView(generics.ListAPIView):
 	'''
-	This view handles viewing of teacher info.
+	This view handles viewing of all teacher personal infos.
 	Note : One user can have only one teacher
 	'''
 	queryset = Teacher.objects.all()
@@ -72,6 +72,9 @@ class DeleteUserView(generics.DestroyAPIView):
 	permission_classes = [IsAuthenticated, IsAdminOrUser]
 
 class ClientsView(generics.ListAPIView):
+	'''
+	View used to display all clients owned by a specific teacher.
+	'''
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated]
 
@@ -86,6 +89,9 @@ class ClientsView(generics.ListAPIView):
 		return allClients if isAdmin else allClients.filter(teacher=linkedTeacher.id)
 
 class ClientDetailView(generics.RetrieveAPIView):
+	'''
+	View used to display client informations.
+	'''
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated, IsAdminOrOwner]
