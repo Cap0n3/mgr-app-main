@@ -63,6 +63,25 @@ class UpdateTeacherView(generics.RetrieveUpdateAPIView):
 	def perform_update(self, serializer):
 		instance = serializer.save()
 
+class CreateUserView(generics.CreateAPIView):
+	'''
+	View to create a new user, a new teacher must also be created at the same time
+	(no user without exactly one teacher)
+	'''
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	#permission_classes = [IsAuthenticated] # Anyone can create user
+	
+	def perform_create(self, serializer):
+		isAdmin = self.request.user.is_superuser
+		# Good to know : If user already exists CreateAPI raise error (default behaviour)
+		if not isAdmin:
+			# Check user is already logged, if so, it's not a new user
+			if self.request.user.is_authenticated:
+				# Find right type of error
+				raise AttributeError("You're not a new user !")
+
+
 class DeleteUserView(generics.DestroyAPIView):
 	'''
 	View used to delete User, it'll also delete associated teacher.
