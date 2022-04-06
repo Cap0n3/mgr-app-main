@@ -3,9 +3,15 @@ from django.db.models import fields
 from rest_framework import serializers
 from django.conf import settings
 
-# Import du Modèle
+# Import des modèles
+from django.contrib.auth.models import User
 from .models import Teacher
 from .models import Clients
+
+class UserSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = '__all__'
 
 class TeacherSerializer(serializers.ModelSerializer):
 	class Meta:

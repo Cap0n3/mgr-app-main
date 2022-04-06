@@ -96,7 +96,7 @@ def validateBankNumber(value):
 		Func to validate bank account number.
 		@isValid : Letters (upper, lower), spaces, numbers and [-].
 	'''
-	forbidChars = re.findall(r'[^\d-A-Za-z\s]+', value)
+	forbidChars = re.findall(r'[^\dA-Za-z\s\-]+', value)
 
 	if len(forbidChars) != 0:
 		raise ValidationError("Bank account number is invalid !")

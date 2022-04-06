@@ -20,17 +20,7 @@ const ClientFormComponent = (props) => {
 	const formRef = useRef();
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
-
-	// On refresh, warn user ====> TO FINISH !
-	window.onbeforeunload = (e) => {
-		e.preventDefault();
-		if (e) {
-			console.log("UNLOADED !!!")
-			e.returnValue = '';
-		  }
-		  return '';
-	}
-
+	
 	/**
 	 * If API call is success, populate clientData & fill form.
 	 * @param {object} data	Data object returned by getClient API Call.
@@ -79,6 +69,23 @@ const ClientFormComponent = (props) => {
 	const fetchFail = (err) => {
 		console.error(err);
 	}
+
+	/**
+	 * Create an event listener to warn user when refreshing.
+	 */
+	useEffect(() => {
+		const promptUser = (e) => {
+		    // Cancel the event
+			e.preventDefault();
+			// Chrome requires returnValue to be set
+			e.returnValue = '';
+		}
+		// When refreshing a 'beforeunload' event is fired (default browser behaviour)
+		window.addEventListener('beforeunload', promptUser);
+		return () => {
+			window.removeEventListener('beforeunload', promptUser);
+		}
+	  }, [])
 
 	/**
 	 * Clear all form related cookies (used for input validation) when refresh or on first render (just in case).

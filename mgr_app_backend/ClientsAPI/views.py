@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Clients, Teacher
-from .serializers import ClientSerializer, TeacherSerializer
+from django.contrib.auth.models import User
+from .serializers import UserSerializer, ClientSerializer, TeacherSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAdminOrOwner
+from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
@@ -34,6 +35,10 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 # === APP VIEW CLASSES === #
 class TeachersView(generics.ListAPIView):
+	'''
+	This view handles viewing of teacher info.
+	Note : One user can have only one teacher
+	'''
 	queryset = Teacher.objects.all()
 	serializer_class = TeacherSerializer
 	permission_classes = [IsAuthenticated]
@@ -41,11 +46,30 @@ class TeachersView(generics.ListAPIView):
 	def get_queryset(self):
 		isAdmin = self.request.user.is_superuser
 		currentUser = self.request.user
-		allTeachers = Teacher.objects.all()
 		if not isAdmin:
 			# Get teacher linked to user
 			linkedTeacher = Teacher.objects.filter(user=currentUser)
+		allTeachers = Teacher.objects.all()
 		return allTeachers if isAdmin else linkedTeacher
+
+class UpdateTeacherView(generics.RetrieveUpdateAPIView):
+	'''
+	View used to update Teacher infos.
+	'''
+	queryset = Teacher.objects.all()
+	serializer_class = TeacherSerializer
+	permission_classes = [IsAuthenticated, IsAdminOrTeacher]
+
+	def perform_update(self, serializer):
+		instance = serializer.save()
+
+class DeleteUserView(generics.DestroyAPIView):
+	'''
+	View used to delete User, it'll also delete associated teacher.
+	'''
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	permission_classes = [IsAuthenticated, IsAdminOrUser]
 
 class ClientsView(generics.ListAPIView):
 	serializer_class = ClientSerializer
