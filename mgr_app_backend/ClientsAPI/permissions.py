@@ -46,3 +46,23 @@ class IsAdminOrOwner(permissions.BasePermission):
 			return True
 		else:
 			return False
+
+class IsSignUp(permissions.BasePermission):
+	'''
+	Permission to create a new user during sign up. Perms are granted only 
+	to first time users during sign up or administrators at any time.
+	'''
+	message = 'Existing users are not allowed to create new users.'
+
+	def has_permission(self, request, view):
+		isAdmin = request.user.is_superuser
+		isUserLogged = request.user.is_authenticated
+
+		if isAdmin:
+			return True
+		elif isUserLogged:
+			return False
+		else:
+			#It's a new user
+			# WARNING => HOW TO LIMIT THIS TO FRESH USERS ONLY ??
+			return True

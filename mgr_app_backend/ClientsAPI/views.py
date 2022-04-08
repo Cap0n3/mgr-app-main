@@ -4,7 +4,7 @@ from .models import Clients, Teacher
 from django.contrib.auth.models import User
 from .serializers import UserSerializer, ClientSerializer, TeacherSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher
+from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher, IsSignUp
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
@@ -32,8 +32,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
 	serializer_class = MyTokenObtainPairSerializer
 
-
+# ======================== #
 # === APP VIEW CLASSES === #
+# ======================== #
+
+# === TEACHER === #
 class TeachersView(generics.ListAPIView):
 	'''
 	This view handles viewing of all teacher personal infos.
@@ -63,24 +66,49 @@ class UpdateTeacherView(generics.RetrieveUpdateAPIView):
 	def perform_update(self, serializer):
 		instance = serializer.save()
 
+# === USER === #
 class CreateUserView(generics.CreateAPIView):
 	'''
 	View to create a new user, a new teacher must also be created at the same time
 	(no user without exactly one teacher)
 	'''
-	queryset = User.objects.all()
+	#queryset = User.objects.all()
 	serializer_class = UserSerializer
-	#permission_classes = [IsAuthenticated] # Anyone can create user
+	permission_classes = [IsSignUp]
+
+	def createTeacher(self, _userInstance, **_userInfos):
+		'''
+		This custom method allow to create a teacher just after user creation for sign up.
+		Teacher will inherit of basic user infos (first name, last name, email).
+
+		Params
+		------
+		userInstance : User object
+			Instance of user freshly created.
+		
+		userInfos : dict
+			Dictionnary containing user infos.
+		'''
+		teacher = Teacher(user=_userInstance, teacher_fname=_userInfos["fname"], teacher_lname=_userInfos["lname"])
+		teacher.save()
 	
 	def perform_create(self, serializer):
-		isAdmin = self.request.user.is_superuser
-		# Good to know : If user already exists CreateAPI raise error (default behaviour)
-		if not isAdmin:
-			# Check user is already logged, if so, it's not a new user
-			if self.request.user.is_authenticated:
-				# Find right type of error
-				raise AttributeError("You're not a new user !")
+		username = self.request.POST["username"]
+		fname = self.request.POST["first_name"]
+		lname = self.request.POST["last_name"]
+		email = self.request.POST["email"]
 
+		userInfos = {
+			"username" : username,
+			"fname" : fname,
+			"lname" : lname,
+			"email" : email
+		}
+		# Crete user
+		userInstance = serializer.save()
+
+		# Create teacher
+		self.createTeacher(userInstance, **userInfos)
 
 class DeleteUserView(generics.DestroyAPIView):
 	'''
@@ -90,6 +118,7 @@ class DeleteUserView(generics.DestroyAPIView):
 	serializer_class = UserSerializer
 	permission_classes = [IsAuthenticated, IsAdminOrUser]
 
+# === CLIENTS === #
 class ClientsView(generics.ListAPIView):
 	'''
 	View used to display all clients owned by a specific teacher.
