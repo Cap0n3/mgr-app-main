@@ -69,46 +69,13 @@ class UpdateTeacherView(generics.RetrieveUpdateAPIView):
 # === USER === #
 class CreateUserView(generics.CreateAPIView):
 	'''
-	View to create a new user, a new teacher must also be created at the same time
-	(no user without exactly one teacher)
+	View to create a new user, a new teacher will be created automatically after
+	user creation (thx to post_save receiver from signals.py).
+	
+	Note : One user <=> one teacher
 	'''
-	#queryset = User.objects.all()
 	serializer_class = UserSerializer
 	permission_classes = [IsSignUp]
-
-	def createTeacher(self, _userInstance, **_userInfos):
-		'''
-		This custom method allow to create a teacher just after user creation for sign up.
-		Teacher will inherit of basic user infos (first name, last name, email).
-
-		Params
-		------
-		userInstance : User object
-			Instance of user freshly created.
-		
-		userInfos : dict
-			Dictionnary containing user infos.
-		'''
-		teacher = Teacher(user=_userInstance, teacher_fname=_userInfos["fname"], teacher_lname=_userInfos["lname"])
-		teacher.save()
-	
-	def perform_create(self, serializer):
-		username = self.request.POST["username"]
-		fname = self.request.POST["first_name"]
-		lname = self.request.POST["last_name"]
-		email = self.request.POST["email"]
-
-		userInfos = {
-			"username" : username,
-			"fname" : fname,
-			"lname" : lname,
-			"email" : email
-		}
-		# Crete user
-		userInstance = serializer.save()
-
-		# Create teacher
-		self.createTeacher(userInstance, **userInfos)
 
 class DeleteUserView(generics.DestroyAPIView):
 	'''
