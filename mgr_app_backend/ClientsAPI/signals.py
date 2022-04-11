@@ -8,6 +8,13 @@ from django.db.models.signals import (
     m2m_changed,
 )
 
+@receiver(pre_save, sender=User)
+def user_pre_save_receiver(sender, instance, *args, **kwargs):
+    '''
+    This receiver will put freshly created user as active by default.
+    '''
+    instance.is_active = True
+
 @receiver(post_save, sender=User)
 def user_post_save_receiver(sender, instance, *args, **kwargs):
     '''
@@ -20,6 +27,6 @@ def user_post_save_receiver(sender, instance, *args, **kwargs):
     userFname = instance.first_name
     userLname = instance.last_name
     userEmail = instance.email
-    # Create teacher with same data
+    # Create a teacher with same data
     teacher = Teacher(user=instance, teacher_fname=userFname, teacher_lname=userLname, teacher_email=userEmail)
     teacher.save()

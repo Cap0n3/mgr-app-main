@@ -69,8 +69,8 @@ class UpdateTeacherView(generics.RetrieveUpdateAPIView):
 # === USER === #
 class CreateUserView(generics.CreateAPIView):
 	'''
-	View to create a new user, a new teacher will be created automatically after
-	user creation (thx to post_save receiver from signals.py).
+	View to create a new user during signup, a new teacher will be automatically 
+	created after user creation (thx to post_save receiver from signals.py).
 	
 	Note : One user <=> one teacher
 	'''
