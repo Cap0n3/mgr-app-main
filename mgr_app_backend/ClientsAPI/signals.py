@@ -9,15 +9,14 @@ from django.db.models.signals import (
     m2m_changed,
 )
 
+import re
+
 @receiver(pre_save, sender=User)
 def user_pre_save_receiver(sender, instance, *args, **kwargs):
     '''
     This receiver will put freshly created user as active by default.
     '''
     instance.is_active = True
-    
-    # standardUserGroup = Group.objects.get(name='standard_user')
-    # standardUserGroup.user_set.add()
 
 @receiver(post_save, sender=User)
 def user_post_save_receiver(sender, instance, created, *args, **kwargs):
@@ -27,61 +26,27 @@ def user_post_save_receiver(sender, instance, created, *args, **kwargs):
     
     Note : User can have only one teacher.
     '''
-    # Get user group
-    try:
-        userGroup = instance.groups.get(name="standard_user")
-        print("Try")
-    except Exception:
-        print("except")
-        standardUserGroup = Group.objects.get(name='standard_user')
-        standardUserGroup.user_set.add(instance)
-        instance.save()
-    else:
-        print("success")
-        userGroup = instance.groups.get(name="standard_user")
-        print(instance)
-        print(userGroup)
-
-        # # Get user infos
-        # userFname = instance.first_name
-        # userLname = instance.last_name
-        # userEmail = instance.email
-        # # Create a teacher with same data
-        # teacher = Teacher(user=instance, teacher_fname=userFname, teacher_lname=userLname, teacher_email=userEmail)
-        # teacher.save()
-    
-    # if not instance:
-    #     return
-
-    # if hasattr(instance, '_dirty'):
-    #     return
-
-    # try:
-    #     instance._dirty = True
-    #     standardUserGroup = Group.objects.get(name='standard_user')
-    #     standardUserGroup.user_set.add(instance)
-    #     instance.save()
-    # finally:
-    #     del instance._dirty
-    
-
-    #     # Get user infos
-    #     userFname = instance.first_name
-    #     userLname = instance.last_name
-    #     userEmail = instance.email
-    #     # Create a teacher with same data
-    #     teacher = Teacher(user=instance, teacher_fname=userFname, teacher_lname=userLname, teacher_email=userEmail)
-    #     teacher.save()
-
-    # Check here, why it does't work ...
-
-    
-
-    #g = Group.objects.get(name='standard_user') 
-    #g.user_set.add(instance)
-    #g.permissions.set([1])
-    #g.permissions.set([permission_list])
-
-    # standardUserGroup = Group.objects.get(name='standard_user')
-    # standardUserGroup.user_set.add(instance.user)
-    #instance.groups.add(standardUserGroup)
+    if created:
+        # === Create Corresponding Teacher === #
+        # Get user infos
+        userFname = instance.first_name
+        userLname = instance.last_name
+        userEmail = instance.email
+        # Create a teacher with same data
+        teacher = Teacher(user=instance, teacher_fname=userFname, teacher_lname=userLname, teacher_email=userEmail)
+        teacher.save()
+        
+        # === Add new user to group === #
+        '''
+        Note : I kept this code here because it seems impossible to assign group from post_save signals.
+        This code should work but it doesn't, it's possible to change user group later on but not from here
+        and I have no clue why...
+        '''
+        # try:
+        #     standardUserGroup = Group.objects.get(name='standard_user')
+        # except Group.DoesNotExist:
+        #     pass
+        # else:
+        #     instance.user_permissions.add(1)
+        #     standardUserGroup.user_set.add(instance)
+        #     instance.save()
