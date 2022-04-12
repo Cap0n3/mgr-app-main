@@ -11,7 +11,7 @@ from .models import Clients
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
-		fields = '__all__'
+		fields = ['id', 'username', 'first_name', 'last_name', 'is_active', 'email']
 
 class TeacherSerializer(serializers.ModelSerializer):
 	class Meta:
