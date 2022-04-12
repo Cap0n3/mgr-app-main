@@ -4,12 +4,7 @@ from django.dispatch import receiver
 from django.db.models.signals import (
     pre_save,
     post_save,
-    pre_delete,
-    post_delete,
-    m2m_changed,
 )
-
-import re
 
 @receiver(pre_save, sender=User)
 def user_pre_save_receiver(sender, instance, *args, **kwargs):
