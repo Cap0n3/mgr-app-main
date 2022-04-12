@@ -42,8 +42,8 @@ def user_post_save_receiver(sender, instance, created, *args, **kwargs):
         # === Add new user to standard group === #
         '''
         WARNING ! Don't activate 'groups' or 'permissions' fields in UserSerializer otherwise it'll override 
-        these post_save instructions with what was put in the JSON request. It can also be dangerous because a hacker could
-        potentially gain privileges with corrupted HTTP request.
+        these post_save instructions with what was put in the JSON request. It can also be dangerous because a hacker 
+        could potentially gain privileges with a corrupted HTTP request.
         '''
         try:
             standardUserGroup = Group.objects.get(name='standard_user')
