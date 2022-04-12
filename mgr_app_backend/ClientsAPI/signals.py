@@ -42,6 +42,5 @@ def user_post_save_receiver(sender, instance, created, *args, **kwargs):
         # except Group.DoesNotExist:
         #     pass
         # else:
-        #     instance.user_permissions.add(1)
         #     standardUserGroup.user_set.add(instance)
-        #     instance.save()
+        #     #instance.save()
