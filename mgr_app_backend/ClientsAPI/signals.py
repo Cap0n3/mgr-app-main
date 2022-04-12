@@ -36,6 +36,8 @@ def user_post_save_receiver(sender, instance, created, *args, **kwargs):
         Note : I kept this code here because it seems impossible to assign group from post_save signals.
         This code should work but it doesn't, it's possible to change user group later on but not from here
         and I have no clue why...
+
+        Maybe it's simply that permissions in Django REST is handled by Base.permissions ... duh
         '''
         # try:
         #     standardUserGroup = Group.objects.get(name='standard_user')
