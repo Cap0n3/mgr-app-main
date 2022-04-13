@@ -9,12 +9,31 @@ const INPUTS_TEXT_COLOR = "#94A0D6"
 
 
 export const Form = styled.form`
-	max-width: 500px;
-	padding: 10px 20px;
+	box-sizing: border-box;
+	max-width: ${(props) => (props.boxWidth ? props.boxWidth : "600px")};;
+	padding: 20px 40px 20px 40px;
 	margin: 10px auto;
-	padding: 20px;
 	background-color: ${FORM_BCKG_COLOR};
 	border-radius: 8px;
+`;
+
+export const Legend = styled.legend`
+	font-size: 1.4em;
+	margin-bottom: 25px
+`;
+
+export const Bullet = styled.span`
+	background: #3c81f6ff;
+	color: #fff;
+	height: 30px;
+	width: 30px;
+	display: inline-block;
+	font-size: 0.8em;
+	margin-right: 15px;
+	line-height: 30px;
+	text-align: center;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+	border-radius: 15px 15px 15px 0px;
 `;
 
 export const Label = styled.label`
@@ -27,14 +46,10 @@ export const RadioLabel = styled.label`
 	padding-bottom: 30px;
 `;
 
-export const Legend = styled.legend`
-	font-size: 1.4em;
-	margin-bottom: 25px
-`;
-
 export const Input = styled.input`
 	&[type="file"], 
-	&[type="text"], 
+	&[type="text"],
+	&[type="password"],
 	&[type="email"],
 	&[type="number"],
 	&[type="tel"],
@@ -58,6 +73,9 @@ export const Input = styled.input`
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		color: ${INPUTS_TEXT_COLOR};
+	}
+	&[type="radio"] {
+		margin: 0px 20px 30px 0px;
 	}
 	
 	&:focus {
@@ -105,6 +123,18 @@ export const Input = styled.input`
 	&[type="submit"]:hover {
 		box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
   		transition-duration: .1s;
+	}
+
+	${'' /* For browser autocomplete annoying automatic color filling ... to FINISH !!! */}
+	&:-webkit-autofill,
+	&:-webkit-autofill:hover,
+  	&:-webkit-autofill:active {
+		-webkit-text-fill-color: ${INPUTS_TEXT_COLOR};
+  		transition: background-color 5000s ease-in-out 0s;
+	}
+
+	&:-webkit-autofill:focus {
+		transition: background-color green;
 	}
 `;
 

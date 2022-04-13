@@ -3,7 +3,21 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import { useAlert } from 'react-alert';
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
-import { Form, Label, LabelPic, RadioLabel, Legend, Input, Select, Textarea, AvatarWrapper, Avatar, WarningBox, WarnIcon } from "./ClientForm.style"
+import { 
+	Form,
+	Legend,
+	Bullet,
+	Label, 
+	LabelPic, 
+	RadioLabel, 
+	Input, 
+	Select, 
+	Textarea, 
+	AvatarWrapper, 
+	Avatar, 
+	WarningBox, 
+	WarnIcon 
+} from "./FormStyles/GlobalForm.style";
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
 import { getCookie, checkCookie } from "../../functions/cookieUtils";
 
@@ -298,7 +312,7 @@ const ClientFormComponent = (props) => {
 					Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs 
 					Note: here getCookie() get input validation strings "true" or "false" or value null from cookies.
 				*/}
-				<Legend>{upperFirstChar(props.target)} Client</Legend>
+				<Legend><Bullet>1</Bullet>Infos Client</Legend>
 				<Label>Photo :</Label>
 				{picPreview &&  props.target === "create" ? <AvatarWrapper><Avatar src={picPreview} /></AvatarWrapper> : null }
 				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
@@ -319,7 +333,7 @@ const ClientFormComponent = (props) => {
 				{warningMessage("student_phone", "tel")}
 				<Label>Date de naissance :</Label>
 				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
-				<Legend>Infos cours</Legend>
+				<Legend><Bullet>2</Bullet>Infos cours</Legend>
 				<Label>Jour du cours * :</Label>
 				<Select name="lesson_day" defaultValue={"DEFAULT"} value={inputs.lesson_day} onChange={handleChange} required>
 					<option value="DEFAULT" disabled>Choisir un jour ...</option>
@@ -359,7 +373,7 @@ const ClientFormComponent = (props) => {
 					<option value="A2">Avancé 2</option>
 					<option value="A3">Avancé 3</option>
 				</Select>
-				<Legend>Infos Facturation</Legend>
+				<Legend><Bullet>3</Bullet>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
 				<Input isValid={getCookie("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} required />
 				{warningMessage("invoice_fname", "text")}
@@ -384,7 +398,7 @@ const ClientFormComponent = (props) => {
 				<Label>Pays * :</Label>
 				<Input isValid={getCookie("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} required />
 				{warningMessage("invoice_country", "text")}
-				<Legend>Tarification et règlement</Legend>
+				<Legend><Bullet>4</Bullet>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
 				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} required />
 				<Label>Monnaie * :</Label>
@@ -403,10 +417,10 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Label>Référence facture * :</Label>
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
-				<input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleChange} required />
+				<Input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleChange} required />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
-				<input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
-				<Legend>Notes</Legend>
+				<Input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
+				<Legend><Bullet>5</Bullet>Notes</Legend>
 				<Textarea isValid={getCookie("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				{warningMessage("notes", "textarea")}
 				<Input type="submit" value={upperFirstChar(props.target)} />
