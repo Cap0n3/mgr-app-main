@@ -15,6 +15,10 @@ export const Form = styled.form`
 	margin: 10px auto;
 	background-color: ${FORM_BCKG_COLOR};
 	border-radius: 8px;
+
+	@media screen and (max-width: 960px) {
+		max-width: 350px;
+	}
 `;
 
 export const Legend = styled.legend`
