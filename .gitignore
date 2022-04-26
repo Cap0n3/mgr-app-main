@@ -34,6 +34,19 @@ __pycache__
 *.pot
 *.bak
 
+# === MEDIA FILES === #
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.mov
+*.mp3
+*.mp4
+# Project specific (MGR)
+!ProfilPic.png
+!genericLogo.png
+
 # == MISC == #
 .env.local
 .env.development.local
