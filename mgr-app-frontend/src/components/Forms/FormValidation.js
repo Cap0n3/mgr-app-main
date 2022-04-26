@@ -2,8 +2,6 @@
     File containing all functions necessary for cookie based text input validation and file validation (on client side).
 */
 
-import { deleteCookie, setCookie, getCookie } from "../../functions/cookieUtils";
-
 // ===================================== //
 // ============ UTILS FUNCS ============ //
 // ===================================== //
@@ -77,17 +75,17 @@ const compareFileBytes = (fileType, bytesArray) => {
  */
 const badCharReturnVerif = (input_name, input_value, bad_chars) => {
     if(input_value === "") {
-        deleteCookie(input_name);
+        sessionStorage.removeItem(input_name);
         return true
     }
     if(bad_chars >= 0) {
-        deleteCookie(input_name);
-        setCookie(input_name, false);
+        sessionStorage.removeItem(input_name);
+        sessionStorage.setItem(input_name, false);
         return false;
     }
     
-    deleteCookie(input_name);
-    setCookie(input_name, true);
+    sessionStorage.removeItem(input_name);
+    sessionStorage.setItem(input_name, true);
     return true;
 }
 
@@ -105,18 +103,18 @@ const badCharReturnVerif = (input_name, input_value, bad_chars) => {
  */
 const matchReturnVerif = (input_name, input_value, matching) => {
     if(input_value === "") {
-        deleteCookie(input_name);
+        sessionStorage.removeItem(input_name);
         return true
     }
 
     if(matching !== 0){
-        deleteCookie(input_name);
-        setCookie(input_name, false);
+        sessionStorage.removeItem(input_name);
+        sessionStorage.setItem(input_name, false);
         return false;
     }
 
-    deleteCookie(input_name);
-    setCookie(input_name, true);
+    sessionStorage.removeItem(input_name);
+    sessionStorage.setItem(input_name, true);
     return true;
 }
 
@@ -130,8 +128,8 @@ const matchReturnVerif = (input_name, input_value, matching) => {
     Object.keys(formRef).forEach(key => {inputNames.push(formRef[key].name)});
     // Compare input names with cookie name and clear matching cookies
     inputNames.forEach(inputName => {
-        if(getCookie(inputName) !== null){
-            deleteCookie(inputName)
+        if(sessionStorage.getItem(inputName) !== null){
+            sessionStorage.removeItem(inputName);
         }
     });
 };
@@ -153,8 +151,9 @@ const matchReturnVerif = (input_name, input_value, matching) => {
     const fileSize = fileObj.size;
     let isValid;
 
+    // Max file size 300 ko
     if (fileSize > 300000) {
-        setCookie(input_name, false)
+        sessionStorage.setItem(input_name, false);
         return false;
     }
 
@@ -176,7 +175,7 @@ const matchReturnVerif = (input_name, input_value, matching) => {
     }).catch(err => console.log(err));
     
     // Set cookie or clear previous one
-    isValid ? deleteCookie(input_name):setCookie(input_name, false);
+    isValid ? sessionStorage.removeItem(input_name):sessionStorage.setItem(input_name, false);
     
     return isValid;
 }

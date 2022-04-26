@@ -19,7 +19,6 @@ import {
 	WarnIcon 
 } from "./FormStyles/GlobalForm.style";
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
-import { getCookie, checkCookie } from "../../functions/cookieUtils";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
@@ -114,7 +113,7 @@ const ClientFormComponent = (props) => {
 	useEffect(() => {
 		if (props.target === "create") {
 			// Set default value of radio btn "invoice numbering" to false in inputs
-			//  => If radio btn isn't touched value is set to "undefined" (which isn't good)
+			//  => If radio btn isn't touched value is set to "undefined" (not good ...)
 			setInputs(values => ({ ...values, "invoice_numbering": false }))
 		}
 		else if (props.target === "update") {
@@ -168,7 +167,7 @@ const ClientFormComponent = (props) => {
 	 const warningMessage = (inputName, inputCategory) => {
 		// Correspond to categories of verification in FormValidation.js
 		const warnMessages = {
-			"file" : "L'image choisie est trop lourde ou non valide !",
+			"file" : "L'image choisie est trop lourde (max 300 ko) ou non valide !",
 			"text" : "Les caractères spéciaux ne sont pas autorisés !",
 			"email" : "L'adresse e-mail n'est pas valide !",
 			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
@@ -176,7 +175,7 @@ const ClientFormComponent = (props) => {
 			"postal" : "Le numéro postal n'est pas valide !",
 			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
 		}
-		let cookieStatus = getCookie(inputName)
+		let cookieStatus = sessionStorage.getItem(inputName)
 		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
 	}
 	
@@ -253,7 +252,7 @@ const ClientFormComponent = (props) => {
 			});		
 		}
 		else if (inputType === "radio") {
-			// convert string "true"/"false" to actual booleean
+			// Convert string "true"/"false" to actual booleean
 			inputValue = (e.target.id === "true") ? true : false;
 			setInputs(values => ({ ...values, [inputName]: inputValue }))
 		}
@@ -281,8 +280,8 @@ const ClientFormComponent = (props) => {
 
 			// Check if an input cookie is set to false (last input verification before sending)
 			allInputs.forEach(element => {
-				if(checkCookie(element.name) === true) {
-					if(getCookie(element.name) === "false") {
+				if(sessionStorage.getItem(element.name) !== null) {
+					if(sessionStorage.getItem(element.name) === "false") {
 						wrongInputs.push(element.name);
 					}
 				}
@@ -310,7 +309,7 @@ const ClientFormComponent = (props) => {
 			<Form ref={formRef} onSubmit={handleSubmit}>
 				{/* 
 					Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs 
-					Note: here getCookie() get input validation strings "true" or "false" or value null from cookies.
+					Note: here getItem() get input validation strings "true" or "false" or value null from cookies.
 				*/}
 				<Legend><Bullet>1</Bullet>Infos Client</Legend>
 				<Label>Photo :</Label>
@@ -320,16 +319,16 @@ const ClientFormComponent = (props) => {
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
 				{warningMessage("student_pic", "file")}
 				<Label>Prénom * :</Label>
-				<Input isValid={getCookie("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} required />
 				{warningMessage("first_name", "text")}
 				<Label>Nom * :</Label>
-				<Input isValid={getCookie("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} required />
 				{warningMessage("last_name", "text")}
 				<Label>Email client :</Label>
-				<Input isValid={getCookie("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
+				<Input isValid={sessionStorage.getItem("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
 				{warningMessage("student_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={getCookie("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
+				<Input isValid={sessionStorage.getItem("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
 				{warningMessage("student_phone", "tel")}
 				<Label>Date de naissance :</Label>
 				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
@@ -358,7 +357,7 @@ const ClientFormComponent = (props) => {
 					<option value="Libre">A la carte</option>
 				</Select>
 				<Label>Instrument :</Label>
-				<Input isValid={getCookie("instrument")} type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
+				<Input isValid={sessionStorage.getItem("instrument")} type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
 				{warningMessage("instrument", "text")}
 				<Label>Niveau :</Label>
 				<Select name="student_level" defaultValue={"DEFAULT"} value={inputs.student_level} onChange={handleChange}>
@@ -375,28 +374,28 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Legend><Bullet>3</Bullet>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
-				<Input isValid={getCookie("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} required />
 				{warningMessage("invoice_fname", "text")}
 				<Label>Nom Facturation * :</Label>
-				<Input isValid={getCookie("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} required />
 				{warningMessage("invoice_lname", "text")}
 				<Label>Email Facturation * :</Label>
-				<Input isValid={getCookie("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} required />
 				{warningMessage("invoice_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={getCookie("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} required />
 				{warningMessage("invoice_phone", "tel")}
 				<Label>Adresse facturation * :</Label>
-				<Input isValid={getCookie("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} required />
 				{warningMessage("invoice_address", "address")}
 				<Label>Code postal * :</Label>
-				<Input isValid={getCookie("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} required />
 				{warningMessage("invoice_postal", "postal")}
 				<Label>Ville * :</Label>
-				<Input isValid={getCookie("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} required />
 				{warningMessage("invoice_city", "text")}
 				<Label>Pays * :</Label>
-				<Input isValid={getCookie("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} required />
+				<Input isValid={sessionStorage.getItem("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} required />
 				{warningMessage("invoice_country", "text")}
 				<Legend><Bullet>4</Bullet>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
@@ -421,7 +420,7 @@ const ClientFormComponent = (props) => {
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
 				<Input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
 				<Legend><Bullet>5</Bullet>Notes</Legend>
-				<Textarea isValid={getCookie("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
+				<Textarea isValid={sessionStorage.getItem("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
 				{warningMessage("notes", "textarea")}
 				<Input type="submit" value={upperFirstChar(props.target)} />
 			</Form>
