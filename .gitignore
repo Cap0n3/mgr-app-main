@@ -28,12 +28,21 @@ env/
 db.sqlite3
 **/__pycache__
 __pycache__
-**/media
 **/invoicesHistory
 **/Output_PDF
 *.log
 *.pot
 *.bak
+
+# === MEDIA FILES === #
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.mov
+*.mp3
+*.mp4
 
 # == MISC == #
 .env.local
