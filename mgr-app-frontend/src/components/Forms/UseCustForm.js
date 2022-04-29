@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../context/AuthContext";
 import { useAlert } from 'react-alert';
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
@@ -37,12 +36,7 @@ const getFormInputInfos = (event) => {
 
         inputsArray.push(inputInfos);
     }
-
     return inputsArray;
-}
-
-const processData = (data, foo) => {
-    console.log(data)
 }
 
 /**
@@ -86,7 +80,6 @@ const createDataObject = (formReference, data) => {
 export const useCustForm = (formSetup) => {
     const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
-    const {authTokens, user} = useContext(AuthContext);
     const alert = useAlert()
     const [pic, setPic] = useState();
 	const [picPreview, setPicPreview] = useState();
@@ -112,7 +105,7 @@ export const useCustForm = (formSetup) => {
         }
         else if (formSetup.operation === "update") {
             // On first render check if it's an update (to get client infos)
-            getClient(authTokens, user, formSetup.userID).then((data) => {
+            getClient(formSetup.authTokens, formSetup.user, formSetup.userID).then((data) => {
                 let serverData = createDataObject(formSetup.formRef.current, data)
                 // Fill inputs with data received from server
                 setInputs(inputs => ({
@@ -257,7 +250,7 @@ export const useCustForm = (formSetup) => {
 				return;
 			}
 
-			createClient(authTokens, user, inputs).then().catch(fetchFail);
+			createClient(formSetup.authTokens, formSetup.user, inputs).then().catch(fetchFail);
 
             // Clear form cookie if success
             clearFormCookies(formSetup.formRef.current)
@@ -266,7 +259,7 @@ export const useCustForm = (formSetup) => {
 			setTimeout(() => navigate('/'), 100);
 		}
 		else if (formSetup.operation === "update") {
-			updateClient(authTokens, user, formSetup.userID, inputs).then().catch(fetchFail);
+			updateClient(formSetup.authTokens, formSetup.user, formSetup.userID, inputs).then().catch(fetchFail);
 			// Wait a bit for server to make ressource available
 			setTimeout(() => navigate('/'), 100);
 		}

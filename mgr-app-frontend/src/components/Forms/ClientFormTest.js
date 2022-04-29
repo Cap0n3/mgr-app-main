@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useAlert } from 'react-alert';
-import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { 
 	Form,
 	Legend,
@@ -18,9 +16,6 @@ import {
 	WarningBox, 
 	WarnIcon 
 } from "./FormStyles/GlobalForm.style";
-import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
-
-
 import { useCustForm } from "./UseCustForm";
 
 /**
@@ -29,11 +24,14 @@ import { useCustForm } from "./UseCustForm";
 const ClientFormComponent = (props) => {
 	const alert = useAlert()
 	const formRef = useRef();
+    const {authTokens, user} = useContext(AuthContext)
 	const radioBtnTrue = useRef();
 	const radioBtnFalse = useRef();
 
     const [customForm] = useCustForm({
         operation: props.target,
+        authTokens: authTokens,
+        user: user,
         userID: props.clientID,
         formRef: formRef
     })
