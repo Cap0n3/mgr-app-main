@@ -89,7 +89,7 @@ const Cloud = () => {
 			</InfoList>,
 		"Facturation" : 
 			<InfoList>
-				<Li><Label offset="200" mobileOffset="180">Facture numérotée :</Label>{(clientData.nvoice_numbering) ? "Oui" : "Non"}</Li>
+				<Li><Label offset="200" mobileOffset="180">Facture numérotée :</Label>{(clientData.invoice_numbering) ? "Oui" : "Non"}</Li>
 				<Li><Label offset="200" mobileOffset="180">Taux horaire :</Label>{clientData.billing_rate} {clientData.billing_currency}</Li>
 				<Li><Label offset="200" mobileOffset="180">Monnaie :</Label>{clientData.billing_currency}</Li>
 				<Li><Label offset="200" mobileOffset="180">Option paiement :</Label>{clientData.payment_option}</Li>

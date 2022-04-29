@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import ClientFormComponent from "../components/Forms/ClientForm";
+import ClientFormComponent from "../components/Forms/ClientFormTest";
 
 const UpdateClient = () => {
 	const params = useParams();

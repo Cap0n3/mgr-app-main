@@ -41,6 +41,43 @@ const getFormInputInfos = (event) => {
     return inputsArray;
 }
 
+const processData = (data, foo) => {
+    console.log(data)
+}
+
+/**
+ * This function creates a data object which will be used during update opreation to populate form inputs with received data from server.
+ * In order achieve this, it's take all input names from a form reference object and use it to create keys of data object.
+ * @param   {object}  formReference   Form reference object.
+ * @returns {object}                  Data object with inputs and its data.
+ */
+const createDataObject = (formReference, data) => {
+    let htmlElements = [];
+    let allInputNames = [];
+    // Extract all inputs from form
+    let keys = Object.keys(formReference);
+    keys.forEach((key, index) => {
+        htmlElements.push(formReference[key]);
+    })
+    // Put name properties of inputs in an unfiltered list
+    for(let i = 0; i < htmlElements.length; i++) {
+        let inputName = htmlElements[i].name;
+        if(inputName !== undefined && inputName !== "") {
+            allInputNames.push(inputName);
+        }
+    }
+
+    // Remove any duplicates from list (value must be unique)
+    let filteredNames = [...new Set(allInputNames)];
+    
+    // Generate object with corresponding data and return
+    let dataObj = {};
+    for (let i = 0; i < filteredNames.length; i++) {
+        dataObj[filteredNames[i]] = data[filteredNames[i]];
+    }
+    return dataObj;
+}
+
 
 // ========================================== //
 // ============ FORM CUSTOM HOOK ============ //
@@ -70,12 +107,25 @@ export const useCustForm = (formSetup) => {
         if (formSetup.operation === "create") {
             // Set default value of radio btn "invoice numbering" to false in inputs
             //  => If radio btn isn't touched value is set to "undefined" (not good ...)
+            // NOT UNIVERSAL !!! Think of a better way
             setInputs(values => ({ ...values, "invoice_numbering": false }))
         }
-        // else if (formSetup.operation === "update") {
-        //     // On first render check if it's an update (to get client infos)
-        //     getClient(authTokens, user, formSetup.userID).then(processData).catch(fetchFail);
-        // }
+        else if (formSetup.operation === "update") {
+            // On first render check if it's an update (to get client infos)
+            getClient(authTokens, user, formSetup.userID).then((data) => {
+                let serverData = createDataObject(formSetup.formRef.current, data)
+                // Fill inputs with data received from server
+                setInputs(inputs => ({
+                    ...serverData,
+                }))
+                // Set profile picture
+                // NOT UNIVERSAL !!! Think of a better way
+                setPic(serverData["student_pic"])
+            }).catch(fetchFail);
+        }
+        else {
+            console.error("No operation has been set ! Please choose either create or update.")
+        }
     }, [formSetup.operation, formSetup.userID])
 
     /**
@@ -183,7 +233,7 @@ export const useCustForm = (formSetup) => {
 
     const handleSubmit = (event) => {
 		event.preventDefault();
-
+        
 		// Evaluate if it's an update or a creation
 		if (formSetup.operation === "create") {
 			
@@ -222,13 +272,12 @@ export const useCustForm = (formSetup) => {
 		}
 	}
 
-    console.log(inputs)
-
     // All datas and methods necessary for form handling
     let FormHandling = {
         inputs: inputs,
         operation: formSetup.operation,
         picPreview: picPreview,
+        pic: pic,
         warningMessage: warningMessage,
         handleChange: handleChange,
         handleSubmit: handleSubmit

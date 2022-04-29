@@ -33,8 +33,8 @@ const ClientFormComponent = (props) => {
 	const radioBtnFalse = useRef();
 
     const [customForm] = useCustForm({
-        operation: "create",
-        userID: "",
+        operation: props.target,
+        userID: props.clientID,
         formRef: formRef
     })
 	
@@ -63,7 +63,7 @@ const ClientFormComponent = (props) => {
 				<Legend><Bullet>1</Bullet>Infos Client</Legend>
 				<Label>Photo :</Label>
 				{customForm.picPreview &&  customForm.operation === "create" ? <AvatarWrapper><Avatar src={customForm.picPreview} /></AvatarWrapper> : null }
-				{/* {props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null} */}
+				{customForm.operation === "update" ? <AvatarWrapper><Avatar src={customForm.pic} /></AvatarWrapper> : null}
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
 				{customForm.warningMessage("student_pic", "file")}
