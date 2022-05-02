@@ -98,7 +98,7 @@ const createDataObject = (formReference, data) => {
  * @param   {Object}    formSetup.user          User object for authentification.
  * @param   {string}    formSetup.userID        User ID for retrieving & updating data.
  * @param   {Object}    formSetup.formRef       Form reference used to extract inputs keys dynamically.
- * @param   {Object}     formSetup.radioButtons  Radio button name (should be the same as input name) and initial state value.      
+ * @param   {Object}    formSetup.radioButtons  Radio button name (should be the same as input name) and initial state value.      
  * @returns                                     Returns all values necessary for form handling.
  */
 export const useCustForm = (formSetup) => {
@@ -316,6 +316,6 @@ export const useCustForm = (formSetup) => {
         handleChange: handleChange,
         handleSubmit: handleSubmit
     }
-    
+
     return [FormHandling];
 }
