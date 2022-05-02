@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useEffect, useState } from "react";
+import React, { useRef, useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useAlert } from 'react-alert';
 import { 
@@ -25,8 +25,6 @@ const ClientFormComponent = (props) => {
 	const alert = useAlert()
 	const formRef = useRef();
     const {authTokens, user} = useContext(AuthContext)
-	const radioBtnTrue = useRef();
-	const radioBtnFalse = useRef();
 
     const [customForm] = useCustForm({
         operation: props.target,
@@ -34,8 +32,10 @@ const ClientFormComponent = (props) => {
         user: user,
         userID: props.clientID,
         formRef: formRef,
-        radioBtn: false
-    })
+        radioButtons: {
+            invoice_numbering: false,
+        }
+    });
 	
     /**
 	 * For props formatting (ex : create => Create).
@@ -46,7 +46,6 @@ const ClientFormComponent = (props) => {
 		let firstToUpper = str.charAt(0).toUpperCase() + str.slice(1)
 		return firstToUpper
 	}
-	
 
 	//=========================================//
 	//============= FORM HANDLING =============//
@@ -164,10 +163,10 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Label>Référence facture * :</Label>
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
-				<Input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioState : customForm.inputs.invoice_numbering} value="true" onChange={customForm.handleChange} required />
+				<Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} required />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
-				<Input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={customForm.operation === "create" ? !customForm.radioState : !customForm.inputs.invoice_numbering} value="false" onChange={customForm.handleChange} />
-				<Legend><Bullet>5</Bullet>Notes</Legend>
+				<Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? !customForm.radioButtons["invoice_numbering"] || "" : !customForm.inputs.invoice_numbering || ""} value="false" onChange={customForm.handleChange} />  
+                <Legend><Bullet>5</Bullet>Notes</Legend>
 				<Textarea isValid={sessionStorage.getItem("notes")} name="notes" value={customForm.inputs.notes || ""} onChange={customForm.handleChange}></Textarea>
 				{customForm.warningMessage("notes", "textarea")}
 				<Input type="submit" value={upperFirstChar(customForm.operation)} />

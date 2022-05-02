@@ -89,17 +89,29 @@ const createDataObject = (formReference, data) => {
 // ============ FORM CUSTOM HOOK ============ //
 // ========================================== //
 
+/**
+ * Custom hook for form handling. It can handle default values for inputs, perform input validation and creating/updating values in form.
+ *  
+ * @typedef Object
+ * @param   {string}    formSetup.operation     Operation performed by form (Create or Update ?).
+ * @param   {Object}    formSetup.authTokens    Authentification token for server connection.
+ * @param   {Object}    formSetup.user          User object for authentification.
+ * @param   {string}    formSetup.userID        User ID for retrieving & updating data.
+ * @param   {Object}    formSetup.formRef       Form reference used to extract inputs keys dynamically.
+ * @param   {Object}     formSetup.radioButtons  Radio button name (should be the same as input name) and initial state value.      
+ * @returns                                     Returns all values necessary for form handling.
+ */
 export const useCustForm = (formSetup) => {
     const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
     const alert = useAlert()
     const [pic, setPic] = useState();
 	const [picPreview, setPicPreview] = useState();
-    const [radioState, setRadioState] = useState(false);
+    const [radioState, setRadioState] = useState({});
 
     /**
 	 * What to do if API call failed.
-	 * @param {str} err	Error message to print.
+	 * @param   {string}    err     Error message to print.
 	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
@@ -107,16 +119,12 @@ export const useCustForm = (formSetup) => {
 	}
 
     /**
-     * Define if it'll be the form for creation or update based on passed props.
+     * Define if it'll be the form for data creation or update.
      */
     useEffect(() => {
         if (formSetup.operation === "create") {
-            // Set default value of radio btn "invoice numbering" to false in inputs
-            //  => If radio btn isn't touched value is set to "undefined" (not good ...)
-            // NOT UNIVERSAL !!! Think of a better way
-            
-            //setInputs(values => ({ ...values, "invoice_numbering" : false }))
-            setInputs(values => ({ ...values}))
+            // Set default values
+            setInputs(values => ({ ...values}));
         }
         else if (formSetup.operation === "update") {
             // On first render check if it's an update (to get client infos)
@@ -134,7 +142,7 @@ export const useCustForm = (formSetup) => {
         else {
             console.error("No operation has been set ! Please choose either create or update.")
         }
-    }, [formSetup.operation, formSetup.userID])
+    }, [formSetup.operation, formSetup.userID]);
 
     /**
 	 * Clear all form related cookies (used for input validation) when refresh or on first render (just in case).
@@ -142,6 +150,13 @@ export const useCustForm = (formSetup) => {
 	useEffect(() => {
 		clearFormCookies(formSetup.formRef.current)
 	}, []);
+
+    /**
+     * Set initial state of passed radio buttons.
+     */
+    useEffect(() => {
+        setRadioState(radioBtns => ({...formSetup.radioButtons}))
+    }, []);
 
     /**
 	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
@@ -167,7 +182,7 @@ export const useCustForm = (formSetup) => {
 
     /**
 	 * Get values from inputs on keyboard press and polulate state "inputs".
-	 * @param {object} e Event object passed by input
+	 * @param {Object}  e   Event object passed by input.
 	 */
 	const handleChange = (e) => {
 		let inputType = e.target.type;
@@ -230,7 +245,8 @@ export const useCustForm = (formSetup) => {
             inputValue = e.target.value;
             // Convert string "true"/"false" to actual booleean
 			inputValue = (inputValue === "true") ? true : false;
-            setRadioState(inputValue)
+            // Set state of changed radio button
+            setRadioState(values => ({ ...values, [inputName]: inputValue }))
             setInputs(values => ({ ...values, [inputName]: inputValue }))
 		}
 		else {
@@ -244,11 +260,13 @@ export const useCustForm = (formSetup) => {
 		}
 	}
 
+    /**
+     * This function first check if all form verification cookies are set to true and if so, send data to server and clear cookies.
+     * @param   {Object}   event   Form submit event.  
+     */
     const handleSubmit = (event) => {
 		event.preventDefault();
 
-        console.log(getFormInputInfos(event))
-        return
 		// Evaluate if it's an update or a creation
 		if (formSetup.operation === "create") {
 			
@@ -293,11 +311,11 @@ export const useCustForm = (formSetup) => {
         operation: formSetup.operation,
         picPreview: picPreview,
         pic: pic,
-        radioBtn: radioState,
+        radioButtons: radioState,
         warningMessage: warningMessage,
         handleChange: handleChange,
         handleSubmit: handleSubmit
     }
-
+    
     return [FormHandling];
 }
