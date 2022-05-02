@@ -30,11 +30,23 @@ const getFormInputInfos = (event) => {
         if(input === undefined){
             break;
         }
-        inputInfos["name"] = input.name;
-        inputInfos["type"] = input.type;
-        inputInfos["value"] = input.value;
+        if (input.type === "radio") {
+            // Get only checked button
+            if (input.checked === true) {
+                inputInfos["name"] = input.name;
+                inputInfos["type"] = input.type;
+                inputInfos["value"] = input.value;
+                inputsArray.push(inputInfos);
+            }
+        }
+        else {
+            inputInfos["name"] = input.name;
+            inputInfos["type"] = input.type;
+            inputInfos["value"] = input.value;
+            inputsArray.push(inputInfos);
+        }
 
-        inputsArray.push(inputInfos);
+        
     }
     return inputsArray;
 }
@@ -83,6 +95,7 @@ export const useCustForm = (formSetup) => {
     const alert = useAlert()
     const [pic, setPic] = useState();
 	const [picPreview, setPicPreview] = useState();
+    const [radioState, setRadioState] = useState(false);
 
     /**
 	 * What to do if API call failed.
@@ -101,7 +114,9 @@ export const useCustForm = (formSetup) => {
             // Set default value of radio btn "invoice numbering" to false in inputs
             //  => If radio btn isn't touched value is set to "undefined" (not good ...)
             // NOT UNIVERSAL !!! Think of a better way
-            setInputs(values => ({ ...values, "invoice_numbering": false }))
+            
+            //setInputs(values => ({ ...values, "invoice_numbering" : false }))
+            setInputs(values => ({ ...values}))
         }
         else if (formSetup.operation === "update") {
             // On first render check if it's an update (to get client infos)
@@ -210,8 +225,13 @@ export const useCustForm = (formSetup) => {
 		}
 		else if (inputType === "radio") {
 			// Convert string "true"/"false" to actual booleean
-			inputValue = (e.target.id === "true") ? true : false;
-			setInputs(values => ({ ...values, [inputName]: inputValue }))
+			// inputValue = (e.target.id === "true") ? true : false;
+			// setInputs(values => ({ ...values, [inputName]: inputValue }))
+            inputValue = e.target.value;
+            // Convert string "true"/"false" to actual booleean
+			inputValue = (inputValue === "true") ? true : false;
+            setRadioState(inputValue)
+            setInputs(values => ({ ...values, [inputName]: inputValue }))
 		}
 		else {
 			// Then it's a standard input (text, email, tel, select-one, etc...)
@@ -226,7 +246,9 @@ export const useCustForm = (formSetup) => {
 
     const handleSubmit = (event) => {
 		event.preventDefault();
-        
+
+        console.log(getFormInputInfos(event))
+        return
 		// Evaluate if it's an update or a creation
 		if (formSetup.operation === "create") {
 			
@@ -271,6 +293,7 @@ export const useCustForm = (formSetup) => {
         operation: formSetup.operation,
         picPreview: picPreview,
         pic: pic,
+        radioBtn: radioState,
         warningMessage: warningMessage,
         handleChange: handleChange,
         handleSubmit: handleSubmit
