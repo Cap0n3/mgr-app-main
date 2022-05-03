@@ -43,10 +43,6 @@ const ClientFormComponent = (props) => {
 		return firstToUpper
 	}
 
-	//=========================================//
-	//============= FORM HANDLING =============//
-	//=========================================//
-
 	return (
 		<>
 			<Form ref={formRef} onSubmit={customForm.handleSubmit}>
