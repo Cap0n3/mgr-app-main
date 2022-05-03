@@ -1,6 +1,5 @@
 import React, { useRef, useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-import { useAlert } from 'react-alert';
 import { 
 	Form,
 	Legend,
@@ -12,9 +11,7 @@ import {
 	Select, 
 	Textarea, 
 	AvatarWrapper, 
-	Avatar, 
-	WarningBox, 
-	WarnIcon 
+	Avatar,
 } from "./FormStyles/GlobalForm.style";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
 
@@ -22,7 +19,6 @@ import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
  */
 const ClientFormComponent = (props) => {
-	const alert = useAlert()
 	const formRef = useRef();
     const {authTokens, user} = useContext(AuthContext)
 
