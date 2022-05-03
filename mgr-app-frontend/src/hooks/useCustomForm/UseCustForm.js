@@ -3,97 +3,66 @@ import { useNavigate } from "react-router-dom";
 import { useAlert } from 'react-alert';
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
 import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
-import { WarningBox, WarnIcon } from "./FormStyles/GlobalForm.style";
-
-// ===================================== //
-// =============== UTILS =============== //
-// ===================================== //
+import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalForm.style";
 
 /**
- * Get all form input properties & current values in an object from submit button event.
- * @param 	{object}	event		Submit button event object.
- * @returns {array}					Array containing input objects with name, type & current value.		
- */
-const getFormInputInfos = (event) => {
-    let inputsArray = []
-
-    // Get input names dynamically
-    for(let i=0; i < 100; i++) {
-        let inputInfos = {
-            "name" : "",
-            "type" : "",
-            "value" : ""
-        };
-
-        let input = event.target[i];
-        // Will reach undefined for other properties present in event target.
-        if(input === undefined){
-            break;
-        }
-        if (input.type === "radio") {
-            // Get only checked button
-            if (input.checked === true) {
-                inputInfos["name"] = input.name;
-                inputInfos["type"] = input.type;
-                inputInfos["value"] = input.value;
-                inputsArray.push(inputInfos);
-            }
-        }
-        else {
-            inputInfos["name"] = input.name;
-            inputInfos["type"] = input.type;
-            inputInfos["value"] = input.value;
-            inputsArray.push(inputInfos);
-        }
-
-        
-    }
-    return inputsArray;
-}
-
-/**
- * This function creates a data object which will be used during update opreation to populate form inputs with received data from server.
- * In order achieve this, it's take all input names from a form reference object and use it to create keys of data object.
- * @param   {object}  formReference   Form reference object.
- * @returns {object}                  Data object with inputs and its data.
- */
-const createDataObject = (formReference, data) => {
-    let htmlElements = [];
-    let allInputNames = [];
-    // Extract all inputs from form
-    let keys = Object.keys(formReference);
-    keys.forEach((key, index) => {
-        htmlElements.push(formReference[key]);
-    })
-    // Put name properties of inputs in an unfiltered list
-    for(let i = 0; i < htmlElements.length; i++) {
-        let inputName = htmlElements[i].name;
-        if(inputName !== undefined && inputName !== "") {
-            allInputNames.push(inputName);
-        }
-    }
-
-    // Remove any duplicates from list (value must be unique)
-    let filteredNames = [...new Set(allInputNames)];
-    
-    // Generate object with corresponding data and return
-    let dataObj = {};
-    for (let i = 0; i < filteredNames.length; i++) {
-        dataObj[filteredNames[i]] = data[filteredNames[i]];
-    }
-    return dataObj;
-}
-
-
-// ========================================== //
-// ============ FORM CUSTOM HOOK ============ //
-// ========================================== //
-
-/**
- * Custom hook for form handling. It can handle default values for inputs, perform input validation and creating/updating values in form.
- *  
+ * # Custom Form Hook
+ * 
+ * Custom hook for form handling, really handy for profile forms. It can handle default values for radio inputs, perform input validation, 
+ * display warning messages and creating/updating values in form.
+ * 
+ * ## Setup example
+ * 
+ * ```js
+ * const [customForm] = useCustForm({
+ *		operation: "update",
+ *		authTokens: authTokens,
+ *		user: user,
+ *		userID: props.clientID,
+ *		formRef: formRef,
+ *		radioButtons: {
+ *			invoice_numbering: false,
+ *		}
+ * });
+ * ```
+ * 
+ * ## Return Object
+ * Here object `customForm` will hold these values & methods. The standard methods `handleChange` will handle input entries and profile pic, 
+ * `handleSubmit` will perform input validation and send data to server (thanks to `ApiCalls.js` file).
+ * 
+ * ```js
+ * FormHandling = {
+ *       inputs: inputs,
+ *       operation: formSetup.operation,
+ *       picPreview: picPreview,
+ *       pic: pic,
+ *       radioButtons: radioState,
+ *       warningMessage: warningMessage,
+ *       handleChange: handleChange,
+ *       handleSubmit: handleSubmit
+ * }
+ * ```
+ * => For accessing values simply do `customForm.inputs`
+ * 
+ * ## Radio buttons
+ * 
+ * Property `radioButtons` can hold as many radio buttons as desired, name used should be identical to html name property :
+ * 
+ * ```js
+ * radioButtons: {
+ * 		<radioBtn1_name>: <initial_state>,
+ * 		<radioBtn2_name>: <initial_state>,
+ * }
+ * ```
+ * For accessing initial state of radio button and perform updates on value from jsx :
+ * 
+ * ```js
+ * <Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} />
+ * ```
+ * ## Parameters 
+ * 
  * @typedef Object
- * @param   {string}    formSetup.operation     Operation performed by form (Create or Update ?).
+ * @param   {string}    formSetup.operation     Operation performed by form (can be either "create" or "update").
  * @param   {Object}    formSetup.authTokens    Authentification token for server connection.
  * @param   {Object}    formSetup.user          User object for authentification.
  * @param   {string}    formSetup.userID        User ID for retrieving & updating data.
@@ -109,6 +78,81 @@ export const useCustForm = (formSetup) => {
 	const [picPreview, setPicPreview] = useState();
     const [radioState, setRadioState] = useState({});
 
+	// ========= UTILS ========= //
+
+	/**
+	 * Get all form input properties & current values in an object from submit button event.
+	 * @param 	{object}	event		Submit button event object.
+	 * @returns {array}					Array containing input objects with name, type & current value.		
+	 */
+	const getFormInputInfos = (event) => {
+		let inputsArray = []
+
+		// Get input names dynamically
+		for(let i=0; i < 100; i++) {
+			let inputInfos = {
+				"name" : "",
+				"type" : "",
+				"value" : ""
+			};
+
+			let input = event.target[i];
+			// Will reach undefined for other properties present in event target.
+			if(input === undefined){
+				break;
+			}
+			if (input.type === "radio") {
+				// Get only checked button
+				if (input.checked === true) {
+					inputInfos["name"] = input.name;
+					inputInfos["type"] = input.type;
+					inputInfos["value"] = input.value;
+					inputsArray.push(inputInfos);
+				}
+			}
+			else {
+				inputInfos["name"] = input.name;
+				inputInfos["type"] = input.type;
+				inputInfos["value"] = input.value;
+				inputsArray.push(inputInfos);
+			}	
+		}
+		return inputsArray;
+	}
+
+	/**
+	 * This function creates a data object which will be used during update opreation to populate form inputs with received data from server.
+	 * In order achieve this, it's take all input names from a form reference object and use it to create keys of data object.
+	 * @param   {object}  formReference   Form reference object.
+	 * @returns {object}                  Data object with inputs and its data.
+	 */
+	const createDataObject = (formReference, data) => {
+		let htmlElements = [];
+		let allInputNames = [];
+		// Extract all inputs from form
+		let keys = Object.keys(formReference);
+		keys.forEach((key, index) => {
+			htmlElements.push(formReference[key]);
+		})
+		// Put name properties of inputs in an unfiltered list
+		for(let i = 0; i < htmlElements.length; i++) {
+			let inputName = htmlElements[i].name;
+			if(inputName !== undefined && inputName !== "") {
+				allInputNames.push(inputName);
+			}
+		}
+
+		// Remove any duplicates from list (value must be unique)
+		let filteredNames = [...new Set(allInputNames)];
+		
+		// Generate object with corresponding data and return
+		let dataObj = {};
+		for (let i = 0; i < filteredNames.length; i++) {
+			dataObj[filteredNames[i]] = data[filteredNames[i]];
+		}
+		return dataObj;
+	}
+
     /**
 	 * What to do if API call failed.
 	 * @param   {string}    err     Error message to print.
@@ -118,12 +162,18 @@ export const useCustForm = (formSetup) => {
 		console.error(err);
 	}
 
+	// ========= SETUP ========= //
+
     /**
-     * Define if it'll be the form for data creation or update.
+     * Define if it'll be the form for data creation or update, populate input with default values.
      */
     useEffect(() => {
         if (formSetup.operation === "create") {
-            // Set default values
+            // Set initial state of radio buttons
+			setRadioState(radioBtns => ({...formSetup.radioButtons}));
+			// Set inputs for radio buttons
+			setInputs(radioBtns => ({...formSetup.radioButtons}));
+			// Set text inputs (to do ...)
             setInputs(values => ({ ...values}));
         }
         else if (formSetup.operation === "update") {
@@ -151,12 +201,7 @@ export const useCustForm = (formSetup) => {
 		clearFormCookies(formSetup.formRef.current)
 	}, []);
 
-    /**
-     * Set initial state of passed radio buttons.
-     */
-    useEffect(() => {
-        setRadioState(radioBtns => ({...formSetup.radioButtons}))
-    }, []);
+	// ========= CORE FUNCTIONS ========= //
 
     /**
 	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
@@ -239,14 +284,12 @@ export const useCustForm = (formSetup) => {
 			});		
 		}
 		else if (inputType === "radio") {
-			// Convert string "true"/"false" to actual booleean
-			// inputValue = (e.target.id === "true") ? true : false;
-			// setInputs(values => ({ ...values, [inputName]: inputValue }))
             inputValue = e.target.value;
             // Convert string "true"/"false" to actual booleean
 			inputValue = (inputValue === "true") ? true : false;
             // Set state of changed radio button
             setRadioState(values => ({ ...values, [inputName]: inputValue }))
+			// Set input value
             setInputs(values => ({ ...values, [inputName]: inputValue }))
 		}
 		else {
@@ -289,7 +332,7 @@ export const useCustForm = (formSetup) => {
 				alert.error("Des entrées ne sont pas valides !")
 				return;
 			}
-
+		
 			createClient(formSetup.authTokens, formSetup.user, inputs).then().catch(fetchFail);
 
             // Clear form cookie if success

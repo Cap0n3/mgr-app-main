@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useAlert } from 'react-alert';
-import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
 import { 
 	Form,
 	Legend,
@@ -18,168 +16,28 @@ import {
 	WarningBox, 
 	WarnIcon 
 } from "./FormStyles/GlobalForm.style";
-import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
+import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
  */
 const ClientFormComponent = (props) => {
 	const alert = useAlert()
-	const [inputs, setInputs] = useState({});
-	const [pic, setPic] = useState();
-	const [picPreview, setPicPreview] = useState();
-	const {authTokens, user} = useContext(AuthContext)
-	const navigate = useNavigate();
 	const formRef = useRef();
-	const radioBtnTrue = useRef();
-	const radioBtnFalse = useRef();
+    const {authTokens, user} = useContext(AuthContext)
+
+    const [customForm] = useCustForm({
+        operation: props.target,
+        authTokens: authTokens,
+        user: user,
+        userID: props.clientID,
+        formRef: formRef,
+        radioButtons: {
+            invoice_numbering: false,
+        }
+    });
 	
-	/**
-	 * If API call is success, populate clientData & fill form.
-	 * @param {object} data	Data object returned by getClient API Call.
-	 */
-	const processData = (data) => {
-		// Fill form inputs with client data
-		let clientObject = {
-			"student_pic": data.student_pic,
-			"first_name": data.first_name,
-			"last_name": data.last_name,
-			"invoice_fname": data.invoice_fname,
-			"invoice_lname": data.invoice_lname,
-			"student_birth": data.student_birth,
-			"lesson_day": data.lesson_day,
-			"lesson_hour": data.lesson_hour,
-			"lesson_duration": data.lesson_duration,
-			"lesson_frequency": data.lesson_frequency,
-			"instrument": data.instrument,
-			"student_level": data.student_level,
-			"student_email": data.student_email,
-			"student_phone": data.student_phone,
-			"billing_rate": data.billing_rate,
-			"billing_currency": data.billing_currency,
-			"invoice_numbering": data.invoice_numbering,
-			"invoice_email": data.invoice_email,
-			"invoice_phone": data.invoice_phone,
-			"invoice_address": data.invoice_address,
-			"invoice_postal": data.invoice_postal,
-			"invoice_city": data.invoice_city,
-			"invoice_country": data.invoice_country,
-			"payment_option": data.payment_option,
-			"notes": data.notes,
-		}
-
-		setInputs(inputs => ({
-			...clientObject,
-		}))
-
-		setPic(data.student_pic)
-	}
-
-	/**
-	 * What to do if API call failed.
-	 * @param {str} err	Error message to print.
-	 */
-	const fetchFail = (err) => {
-		console.error(err);
-	}
-
-	/**
-	 * Create an event listener to warn user when refreshing.
-	 */
-	useEffect(() => {
-		const promptUser = (e) => {
-		    // Cancel the event
-			e.preventDefault();
-			// Chrome requires returnValue to be set
-			e.returnValue = '';
-		}
-		// When refreshing a 'beforeunload' event is fired (default browser behaviour)
-		window.addEventListener('beforeunload', promptUser);
-		return () => {
-			window.removeEventListener('beforeunload', promptUser);
-		}
-	  }, [])
-
-	/**
-	 * Clear all form related cookies (used for input validation) when refresh or on first render (just in case).
-	 */
-	useEffect(() => {
-		clearFormCookies(formRef.current)
-	}, []);
-
-	/**
-	 * Define if it'll be the form for creation or update based on passed props.
-	 */
-	useEffect(() => {
-		if (props.target === "create") {
-			// Set default value of radio btn "invoice numbering" to false in inputs
-			//  => If radio btn isn't touched value is set to "undefined" (not good ...)
-			setInputs(values => ({ ...values, "invoice_numbering": false }))
-		}
-		else if (props.target === "update") {
-			// On first render check if it's an update (to get client infos)
-			getClient(authTokens, user, props.clientID).then(processData).catch(fetchFail);
-		}
-	}, [props.target, props.clientID])
-	
-	//=================================//
-	//============= UTILS =============//
-	//=================================//
-	
-	/**
-	 * Get all form input properties & current values in an object from submit button event.
-	 * @param 	{object}	event		Submit button event object.
-	 * @returns {array}					Array containing input objects with name, type & current value.		
-	 */
-	const getFormInputInfos = (event) => {
-		let inputsArray = []
-
-		// Get input names dynamically
-		for(let i=0; i < 100; i++) {
-			let inputInfos = {
-				"name" : "",
-				"type" : "",
-				"value" : ""
-			};
-
-			let input = event.target[i];
-			// Will reach undefined for other properties present in event target.
-			if(input === undefined){
-				break;
-			}
-			inputInfos["name"] = input.name;
-			inputInfos["type"] = input.type;
-			inputInfos["value"] = input.value;
-
-			inputsArray.push(inputInfos);
-		}
-
-		return inputsArray;
-	}
-
-	/**
-	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
-	 * if it's set to "false" then it displays the message. Input categories are based on FormValidation.js.
-	 * @param {str} inputName		Input name property.
-	 * @param {str} inputCategory 	Input category ("file", text", "email", "tel", "address", "postal", "textarea").
-	 * @returns {jsx}				JSX with styled-components.
-	 */
-	 const warningMessage = (inputName, inputCategory) => {
-		// Correspond to categories of verification in FormValidation.js
-		const warnMessages = {
-			"file" : "L'image choisie est trop lourde (max 300 ko) ou non valide !",
-			"text" : "Les caractères spéciaux ne sont pas autorisés !",
-			"email" : "L'adresse e-mail n'est pas valide !",
-			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
-			"address" : "L'adresse n'est pas valide !",
-			"postal" : "Le numéro postal n'est pas valide !",
-			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
-		}
-		let cookieStatus = sessionStorage.getItem(inputName)
-		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
-	}
-	
-	/**
+    /**
 	 * For props formatting (ex : create => Create).
 	 * @param {str} str String to format. 
 	 * @returns {str} Formatted string.
@@ -193,148 +51,37 @@ const ClientFormComponent = (props) => {
 	//============= FORM HANDLING =============//
 	//=========================================//
 
-	/**
-	 * Get values from inputs on keyboard press and polulate state "inputs".
-	 * @param {object} e Event object passed by input
-	 */
-	const handleChange = (e) => {
-		let inputType = e.target.type;
-		let inputName = e.target.name;
-		let inputValue;
-		
-		if (inputType === "file") {
-			inputValue = e.target.files[0];
-
-			/* 
-				Condition is here to avoid undefined value to be passed further.
-				Happens if you first choose invalid file, have popup alert and then 
-				press upload button and finally click on cancel without choosing new file.
-			*/
-			if (inputValue === undefined){
-				return;
-			}
-
-			fileValidation(inputValue, inputName).then((isValid) => {
-				if(isValid === true)
-				{
-					// Set image preview for user
-					let file_local_URL = URL.createObjectURL(inputValue);
-					setPicPreview(file_local_URL)
-					
-					// Convert file object to readable format (for upload to server)
-					let reader  = new FileReader();
-					reader.onload = (e) => {
-						// Set updated image
-						setPic(e.target.result);
-					}
-					reader.readAsDataURL(inputValue);
-
-					// See JS spread operator
-					setInputs(values => ({ ...values, [inputName]: inputValue }));	
-				}
-				else if(isValid === false)
-				{
-					if(inputValue.size > 300000) {
-						alert.show("Image trop lourde !");
-					}
-					else {
-						alert.show("Image non valide !");
-					}
-					/* 
-						Nasty trick to force re-render on file input to take into
-						account set cookie and display warning message below input.
-					*/
-					setPicPreview(null);
-
-					// Clear value of file input
-					e.target.value = null;
-				}
-			});		
-		}
-		else if (inputType === "radio") {
-			// Convert string "true"/"false" to actual booleean
-			inputValue = (e.target.id === "true") ? true : false;
-			setInputs(values => ({ ...values, [inputName]: inputValue }))
-		}
-		else {
-			// Then it's a standard input (text, email, tel, select-one, etc...)
-			inputValue = e.target.value;
-
-			// Check if input is valid (no special chars etc...)
-			inputValidation(inputValue, inputType, inputName);
-			
-			setInputs(values => ({ ...values, [inputName]: inputValue }));
-		}
-	}
-
-	const handleSubmit = (event) => {
-		event.preventDefault();
-
-		// Evaluate if it's an update or a creation
-		if (props.target === "create") {
-			
-			// Get inputs infos from submit button
-			let allInputs = getFormInputInfos(event);
-			
-			let wrongInputs = []
-
-			// Check if an input cookie is set to false (last input verification before sending)
-			allInputs.forEach(element => {
-				if(sessionStorage.getItem(element.name) !== null) {
-					if(sessionStorage.getItem(element.name) === "false") {
-						wrongInputs.push(element.name);
-					}
-				}
-			})
-
-			// Warn user if inputs are wrong and quit function (without sending data)
-			if (wrongInputs.length !== 0){
-				alert.error("Des entrées ne sont pas valides !")
-				return;
-			}
-
-			createClient(authTokens, user, inputs).then().catch(fetchFail);
-			// Wait a bit for server to make ressource available
-			setTimeout(() => navigate('/'), 50);
-		}
-		else if (props.target === "update") {
-			updateClient(authTokens, user, props.clientID, inputs).then().catch(fetchFail);
-			// Wait a bit for server to make ressource available
-			setTimeout(() => navigate('/'), 50);
-		}
-	}
-
 	return (
 		<>
-			<Form ref={formRef} onSubmit={handleSubmit}>
+			<Form ref={formRef} onSubmit={customForm.handleSubmit}>
 				{/* 
 					Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs 
 					Note: here getItem() get input validation strings "true" or "false" or value null from cookies.
 				*/}
 				<Legend><Bullet>1</Bullet>Infos Client</Legend>
 				<Label>Photo :</Label>
-				{picPreview &&  props.target === "create" ? <AvatarWrapper><Avatar src={picPreview} /></AvatarWrapper> : null }
-				{props.target === "update" ? <AvatarWrapper><Avatar src={pic} /></AvatarWrapper> : null}
+				{customForm.picPreview &&  customForm.operation === "create" ? <AvatarWrapper><Avatar src={customForm.picPreview} /></AvatarWrapper> : null }
+				{customForm.operation === "update" ? <AvatarWrapper><Avatar src={customForm.pic} /></AvatarWrapper> : null}
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
-				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={handleChange} />
-				{warningMessage("student_pic", "file")}
+				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
+				{customForm.warningMessage("student_pic", "file")}
 				<Label>Prénom * :</Label>
-				<Input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={inputs.first_name || ""} onChange={handleChange} required />
-				{warningMessage("first_name", "text")}
+				<Input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("first_name", "text")}
 				<Label>Nom * :</Label>
-				<Input isValid={sessionStorage.getItem("last_name")} type="text" name="last_name" value={inputs.last_name || ""} onChange={handleChange} required />
-				{warningMessage("last_name", "text")}
+				<Input isValid={sessionStorage.getItem("last_name")} type="text" name="last_name" value={customForm.inputs.last_name || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("last_name", "text")}
 				<Label>Email client :</Label>
-				<Input isValid={sessionStorage.getItem("student_email")} type="email" name="student_email" value={inputs.student_email || ""} onChange={handleChange} />
-				{warningMessage("student_email", "email")}
+				<Input isValid={sessionStorage.getItem("student_email")} type="email" name="student_email" value={customForm.inputs.student_email || ""} onChange={customForm.handleChange} />
+				{customForm.warningMessage("student_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={sessionStorage.getItem("student_phone")} type="tel" name="student_phone" value={inputs.student_phone || ""} onChange={handleChange} />
-				{warningMessage("student_phone", "tel")}
+				<Input isValid={sessionStorage.getItem("student_phone")} type="tel" name="student_phone" value={customForm.inputs.student_phone || ""} onChange={customForm.handleChange} />
+				{customForm.warningMessage("student_phone", "tel")}
 				<Label>Date de naissance :</Label>
-				<Input type="date" name="student_birth" value={inputs.student_birth || ""} onChange={handleChange} />
+				<Input type="date" name="student_birth" value={customForm.inputs.student_birth || ""} onChange={customForm.handleChange} />
 				<Legend><Bullet>2</Bullet>Infos cours</Legend>
 				<Label>Jour du cours * :</Label>
-				<Select name="lesson_day" defaultValue={"DEFAULT"} value={inputs.lesson_day} onChange={handleChange} required>
+				<Select name="lesson_day" defaultValue={"DEFAULT"} value={customForm.inputs.lesson_day} onChange={customForm.handleChange} required>
 					<option value="DEFAULT" disabled>Choisir un jour ...</option>
 					<option value="Lundi">Lundi</option>
 					<option value="Mardi">Mardi</option>
@@ -345,11 +92,11 @@ const ClientFormComponent = (props) => {
 					<option value="Dimanche">Dimanche</option>
 				</Select>
 				<Label>Heure du cours * :</Label>
-				<Input type="time" name="lesson_hour" min="00:00" max="23:00" value={inputs.lesson_hour || ""} onChange={handleChange} required/>
+				<Input type="time" name="lesson_hour" min="00:00" max="23:00" value={customForm.inputs.lesson_hour || ""} onChange={customForm.handleChange} required/>
 				<Label>Durée du cours (min) * :</Label>
-				<Input type="number" name="lesson_duration" value={inputs.lesson_duration || ""} onChange={handleChange} required />
+				<Input type="number" name="lesson_duration" value={customForm.inputs.lesson_duration || ""} onChange={customForm.handleChange} required />
 				<Label>Fréquence du cours * :</Label>
-				<Select name="lesson_frequency" defaultValue={"DEFAULT"} value={inputs.lesson_frequency} onChange={handleChange} required>
+				<Select name="lesson_frequency" defaultValue={"DEFAULT"} value={customForm.inputs.lesson_frequency} onChange={customForm.handleChange} required>
 					<option value="DEFAULT" disabled>Choisir une fréquence ...</option>
 					<option value="Quotidien">Quotidien</option>
 					<option value="Hebdomadaire">Hebdomadaire</option>
@@ -357,10 +104,10 @@ const ClientFormComponent = (props) => {
 					<option value="Libre">A la carte</option>
 				</Select>
 				<Label>Instrument :</Label>
-				<Input isValid={sessionStorage.getItem("instrument")} type="text" name="instrument" value={inputs.instrument || ""} onChange={handleChange} />
-				{warningMessage("instrument", "text")}
+				<Input isValid={sessionStorage.getItem("instrument")} type="text" name="instrument" value={customForm.inputs.instrument || ""} onChange={customForm.handleChange} />
+				{customForm.warningMessage("instrument", "text")}
 				<Label>Niveau :</Label>
-				<Select name="student_level" defaultValue={"DEFAULT"} value={inputs.student_level} onChange={handleChange}>
+				<Select name="student_level" defaultValue={"DEFAULT"} value={customForm.inputs.student_level} onChange={customForm.handleChange}>
 					<option value="DEFAULT" disabled>Choisir un niveau ...</option>
 					<option value="D1">Débutant 1</option>
 					<option value="D2">Débutant 2</option>
@@ -374,40 +121,40 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Legend><Bullet>3</Bullet>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_fname")} type="text" name="invoice_fname" value={inputs.invoice_fname || ""} onChange={handleChange} required />
-				{warningMessage("invoice_fname", "text")}
+				<Input isValid={sessionStorage.getItem("invoice_fname")} type="text" name="invoice_fname" value={customForm.inputs.invoice_fname || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_fname", "text")}
 				<Label>Nom Facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_lname")} type="text" name="invoice_lname" value={inputs.invoice_lname || ""} onChange={handleChange} required />
-				{warningMessage("invoice_lname", "text")}
+				<Input isValid={sessionStorage.getItem("invoice_lname")} type="text" name="invoice_lname" value={customForm.inputs.invoice_lname || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_lname", "text")}
 				<Label>Email Facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_email")} type="email" name="invoice_email" value={inputs.invoice_email || ""} onChange={handleChange} required />
-				{warningMessage("invoice_email", "email")}
+				<Input isValid={sessionStorage.getItem("invoice_email")} type="email" name="invoice_email" value={customForm.inputs.invoice_email || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_phone")} type="tel" name="invoice_phone" value={inputs.invoice_phone || ""} onChange={handleChange} required />
-				{warningMessage("invoice_phone", "tel")}
+				<Input isValid={sessionStorage.getItem("invoice_phone")} type="tel" name="invoice_phone" value={customForm.inputs.invoice_phone || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_phone", "tel")}
 				<Label>Adresse facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_address")} type="text" name="invoice_address" value={inputs.invoice_address || ""} onChange={handleChange} required />
-				{warningMessage("invoice_address", "address")}
+				<Input isValid={sessionStorage.getItem("invoice_address")} type="text" name="invoice_address" value={customForm.inputs.invoice_address || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_address", "address")}
 				<Label>Code postal * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_postal")} type="text" name="invoice_postal" value={inputs.invoice_postal || ""} onChange={handleChange} required />
-				{warningMessage("invoice_postal", "postal")}
+				<Input isValid={sessionStorage.getItem("invoice_postal")} type="text" name="invoice_postal" value={customForm.inputs.invoice_postal || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_postal", "postal")}
 				<Label>Ville * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_city")} type="text" name="invoice_city" value={inputs.invoice_city || ""} onChange={handleChange} required />
-				{warningMessage("invoice_city", "text")}
+				<Input isValid={sessionStorage.getItem("invoice_city")} type="text" name="invoice_city" value={customForm.inputs.invoice_city || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_city", "text")}
 				<Label>Pays * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_country")} type="text" name="invoice_country" value={inputs.invoice_country || ""} onChange={handleChange} required />
-				{warningMessage("invoice_country", "text")}
+				<Input isValid={sessionStorage.getItem("invoice_country")} type="text" name="invoice_country" value={customForm.inputs.invoice_country || ""} onChange={customForm.handleChange} required />
+				{customForm.warningMessage("invoice_country", "text")}
 				<Legend><Bullet>4</Bullet>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
-				<Input type="number" name="billing_rate" value={inputs.billing_rate || ""} onChange={handleChange} required />
+				<Input type="number" name="billing_rate" value={customForm.inputs.billing_rate || ""} onChange={customForm.handleChange} required />
 				<Label>Monnaie * :</Label>
-				<Select name="billing_currency" defaultValue={"DEFAULT"} value={inputs.billing_currency} onChange={handleChange} required>
+				<Select name="billing_currency" defaultValue={"DEFAULT"} value={customForm.inputs.billing_currency} onChange={customForm.handleChange} required>
 					<option value="DEFAULT" disabled>Choisir une monnaie ...</option>
 					<option value="CHF">CHF - Francs suisse</option>
 					<option value="EUR">EUR - Euros</option>
 				</Select>
 				<Label>Mode de règlement * :</Label>
-				<Select name="payment_option" defaultValue={"DEFAULT"} value={inputs.payment_option} onChange={handleChange} required>
+				<Select name="payment_option" defaultValue={"DEFAULT"} value={customForm.inputs.payment_option} onChange={customForm.handleChange} required>
 					<option value="DEFAULT" disabled>Choisir un mode de règlement ...</option>
 					<option value="Versement">Virement bancaire</option>
 					<option value="Bulletin">Bulletin</option>
@@ -416,13 +163,13 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Label>Référence facture * :</Label>
 				<RadioLabel htmlFor="numbering_true">Oui</RadioLabel>
-				<Input type="radio" ref={radioBtnTrue} id="true" name="invoice_numbering" checked={inputs.invoice_numbering === true} value={inputs.invoice_numbering} onChange={handleChange} required />
+				<Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} required />
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
-				<Input type="radio" ref={radioBtnFalse} id="false" name="invoice_numbering" checked={inputs.invoice_numbering === false || inputs.invoice_numbering === undefined} value={inputs.invoice_numbering} onChange={handleChange} />
-				<Legend><Bullet>5</Bullet>Notes</Legend>
-				<Textarea isValid={sessionStorage.getItem("notes")} name="notes" value={inputs.notes || ""} onChange={handleChange}></Textarea>
-				{warningMessage("notes", "textarea")}
-				<Input type="submit" value={upperFirstChar(props.target)} />
+				<Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? !customForm.radioButtons["invoice_numbering"] || "" : !customForm.inputs.invoice_numbering || ""} value="false" onChange={customForm.handleChange} />  
+                <Legend><Bullet>5</Bullet>Notes</Legend>
+				<Textarea isValid={sessionStorage.getItem("notes")} name="notes" value={customForm.inputs.notes || ""} onChange={customForm.handleChange}></Textarea>
+				{customForm.warningMessage("notes", "textarea")}
+				<Input type="submit" value={upperFirstChar(customForm.operation)} />
 			</Form>
 		</>);
 }
