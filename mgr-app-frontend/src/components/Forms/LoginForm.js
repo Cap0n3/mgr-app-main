@@ -1,12 +1,13 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import AuthContext from '../../context/AuthContext';
 import { Form, Input, WarningBox, WarnIcon } from "./FormStyles/GlobalForm.style";
 import { LogoWrapper, AppLogo, AppTitle } from "./FormStyles/LoginForm.style";
 
-const LoginFormComponent = () => {
-    let { loginUser } = useContext(AuthContext)
-    let { loginState } = useContext(AuthContext)
+import { SignupContext } from "../../App";
 
+const LoginFormComponent = () => {
+    let { loginUser } = useContext(AuthContext);
+    let { loginState } = useContext(AuthContext);
     /**
      * This func warns user if login attempt was unsuccessful by displaying a warning message.
      * It uses login state passed by AuthContext, if false then it'll display message.

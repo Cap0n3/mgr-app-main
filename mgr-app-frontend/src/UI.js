@@ -8,9 +8,10 @@ import AuthContext from "./context/AuthContext";
 
 const UI = () => {
 	const [isOpen, setOpen] = useState(false);
-	const { user } = useContext(AuthContext)
+	const { user } = useContext(AuthContext);
+    
     if(user === null) {
-        return <LoginPage />
+        return <LoginPage />   
     } 
     else 
     {

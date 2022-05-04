@@ -8,12 +8,14 @@ import CreateClient from "../pages/CreateClient";
 import UpdateClient from "../pages/UpdateClient";
 import Billing from "../pages/Billing";
 import Notes from "../pages/Notes";
+import SignUp from "../pages/SignupPage";
 
 const Content = () => {
 	return(
 		<div className="content">
 			<Routes>
 				<Route path="/login" element={<LoginPage />} />
+				<Route path="/signup" element={<SignUp />} />
 				<Route path="/" element={<Dashboard />} />
 				<Route path="/client/:clientID" element={<ClientDetail />} />
 				<Route path="/client/create" element={<CreateClient />} />
