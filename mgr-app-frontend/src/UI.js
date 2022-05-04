@@ -5,14 +5,22 @@ import { FaBars } from "react-icons/fa";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { useState, useContext } from "react";
 import AuthContext from "./context/AuthContext";
+import { SignupContext } from "./App";
+import SignUp from "./pages/SignupPage";
 
 const UI = () => {
 	const [isOpen, setOpen] = useState(false);
 	const { user } = useContext(AuthContext);
+    const { isSignup, setIsSignup } = useContext(SignupContext);
     
     if(user === null) {
         // Find condition 
-        return <LoginPage />   
+        console.log(isSignup)
+        if(isSignup){
+            return <SignUp />
+        } else {
+            return <LoginPage />  
+        }
     } 
     else 
     {

@@ -1,9 +1,11 @@
+import { useState } from "react";
 import "./layout.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import UI from "./UI"
 import { AuthProvider } from "./context/AuthContext";
 import { transitions, positions, type, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from "react-alert-template-basic";
+import { createContext } from "react";
 
 // optional configuration for alert popup
 const options = {
@@ -16,16 +18,23 @@ const options = {
 	transition: transitions.SCALE
 }
 
+export const SignupContext = createContext();
+
 export default function App() {
+	const [ isSignup, setIsSignup] = useState(false);
+	const value = { isSignup, setIsSignup };
+	
 	return (
 		<Router>
-			<AuthProvider>
-				<AlertProvider template={AlertTemplate} {...options}>
-					<div className="App">
-						<UI />
-					</div>
-				</AlertProvider>
-			</AuthProvider>
+			<SignupContext.Provider value={value}>
+				<AuthProvider>
+					<AlertProvider template={AlertTemplate} {...options}>
+						<div className="App">
+							<UI />
+						</div>
+					</AlertProvider>
+				</AuthProvider>
+			</SignupContext.Provider>
 		</Router>
 	);
 }

@@ -8,6 +8,7 @@ import { SignupContext } from "../../App";
 const LoginFormComponent = () => {
     let { loginUser } = useContext(AuthContext);
     let { loginState } = useContext(AuthContext);
+    const { isSignup, setIsSignup } = useContext(SignupContext);
     /**
      * This func warns user if login attempt was unsuccessful by displaying a warning message.
      * It uses login state passed by AuthContext, if false then it'll display message.
@@ -27,6 +28,7 @@ const LoginFormComponent = () => {
                 <Input type="text" name="username" placeholder="Enter Username" />
                 <Input type="password" name="password" placeholder="Enter Password" />
                 <Input type="submit" value="Login" />
+                <button onClick={() => setIsSignup(true)}>Sign Up !</button>
             </Form>
         </>
     );

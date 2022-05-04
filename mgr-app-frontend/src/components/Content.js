@@ -14,8 +14,7 @@ const Content = () => {
 	return(
 		<div className="content">
 			<Routes>
-				<Route path="/login" element={<LoginPage />} />
-				<Route path="/signup" element={<SignUp />} />
+				<Route path="/login" element={<LoginPage />} /> {/* See UI.js for signup page */}
 				<Route path="/" element={<Dashboard />} />
 				<Route path="/client/:clientID" element={<ClientDetail />} />
 				<Route path="/client/create" element={<CreateClient />} />
