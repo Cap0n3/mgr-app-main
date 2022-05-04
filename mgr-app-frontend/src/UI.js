@@ -11,6 +11,7 @@ const UI = () => {
 	const { user } = useContext(AuthContext);
     
     if(user === null) {
+        // Find condition 
         return <LoginPage />   
     } 
     else 
