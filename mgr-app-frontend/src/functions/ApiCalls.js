@@ -7,55 +7,45 @@ const SERVER = "http://127.0.0.1:8000"
 // ==================== //
 // ====== CREATE ====== //
 // ==================== //
+
+/**
+ * This function job is to create a well formatted API call to server (Multipart/form-data) to create a new entry in database and handle errors.
+ * @param   {Object}    authTokens  Token to connect to server. 
+ * @param   {Object}    user        User infos for identification.
+ * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).
+ * @returns                         True or throw Error if any.
+ */
 export const createClient = async (authTokens, user, inputs) => {
-        /*
-            For image uploading, I choosed multipart/form-data instead of base64 encoding.
-            Multipart/form-data is standard, faster and consumes less bandwidth.
-        */
-        let profilePic = inputs.student_pic;
-        let formData = new FormData();
+    /*
+        The FormData interface provides a way to easily construct a set of key/value pairs representing form fields and their values.
+        It uses the same format a form would use if the encoding type were set to "multipart/form-data".
 
-        // Append data to object
-        if(profilePic !== undefined){
-            formData.append("student_pic", profilePic);
-        }
-        formData.append("first_name", inputs.first_name);
-        formData.append("last_name", inputs.last_name);
-        formData.append("lesson_day", inputs.lesson_day);
-        formData.append("lesson_hour", inputs.lesson_hour);
-        formData.append("lesson_duration", inputs.lesson_duration);
-        formData.append("lesson_frequency", inputs.lesson_frequency);
-        formData.append("instrument", inputs.instrument);
-        formData.append("student_email", inputs.student_email);
-        formData.append("student_phone", inputs.student_phone);
-        formData.append("student_level", inputs.student_level);
-        formData.append("student_birth", inputs.student_birth);
-        formData.append("invoice_fname", inputs.invoice_fname);
-        formData.append("invoice_lname", inputs.invoice_lname);
-        formData.append("invoice_email", inputs.invoice_email);
-        formData.append("invoice_phone", inputs.invoice_phone);
-        formData.append("invoice_address", inputs.invoice_address);
-        formData.append("invoice_postal", inputs.invoice_postal);
-        formData.append("invoice_city", inputs.invoice_city);
-        formData.append("invoice_country", inputs.invoice_country);
-        formData.append("invoice_numbering", inputs.invoice_numbering);
-        formData.append("billing_rate", inputs.billing_rate);
-        formData.append("billing_currency", inputs.billing_currency);
-        formData.append("payment_option", inputs.payment_option);
-        formData.append("notes", inputs.notes);
+        Note: For image uploading, I choosed multipart/form-data instead of base64 encoding.
+        Multipart/form-data is standard, faster and consumes less bandwidth.
 
-        let response = await fetch(`${SERVER}/client/create/`, {
-            method: "POST",
-            headers: {
-                // Do not put Content-Type: multipart/form-data ! FormData() doesn't handle "boundary" ...
-                // The trick here is to let server find right according to body content type.
-                'Authorization':'Bearer ' + String(authTokens.access)
-            },
-            body: formData
-        })
+    */
+    let formData = new FormData();
     
-        return checkErrors(response, user, "CREATE")
-    }
+    // Get entries in an array
+    const inputEntries = Object.entries(inputs)
+
+    // Append input data to FormData object
+    inputEntries.map((item) => {
+        formData.append(item[0], item[1])
+    })
+    
+    let response = await fetch(`${SERVER}/client/create/`, {
+        method: "POST",
+        headers: {
+            // Do not put Content-Type: multipart/form-data ! FormData() doesn't handle "boundary" ...
+            // The trick here is to let server find right according to body content type.
+            'Authorization':'Bearer ' + String(authTokens.access)
+        },
+        body: formData
+    })
+
+    return checkErrors(response, user, "CREATE")
+}
 
 // ================== //
 // ====== READ ====== //

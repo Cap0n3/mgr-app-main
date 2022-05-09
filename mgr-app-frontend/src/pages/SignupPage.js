@@ -14,14 +14,14 @@ const SignUp = () => {
     return(
         <PageBody>
             <LeftSectionWrapper>
-                <LeftSectionHeader>
-                </LeftSectionHeader>
                 <LeftSectionBody>
                     <Title>Bienvenue</Title>
                     {/* <Image src={Illustration} /> */}
                 </LeftSectionBody>
             </LeftSectionWrapper>
-            <RightSectionWrapper></RightSectionWrapper>
+            <RightSectionWrapper>
+                
+            </RightSectionWrapper>
         </PageBody>
     );
 }

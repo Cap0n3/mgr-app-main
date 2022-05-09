@@ -82,7 +82,7 @@ export const useCustForm = (formSetup) => {
 
 	/**
 	 * Get all form input properties & current values in an object from submit button event.
-	 * @param 	{object}	event		Submit button event object.
+	 * @param 	{Object}	event		Submit button event object.
 	 * @returns {array}					Array containing input objects with name, type & current value.		
 	 */
 	const getFormInputInfos = (event) => {
@@ -123,8 +123,8 @@ export const useCustForm = (formSetup) => {
 	/**
 	 * This function creates a data object which will be used during update opreation to populate form inputs with received data from server.
 	 * In order achieve this, it's take all input names from a form reference object and use it to create keys of data object.
-	 * @param   {object}  formReference   Form reference object.
-	 * @returns {object}                  Data object with inputs and its data.
+	 * @param   {Object}  formReference   Form reference object.
+	 * @returns {Object}                  Data object with inputs and its data.
 	 */
 	const createDataObject = (formReference, data) => {
 		let htmlElements = [];
@@ -332,19 +332,20 @@ export const useCustForm = (formSetup) => {
 				alert.error("Des entrées ne sont pas valides !")
 				return;
 			}
-		
-			createClient(formSetup.authTokens, formSetup.user, inputs).then().catch(fetchFail);
-
-            // Clear form cookie if success
-            clearFormCookies(formSetup.formRef.current)
-
-			// Wait a bit for server to make ressource available
-			setTimeout(() => navigate('/'), 100);
+			
+			// Make API call to server
+			createClient(formSetup.authTokens, formSetup.user, inputs).then(() => {
+				// If success, clear form cookie go to dashboard
+				clearFormCookies(formSetup.formRef.current)
+				navigate('/');
+			}).catch(fetchFail);
 		}
 		else if (formSetup.operation === "update") {
-			updateClient(formSetup.authTokens, formSetup.user, formSetup.userID, inputs).then().catch(fetchFail);
-			// Wait a bit for server to make ressource available
-			setTimeout(() => navigate('/'), 100);
+			updateClient(formSetup.authTokens, formSetup.user, formSetup.userID, inputs).then(() => {
+				// If success, clear form cookie go to dashboard
+				clearFormCookies(formSetup.formRef.current)
+				navigate('/');
+			}).catch(fetchFail);
 		}
 	}
 
