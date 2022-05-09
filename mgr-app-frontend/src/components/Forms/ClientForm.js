@@ -24,6 +24,10 @@ const ClientFormComponent = (props) => {
 
     const [customForm] = useCustForm({
         operation: props.target,
+		endpoints: {
+			create: "http://127.0.0.1:8000/client/create/",
+			update: "http://127.0.0.1:8000/client/update/"
+		},
         authTokens: authTokens,
         user: user,
         userID: props.clientID,

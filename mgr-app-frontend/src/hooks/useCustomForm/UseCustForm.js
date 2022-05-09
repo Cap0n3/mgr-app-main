@@ -2,25 +2,33 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from 'react-alert';
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
-import { createClient, getClient, updateClient } from "../../functions/ApiCalls";
+import { createEntry, getClient, updateEntry } from "../../functions/ApiCalls";
 import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalForm.style";
 
 /**
  * # Custom Form Hook
  * 
  * Custom hook for form handling, really handy for profile forms. It can handle default values for radio inputs, perform input validation, 
- * display warning messages and creating/updating values in form.
+ * display warning messages and creating/updating values in form. It'll transmit data inputs to server endpoints to create and update 
+ * entries in database (thanks to `ApiCalls.js` file).
+ * 
+ * > **IMPORTANT !** : Name properties of form inputs must have the same name as database model. For example, `first_name` input should relate
+ * to `first_name` column in database.
  * 
  * ## Setup example
  * 
  * ```js
  * const [customForm] = useCustForm({
- *		operation: "update",
- *		authTokens: authTokens,
+ *		operation: "update", // "create" or "update"
+ *		endpoints: { // Server endpoints
+ *			create: "http://127.0.0.1:8000/client/create/",
+ *			update: "http://127.0.0.1:8000/client/update/"
+ *		},
+ *		authTokens: authTokens, // Authenfification tokens
  *		user: user,
- *		userID: props.clientID,
- *		formRef: formRef,
- *		radioButtons: {
+ *		entryID: props.clientID, // Primary key of entry to update
+ *		formRef: formRef, // Form reference
+ *		radioButtons: { // All radio buttons and their initial state
  *			invoice_numbering: false,
  *		}
  * });
@@ -43,7 +51,12 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * }
  * ```
  * => For accessing values simply do `customForm.inputs`
+ * ## Image input
  * 
+ * Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
+ * ```html
+ * <input type="file" id="img_upload" name="student_pic" />
+ * ```
  * ## Radio buttons
  * 
  * Property `radioButtons` can hold as many radio buttons as desired, name used should be identical to html name property :
@@ -63,9 +76,10 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * 
  * @typedef Object
  * @param   {string}    formSetup.operation     Operation performed by form (can be either "create" or "update").
+ * @param	{Object}	formSetup.endoints		Object containing create and update operation endoints.
  * @param   {Object}    formSetup.authTokens    Authentification token for server connection.
  * @param   {Object}    formSetup.user          User object for authentification.
- * @param   {string}    formSetup.userID        User ID for retrieving & updating data.
+ * @param   {string}    formSetup.entryID        User ID for retrieving & updating data.
  * @param   {Object}    formSetup.formRef       Form reference used to extract inputs keys dynamically.
  * @param   {Object}    formSetup.radioButtons  Radio button name (should be the same as input name) and initial state value.      
  * @returns                                     Returns all values necessary for form handling.
@@ -178,7 +192,7 @@ export const useCustForm = (formSetup) => {
         }
         else if (formSetup.operation === "update") {
             // On first render check if it's an update (to get client infos)
-            getClient(formSetup.authTokens, formSetup.user, formSetup.userID).then((data) => {
+            getClient(formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
                 let serverData = createDataObject(formSetup.formRef.current, data)
                 // Fill inputs with data received from server
                 setInputs(inputs => ({
@@ -192,7 +206,7 @@ export const useCustForm = (formSetup) => {
         else {
             console.error("No operation has been set ! Please choose either create or update.")
         }
-    }, [formSetup.operation, formSetup.userID]);
+    }, [formSetup.operation, formSetup.entryID]);
 
     /**
 	 * Clear all form related cookies (used for input validation) when refresh or on first render (just in case).
@@ -334,15 +348,15 @@ export const useCustForm = (formSetup) => {
 			}
 			
 			// Make API call to server
-			createClient(formSetup.authTokens, formSetup.user, inputs).then(() => {
-				// If success, clear form cookie go to dashboard
+			createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then(() => {
+				// If success, clear form cookies & go to dashboard
 				clearFormCookies(formSetup.formRef.current)
 				navigate('/');
 			}).catch(fetchFail);
 		}
 		else if (formSetup.operation === "update") {
-			updateClient(formSetup.authTokens, formSetup.user, formSetup.userID, inputs).then(() => {
-				// If success, clear form cookie go to dashboard
+			updateEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID, inputs).then(() => {
+				// If success, clear form cookies & go to dashboard
 				clearFormCookies(formSetup.formRef.current)
 				navigate('/');
 			}).catch(fetchFail);

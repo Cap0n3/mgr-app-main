@@ -9,13 +9,15 @@ const SERVER = "http://127.0.0.1:8000"
 // ==================== //
 
 /**
- * This function job is to create a well formatted API call to server (Multipart/form-data) to create a new entry in database and handle errors.
- * @param   {Object}    authTokens  Token to connect to server. 
+ * This function creates an API request to create a new entry in a database on a remote server and handle errors. 
+ * > **Note :** The body of the request uses a `Multipart/form-data` format.
+ * @param   {string}    endpoint    String representing server endpoint URL.   
+ * @param   {Object}    authTokens  Authentification token to connect to server.
  * @param   {Object}    user        User infos for identification.
  * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).
- * @returns                         True or throw Error if any.
+ * @returns                         True or throw Error (if any).
  */
-export const createClient = async (authTokens, user, inputs) => {
+export const createEntry = async (endpoint, authTokens, user, inputs) => {
     /*
         The FormData interface provides a way to easily construct a set of key/value pairs representing form fields and their values.
         It uses the same format a form would use if the encoding type were set to "multipart/form-data".
@@ -34,7 +36,7 @@ export const createClient = async (authTokens, user, inputs) => {
         formData.append(item[0], item[1])
     })
     
-    let response = await fetch(`${SERVER}/client/create/`, {
+    let response = await fetch(endpoint, {
         method: "POST",
         headers: {
             // Do not put Content-Type: multipart/form-data ! FormData() doesn't handle "boundary" ...
@@ -85,45 +87,45 @@ export const getClient = async (authTokens, user, clientID) => {
 // ====== UPDATE ====== //
 // ==================== //
 
-export const updateClient =  async (authTokens, user, clientID, inputs) => {
-    
-    let profilePic = inputs.student_pic;
+/**
+ * This function creates an API request to update an entry in a database on a remote server and handle errors.
+ * > **Note :** The body of the request uses a `Multipart/form-data` format.
+ * @param   {string}    endpoint    String representing server endpoint URL.
+ * @param   {Object}    authTokens  Authentification token to connect to server.
+ * @param   {Object}    user        User infos for identification.
+ * @param   {string}    entryID     ID (primary key) of database entry to update.
+ * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).   
+ * @returns                         True or throw Error (if any).
+ */
+export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) => {
+    // Create FormData object
     let formData = new FormData();
     
-    /* 
-        If type of profilePic is equal to a string then it's a link to a an img stored by server. 
-        Basically, it means that user have not updated his/her profile pic so don't update value of 
-        this var with a string because a file object is expected by the server.
-    */ 
-    if(profilePic !== undefined && typeof(profilePic) != "string"){
-        formData.append("student_pic", profilePic);
-    }
-    formData.append("first_name", inputs.first_name);
-    formData.append("last_name", inputs.last_name);
-    formData.append("lesson_day", inputs.lesson_day);
-    formData.append("lesson_hour", inputs.lesson_hour);
-    formData.append("lesson_duration", inputs.lesson_duration);
-    formData.append("lesson_frequency", inputs.lesson_frequency);
-    formData.append("instrument", inputs.instrument);
-    formData.append("student_email", inputs.student_email);
-    formData.append("student_phone", inputs.student_phone);
-    formData.append("student_level", inputs.student_level);
-    formData.append("student_birth", inputs.student_birth);
-    formData.append("invoice_fname", inputs.invoice_fname);
-    formData.append("invoice_lname", inputs.invoice_lname);
-    formData.append("invoice_email", inputs.invoice_email);
-    formData.append("invoice_phone", inputs.invoice_phone);
-    formData.append("invoice_address", inputs.invoice_address);
-    formData.append("invoice_postal", inputs.invoice_postal);
-    formData.append("invoice_city", inputs.invoice_city);
-    formData.append("invoice_country", inputs.invoice_country);
-    formData.append("invoice_numbering", inputs.invoice_numbering);
-    formData.append("billing_rate", inputs.billing_rate);
-    formData.append("billing_currency", inputs.billing_currency);
-    formData.append("payment_option", inputs.payment_option);
-    formData.append("notes", inputs.notes);
+    // Get entries in an array
+    const inputEntries = Object.entries(inputs)
 
-    let response = await fetch(`${SERVER}/client/update/${clientID}`, {
+    // Append input data to FormData object & test if image is not a link to server stored image.
+    inputEntries.map((item) => {
+        const isImage = /(pic|picture|image|img)/i;
+        /* 
+            If value of image input is equal to a string then it's a link to a an img stored by server. 
+            Basically, this means that user have not updated his/her profile pic so don't update value of 
+            this var with a string because ONLY a file object is expected by the server.
+        */ 
+        if(isImage.test(item[0]) && typeof(item[1]) !== "string"){
+            formData.append(item[0], item[1])
+        }
+        else if(!isImage.test(item[0])) {
+            // It's not an image input
+            formData.append(item[0], item[1])
+        }
+        
+    })
+
+    // Create final URL with entry ID
+    const updateEndpoint = endpoint + entryID;
+
+    let response = await fetch(updateEndpoint, {
         method: "PUT",
         headers: {
             // 'Content-Type':'application/json',
