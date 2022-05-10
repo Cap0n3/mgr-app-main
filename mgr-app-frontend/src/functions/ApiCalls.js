@@ -121,7 +121,7 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
         }
         
     })
-
+    
     // Create final URL with entry ID
     const updateEndpoint = endpoint + entryID;
 

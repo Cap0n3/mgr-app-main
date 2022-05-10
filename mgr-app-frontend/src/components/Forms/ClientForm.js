@@ -30,7 +30,8 @@ const ClientFormComponent = (props) => {
 		},
         authTokens: authTokens,
         user: user,
-        userID: props.clientID,
+        entryID: props.clientID,
+		navigateTo: "/",
         formRef: formRef,
         radioButtons: {
             invoice_numbering: false,

@@ -15,7 +15,7 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * > **IMPORTANT !** : Name properties of form inputs must have the same name as database model. For example, `first_name` input should relate
  * to `first_name` column in database.
  * 
- * ## Setup example
+ * ## Hook Setup
  * 
  * ```js
  * const [customForm] = useCustForm({
@@ -25,40 +25,15 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  *			update: "http://127.0.0.1:8000/client/update/"
  *		},
  *		authTokens: authTokens, // Authenfification tokens
- *		user: user,
- *		entryID: props.clientID, // Primary key of entry to update
+ *		user: user, // User information
+ *		entryID: props.clientID, // Primary key of entry (for update operation)
+ *		navigateTo: "/home",	// URL to navigate to if form submit is a success
  *		formRef: formRef, // Form reference
  *		radioButtons: { // All radio buttons and their initial state
  *			invoice_numbering: false,
  *		}
  * });
  * ```
- * 
- * ## Return Object
- * Here object `customForm` will hold these values & methods. The standard methods `handleChange` will handle input entries and profile pic, 
- * `handleSubmit` will perform input validation and send data to server (thanks to `ApiCalls.js` file).
- * 
- * ```js
- * FormHandling = {
- *       inputs: inputs,
- *       operation: formSetup.operation,
- *       picPreview: picPreview,
- *       pic: pic,
- *       radioButtons: radioState,
- *       warningMessage: warningMessage,
- *       handleChange: handleChange,
- *       handleSubmit: handleSubmit
- * }
- * ```
- * => For accessing values simply do `customForm.inputs`
- * ## Image input
- * 
- * Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
- * ```html
- * <input type="file" id="img_upload" name="student_pic" />
- * ```
- * ## Radio buttons
- * 
  * Property `radioButtons` can hold as many radio buttons as desired, name used should be identical to html name property :
  * 
  * ```js
@@ -67,11 +42,109 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * 		<radioBtn2_name>: <initial_state>,
  * }
  * ```
- * For accessing initial state of radio button and perform updates on value from jsx :
+ * ## Returned Object
+ * Here returned object stored in `customForm` will hold these values & methods. For instance, standard form functions like `handleChange` will handle input 
+ * entries and profile pic, `handleSubmit` will perform input validation and send data to server. 
  * 
  * ```js
- * <Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} />
+ * FormHandling = {
+ *		inputs: inputs, // Current value of all inputs
+ *		operation: formSetup.operation, // Operation
+ *		picPreview: picPreview, // Pic image for preview by user
+ *		pic: pic, // Pic source URL sent by server (if entry already exists in database)
+ *		radioButtons: radioState, // Radio initial state
+ *		warningMessage: warningMessage, // Error message if validation is not successful
+ *		handleChange: handleChange, // Function to get changes on inputs
+ *		handleSubmit: handleSubmit, // Function to submit form data to server
+ *		submitError: submitError.message, // Error message if something went wrong durant data transfer
+ * }
  * ```
+ * 
+ * In this example, for accessing values simply do `customForm.<value>`.
+ * 
+ * - To access `handleChange` function :
+ * ```html
+ * <input type="text" name="first_name" onChange={customForm.handleChange} />
+ * ```
+ * - To access `handleSubmit` function :
+ * ```html
+ * <form onSubmit={customForm.handleSubmit}>
+ * ```
+ *
+ * ## Form Setup
+ * 
+ * To setup form :
+ * 
+ * ```html
+ * <form ref={formRef} onSubmit={customForm.handleSubmit}>
+ *		...
+ *		<input type="submit" value={customForm.operation} />
+ * </form>
+ * ```
+ * 
+ * ### Basic input
+ * 
+ * - To setup a simple text input with user input validation and warning message for user :
+ * ```js
+ * <input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
+ * ```
+ * > **Note :** `isValid` property is not mandatory, it can be used to change appearance of input if validation is not successful (returns `true`/`false`).
+ * 
+ * - To display a warning message for user if validation of this specific input is not successful, simply add below (or elsewhere) :
+ * ```js
+ * {customForm.warningMessage("first_name", "text")}
+ * ```
+ * > **Note :** Here `warningMessage` will display a jsx generic warning message box for user if text input validation is not successful.
+ * 
+ * ### Image file input 
+ * 
+ * - To setup a file input to choose image :
+ * ```js
+ * <input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
+ * ```
+ * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
+ * 
+ * ### Image preview & displaying
+ * 
+ * To setup a profile picture with preview here's the way to go.
+ * 
+ * - For "create" entry operation with a preview of choosen image :
+ * ```js
+ * {customForm.picPreview &&  customForm.operation === "create" ? <img src={customForm.picPreview} /> : null }
+ * ```
+ * 
+ * - For "update" operation with displaying of image URL received by server :
+ * ```js
+ * {customForm.operation === "update" ? <img src={customForm.pic} /> : null}
+ * ```
+ * 
+ * ### Radio buttons
+ * 
+ * - For accessing initial state of radio button and perform updates on value from jsx :
+ * ```js
+ * <input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} />
+ * ```
+ *
+ * ### Select
+ * 
+ * - For select box :
+ * ```js
+ * <Select name="lesson_frequency" defaultValue={"DEFAULT"} value={customForm.inputs.lesson_frequency} onChange={customForm.handleChange} required>
+ *		<option value="DEFAULT" disabled>Choisir une fréquence ...</option>
+ *		<option value="Quotidien">Quotidien</option>
+ *		<option value="Hebdomadaire">Hebdomadaire</option>
+ *		<option value="Bimensuel">Bimensuel</option>
+ *		<option value="Libre">A la carte</option>
+ *</Select>
+ * ```
+ * 
+ * ### Error message
+ * 
+ * - If something is wrong with data transfer to server an alert will be automatically displayed, but if you want to get exact error message do :
+ * ```js
+ * <p>{customForm.submitError ? customForm.submitError : "" }</p>
+ * ```
+ * 
  * ## Parameters 
  * 
  * @typedef Object
@@ -79,9 +152,10 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * @param	{Object}	formSetup.endoints		Object containing create and update operation endoints.
  * @param   {Object}    formSetup.authTokens    Authentification token for server connection.
  * @param   {Object}    formSetup.user          User object for authentification.
- * @param   {string}    formSetup.entryID        User ID for retrieving & updating data.
+ * @param   {string}    formSetup.entryID       Entry primary key for retrieving & updating data.
+ * @param	{string}	formSetup.navigateTo	Where to go if form submit is a success.
  * @param   {Object}    formSetup.formRef       Form reference used to extract inputs keys dynamically.
- * @param   {Object}    formSetup.radioButtons  Radio button name (should be the same as input name) and initial state value.      
+ * @param   {Object}    formSetup.radioButtons  Radio button name (should be the same as input name) and initial state value.
  * @returns                                     Returns all values necessary for form handling.
  */
 export const useCustForm = (formSetup) => {
@@ -91,6 +165,7 @@ export const useCustForm = (formSetup) => {
     const [pic, setPic] = useState();
 	const [picPreview, setPicPreview] = useState();
     const [radioState, setRadioState] = useState({});
+	const [submitError, setSubmitError] = useState();
 
 	// ========= UTILS ========= //
 
@@ -168,12 +243,15 @@ export const useCustForm = (formSetup) => {
 	}
 
     /**
-	 * What to do if API call failed.
-	 * @param   {string}    err     Error message to print.
+	 * This function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, it'll display it to console,
+	 * and pass the error message to `FormHandling` (hook return value) object.
+	 * @param   {Object}    err     		Error object.
+	 * @param	{string}	err.message		Error message.
 	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
 		console.error(err);
+		setSubmitError(err);
 	}
 
 	// ========= SETUP ========= //
@@ -351,14 +429,14 @@ export const useCustForm = (formSetup) => {
 			createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then(() => {
 				// If success, clear form cookies & go to dashboard
 				clearFormCookies(formSetup.formRef.current)
-				navigate('/');
+				navigate(formSetup.navigateTo);
 			}).catch(fetchFail);
 		}
 		else if (formSetup.operation === "update") {
 			updateEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID, inputs).then(() => {
 				// If success, clear form cookies & go to dashboard
 				clearFormCookies(formSetup.formRef.current)
-				navigate('/');
+				navigate(formSetup.navigateTo);
 			}).catch(fetchFail);
 		}
 	}
@@ -372,7 +450,8 @@ export const useCustForm = (formSetup) => {
         radioButtons: radioState,
         warningMessage: warningMessage,
         handleChange: handleChange,
-        handleSubmit: handleSubmit
+        handleSubmit: handleSubmit,
+		submitError: submitError ? submitError.message : null,
     }
 
     return [FormHandling];
