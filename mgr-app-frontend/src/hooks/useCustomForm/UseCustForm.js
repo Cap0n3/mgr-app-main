@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from 'react-alert';
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
-import { createEntry, getClient, updateEntry } from "../../functions/ApiCalls";
+import { createEntry, getEntry, updateEntry } from "../../functions/ApiCalls";
 import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalForm.style";
 
 /**
@@ -270,7 +270,7 @@ export const useCustForm = (formSetup) => {
         }
         else if (formSetup.operation === "update") {
             // On first render check if it's an update (to get client infos)
-            getClient(formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
+            getEntry("http://127.0.0.1:8000/client/", formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
                 let serverData = createDataObject(formSetup.formRef.current, data)
                 // Fill inputs with data received from server
                 setInputs(inputs => ({

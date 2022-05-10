@@ -52,8 +52,16 @@ export const createEntry = async (endpoint, authTokens, user, inputs) => {
 // ================== //
 // ====== READ ====== //
 // ================== //
-export const getClients = async (authTokens, user) => {
-    let response = await fetch(`${SERVER}/clients/`, {
+
+/**
+ * This function retrives all database column entries belonging to a specific authenticated user and check for errors.
+ * @param      {string}     endpoint       Endpoint of request.
+ * @param      {Object}     authTokens     Authentication tokens.
+ * @param      {Object}     user           User informations.
+ * @returns                                Column entries data in an json object.                        
+ */
+export const getEntries = async (endpoint, authTokens, user) => {
+    let response = await fetch(endpoint, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -67,9 +75,17 @@ export const getClients = async (authTokens, user) => {
     } 
 }
 
-// Get a single client
-export const getClient = async (authTokens, user, clientID) => {
-    let response = await fetch(`${SERVER}/client/${clientID}`, {
+/**
+ * This function retrieves a single entry belonging to a specific authenticated user and check for errors
+ * @param   {string}    endpoint    Endpoint of request. 
+ * @param   {Object}    authTokens  Authentication tokens.
+ * @param   {Object}    user        User informations.
+ * @param   {string}    entryID     Primary key (ID) of database entry.
+ * @returns                         Entry data in an json object.
+ */
+export const getEntry = async (endpoint, authTokens, user, entryID) => {
+    let entryEndoint = endpoint + entryID
+    let response = await fetch(entryEndoint, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -140,6 +156,7 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
 // ==================== //
 // ====== DELETE ====== //
 // ==================== //
+
 export const deleteClient = async (authTokens, user, clientID) => {
     // clientID = 67
     let response = await fetch(`${SERVER}/client/delete/${clientID}`, {

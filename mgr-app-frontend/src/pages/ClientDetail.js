@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
+import { getEntry } from "../functions/ApiCalls";
+import { useAlert } from 'react-alert';
+import { useNavigate } from "react-router-dom";
 import {
 	StyledLink,
 	PreviousIcon,
@@ -27,27 +30,26 @@ import {
 } from "./pagesStyles/ClientDetail.style";
 
 
-const Cloud = () => {
+const ClientDetail = () => {
 
 	const [clientData, setData ] = useState([])
 	const [picWidth, setWidth] = useState(0);
 	const { clientID } = useParams()
-	const {authTokens} = useContext(AuthContext)
+	const {authTokens, user} = useContext(AuthContext)
 	const clientPicRef = useRef();
+	const navigate = useNavigate();
+	const alert = useAlert()
 	
+	const fetchFail = (err) => {
+        alert.show("Une erreur s'est produite !");
+		console.error(err);
+		navigate("/");
+	}
+
 	useEffect(() => {
-		const getClient = async() => {
-			let response = await fetch(`http://127.0.0.1:8000/client/${clientID}`, {
-				method:'GET',
-				headers:{
-					'Content-Type':'application/json',
-					'Authorization':'Bearer ' + String(authTokens.access)
-				}
-			})
-			let clientData = await response.json()
-			setData(clientData)
-		}
-		getClient();
+		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((data) => {
+			setData(data);
+		}).catch(fetchFail);
 	}, [clientID]);
 	
 	useEffect(() => {
@@ -158,4 +160,4 @@ const Cloud = () => {
 	);
 }
 
-export default Cloud;
+export default ClientDetail;

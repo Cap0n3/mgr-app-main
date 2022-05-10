@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
-import { getClients, deleteClient } from "../functions/ApiCalls";
+import { getEntries, deleteClient } from "../functions/ApiCalls";
 import { Button } from "./pagesStyles/Global.style";
 import { ClientTable, HeaderCell, FooterCell, Cell, Line, ProfilePic, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
@@ -23,7 +23,7 @@ const Dashboard = () => {
 	
 	useEffect(() => {	
 		// Necessary syntax (.then) for external async funcs
-		getClients(authTokens, user, logoutUser).then(processData).catch(fetchFail);
+		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then(processData).catch(fetchFail);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
