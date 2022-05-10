@@ -181,6 +181,7 @@ export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
 // ============================ //
 // ====== ERROR HANDLING ====== //
 // ============================ //
+
 const checkErrors = (httpResponse, user, operation) => {
     if (httpResponse.status === 200 || httpResponse.status === 201) 
     {
