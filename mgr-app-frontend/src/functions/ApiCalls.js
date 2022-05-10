@@ -109,7 +109,7 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
  * @param   {string}    endpoint    String representing server endpoint URL.
  * @param   {Object}    authTokens  Authentification token to connect to server.
  * @param   {Object}    user        User infos for identification.
- * @param   {string}    entryID     ID (primary key) of database entry to update.
+ * @param   {string}    entryID     ID (primary key) of entry to update.
  * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).   
  * @returns                         True or throw Error (if any).
  */
@@ -157,9 +157,17 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
 // ====== DELETE ====== //
 // ==================== //
 
-export const deleteClient = async (authTokens, user, clientID) => {
-    // clientID = 67
-    let response = await fetch(`${SERVER}/client/delete/${clientID}`, {
+/**
+ * This function creates an API request to delete an entry belonging to a specific authenticated user on a remote server and handle errors.
+ * @param   {string}    endpoint        String representing server endpoint URL.
+ * @param   {Object}    authTokens      Authentification token to connect to server.
+ * @param   {Object}    user            User infos for identification.
+ * @param   {string}    entryID         ID (primary key) of entry to delete.         
+ * @returns                             True or throw Error (if any).
+ */
+export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
+    let deleteEndpoint = endpoint + entryID;
+    let response = await fetch(endpoint, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',

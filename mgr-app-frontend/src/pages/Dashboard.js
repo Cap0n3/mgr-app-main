@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
-import { getEntries, deleteClient } from "../functions/ApiCalls";
+import { getEntries, deleteEntry } from "../functions/ApiCalls";
 import { Button } from "./pagesStyles/Global.style";
 import { ClientTable, HeaderCell, FooterCell, Cell, Line, ProfilePic, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
@@ -46,7 +46,7 @@ const Dashboard = () => {
 			navigate(`/client/update/${clientID}`);
 		}
 		else if (callToAction === "delete") {
-			deleteClient(authTokens, user, clientID).then().catch(fetchFail);;
+			deleteEntry("http://127.0.0.1:8000/client/delete/", authTokens, user, clientID).then().catch(fetchFail);;
 			// To refresh client list
 			window.location.reload();
 		}
