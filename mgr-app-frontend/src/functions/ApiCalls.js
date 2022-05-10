@@ -2,8 +2,6 @@
     CRUD API custom calls functions.
 */
 
-const SERVER = "http://127.0.0.1:8000"
-
 // ==================== //
 // ====== CREATE ====== //
 // ==================== //
@@ -166,8 +164,9 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
  * @returns                             True or throw Error (if any).
  */
 export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
+    // Create final URL with entry ID
     let deleteEndpoint = endpoint + entryID;
-    let response = await fetch(endpoint, {
+    let response = await fetch(deleteEndpoint, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',

@@ -38,7 +38,7 @@ const ClientDetail = () => {
 	const {authTokens, user} = useContext(AuthContext)
 	const clientPicRef = useRef();
 	const navigate = useNavigate();
-	const alert = useAlert()
+	const alert = useAlert();
 	
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");

@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAlert } from 'react-alert';
 import AuthContext from '../context/AuthContext';
 import { getEntries, deleteEntry } from "../functions/ApiCalls";
 import { Button } from "./pagesStyles/Global.style";
@@ -10,20 +11,20 @@ const Dashboard = () => {
 	const { authTokens, user, logoutUser } = useContext(AuthContext)
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 	const navigate = useNavigate();
-
-	// If API call is success, populate clientData
-	const processData = (data) => {
-		setData(data)
-	}
+	const alert = useAlert();
 
 	// If API call error
 	const fetchFail = (err) => {
+		alert.show("Une erreur s'est produite !");
 		console.error(err);
 	}
 	
 	useEffect(() => {	
 		// Necessary syntax (.then) for external async funcs
-		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then(processData).catch(fetchFail);
+		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then((data) => {
+			// If API call is success, populate clientData
+			setData(data);
+		}).catch(fetchFail);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -46,9 +47,10 @@ const Dashboard = () => {
 			navigate(`/client/update/${clientID}`);
 		}
 		else if (callToAction === "delete") {
-			deleteEntry("http://127.0.0.1:8000/client/delete/", authTokens, user, clientID).then().catch(fetchFail);;
-			// To refresh client list
-			window.location.reload();
+			deleteEntry("http://127.0.0.1:8000/client/delete/", authTokens, user, clientID).then(() => {
+				// Refresh client list
+				window.location.reload();
+			}).catch(fetchFail);;
 		}
 	}
 	
