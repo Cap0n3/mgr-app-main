@@ -39,6 +39,7 @@ const SignupForm = () => {
             {customForm.warningMessage("last_name", "text")}
             <Input isValid={sessionStorage.getItem("email")} type="email" name="email" placeholder="Email" value={customForm.inputs.email || ""} onChange={customForm.handleChange} required />
             {customForm.warningMessage("email", "email")}
+            <Input type="password" name="password" placeholder="Password" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
             <Input type="submit" value="S'inscrire" />
         </form>
         </>
