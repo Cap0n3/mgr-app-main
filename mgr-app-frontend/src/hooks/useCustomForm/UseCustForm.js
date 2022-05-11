@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from 'react-alert';
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
-import { createEntry, getEntry, updateEntry } from "../../functions/ApiCalls";
+import { createEntry, getEntry, updateEntry, signUpCall } from "../../functions/ApiCalls";
 import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalForm.style";
 
 /**
@@ -19,10 +19,11 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * 
  * ```js
  * const [customForm] = useCustForm({
- *		operation: "update", // "create" or "update"
+ *		operation: "update", // "create", "update" or "signup"
  *		endpoints: { // Server endpoints
  *			create: "http://127.0.0.1:8000/client/create/",
- *			update: "http://127.0.0.1:8000/client/update/"
+ *			update: "http://127.0.0.1:8000/client/update/",
+ *			signup: "http://127.0.0.1:8000/client/signup/"
  *		},
  *		authTokens: authTokens, // Authenfification tokens
  *		user: user, // User information
@@ -73,18 +74,31 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  *
  * ## Form Setup
  * 
- * To setup form :
+ * To set up a form, first you must first import `useRef()` hook :
  * 
- * ```html
- * <form ref={formRef} onSubmit={customForm.handleSubmit}>
- *		...
- *		<input type="submit" value={customForm.operation} />
- * </form>
+ * ```js
+ * import React, { useRef } from "react";
+ * 
+ * const myFormComponent = () => {
+ * 		const formRef = useRef();
+ *		// ... code ... //
+ * }
+ * ```
+ * And then insert form in component return like this :
+ * 
+ * ```js
+ * return(
+ * 	<>
+ * 		<form ref={formRef} onSubmit={customForm.handleSubmit}>
+ * 			<input type="submit" value={customForm.operation} />
+ * 		</form>
+ * 	</>
+ * );
  * ```
  * 
  * ### Basic input
  * 
- * - To setup a simple text input with user input validation and warning message for user :
+ * - To set up a simple text input with user input validation and warning message for user :
  * ```js
  * <input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
  * ```
@@ -98,15 +112,18 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * 
  * ### Image file input 
  * 
- * - To setup a file input to choose image :
+ * For now, only images are handled by file inputs in this custom hook. Once an image file input is set up, it can preview images as soon as 
+ * it is choosen by user or display an URL received by a remote server.
+ * 
+ * - To set up a file input to choose image :
  * ```js
  * <input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
  * ```
  * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
  * 
- * ### Image preview & displaying
+ * #### Image preview & displaying
  * 
- * To setup a profile picture with preview here's the way to go.
+ * To set up a profile picture with preview here's the way to go.
  * 
  * - For "create" entry operation with a preview of choosen image :
  * ```js
@@ -257,10 +274,10 @@ export const useCustForm = (formSetup) => {
 	// ========= SETUP ========= //
 
     /**
-     * Define if it'll be the form for data creation or update, populate input with default values.
+     * Define if it'll be the form for data creation, update or signup and populate input with default values.
      */
     useEffect(() => {
-        if (formSetup.operation === "create") {
+        if (formSetup.operation === "create" || formSetup.operation === "signup") {
             // Set initial state of radio buttons
 			setRadioState(radioBtns => ({...formSetup.radioButtons}));
 			// Set inputs for radio buttons
@@ -403,7 +420,7 @@ export const useCustForm = (formSetup) => {
 		event.preventDefault();
 
 		// Evaluate if it's an update or a creation
-		if (formSetup.operation === "create") {
+		if (formSetup.operation === "create" || formSetup.operation === "signup") {
 			
 			// Get inputs infos from submit button
 			let allInputs = getFormInputInfos(event);
@@ -426,11 +443,20 @@ export const useCustForm = (formSetup) => {
 			}
 			
 			// Make API call to server
-			createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then(() => {
-				// If success, clear form cookies & go to dashboard
-				clearFormCookies(formSetup.formRef.current)
-				navigate(formSetup.navigateTo);
-			}).catch(fetchFail);
+			if (formSetup.operation === "create") {
+				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then(() => {
+					// If success, clear form cookies & go to dashboard
+					clearFormCookies(formSetup.formRef.current)
+					navigate(formSetup.navigateTo);
+				}).catch(fetchFail);
+			}
+			else if (formSetup.operation === "signup") {
+				signUpCall(formSetup.endpoints.signup, inputs).then(() => {
+					// If success, clear form cookies & go to dashboard
+					clearFormCookies(formSetup.formRef.current)
+					navigate(formSetup.navigateTo);
+				}).catch(fetchFail);
+			}
 		}
 		else if (formSetup.operation === "update") {
 			updateEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID, inputs).then(() => {
@@ -445,9 +471,9 @@ export const useCustForm = (formSetup) => {
     let FormHandling = {
         inputs: inputs,
         operation: formSetup.operation,
-        picPreview: picPreview,
-        pic: pic,
-        radioButtons: radioState,
+        picPreview: picPreview ? picPreview : null,
+        pic: pic ? pic : null,
+        radioButtons: radioState ? radioState : null,
         warningMessage: warningMessage,
         handleChange: handleChange,
         handleSubmit: handleSubmit,

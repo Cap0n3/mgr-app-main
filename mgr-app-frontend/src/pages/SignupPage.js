@@ -6,9 +6,11 @@ import {
     LeftSectionHeader,
     LeftSectionBody,
     Title,
-    Image
+    Image,
+    FormWrapper,
 } from "./pagesStyles/Signup.style";
 import Illustration from "../assets/illustration1.svg"
+import SignupForm from "../components/Forms/SignupForm";
 
 const SignUp = () => {
     return(
@@ -20,7 +22,10 @@ const SignUp = () => {
                 </LeftSectionBody>
             </LeftSectionWrapper>
             <RightSectionWrapper>
-                
+                <Title>Sign Up !</Title>
+                <FormWrapper>
+                    <SignupForm />
+                </FormWrapper>
             </RightSectionWrapper>
         </PageBody>
     );

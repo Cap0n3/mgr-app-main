@@ -47,6 +47,37 @@ export const createEntry = async (endpoint, authTokens, user, inputs) => {
     return checkErrors(response, user, "CREATE")
 }
 
+export const signUpCall = async (endpoint, inputs) => {
+    let formData = new FormData();
+    
+    // Get entries in an array
+    const inputEntries = Object.entries(inputs)
+
+    // Append input data to FormData object
+    inputEntries.map((item) => {
+        formData.append(item[0], item[1])
+    })
+
+    // for (let el of formData) {
+    //     console.log(el)
+    // }
+
+    // Get user name from input data
+    let user = formData.get("username");
+    
+    let response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+            // Do not put Content-Type: multipart/form-data ! FormData() doesn't handle "boundary" ...
+            // The trick here is to let server find right according to body content type.
+            
+        },
+        body: formData
+    })
+
+    return checkErrors(response, user, "SIGNUP")
+}
+
 // ================== //
 // ====== READ ====== //
 // ================== //

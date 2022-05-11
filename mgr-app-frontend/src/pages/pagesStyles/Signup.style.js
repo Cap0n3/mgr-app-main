@@ -28,17 +28,6 @@ export const LeftSectionWrapper = styled.div`
     }
 `;
 
-export const RightSectionWrapper = styled.div`
-    margin: 0;
-    width: 50%;
-    background-color: green;
-
-    @media screen and (max-width: 960px) {
-        width: 100%;
-    }
-`;
-
-
 export const LeftSectionHeader = styled.div`
     width: 100%;
     height: 80px;
@@ -52,10 +41,28 @@ export const LeftSectionBody = styled.div`
     height: 100%;
 `;
 
+export const RightSectionWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    width: 50%;
+    background-color: ${DarkColors.Dark_Background};
+
+    @media screen and (max-width: 960px) {
+        width: 100%;
+    }
+`;
+
 export const Image = styled.img`
     width: 500px;
 `;
 
 export const Title = styled.h1`
     text-transform: uppercase;
+`;
+
+export const FormWrapper = styled.div`
+    width: 350px;
 `;

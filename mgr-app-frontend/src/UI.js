@@ -15,7 +15,6 @@ const UI = () => {
     
     if(user === null) {
         // Find condition 
-        console.log(isSignup)
         if(isSignup){
             return <SignUp />
         } else {
