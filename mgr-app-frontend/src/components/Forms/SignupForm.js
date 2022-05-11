@@ -23,7 +23,7 @@ const SignupForm = () => {
         },
         authTokens: null,
         user: null,
-        navigateTo: "http://localhost:3000/login",
+        navigateTo: "/",
         formRef: formRef
     })
     
