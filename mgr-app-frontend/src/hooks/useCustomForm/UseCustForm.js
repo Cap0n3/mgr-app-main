@@ -54,7 +54,7 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  *		picPreview: picPreview, // Pic image for preview by user
  *		pic: pic, // Pic source URL sent by server (if entry already exists in database)
  *		radioButtons: radioState, // Radio initial state
- *		warningMessage: warningMessage, // Error message if validation is not successful
+ *		isValid: isValid, // Check input validation
  *		handleChange: handleChange, // Function to get changes on inputs
  *		handleSubmit: handleSubmit, // Function to submit form data to server
  *		submitError: submitError.message, // Error message if something went wrong durant data transfer
@@ -100,15 +100,9 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * 
  * - To set up a simple text input with user input validation and warning message for user :
  * ```js
- * <input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
+ * <input isValid={isValid("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
  * ```
- * > **Note :** `isValid` property is not mandatory, it can be used to change appearance of input if validation is not successful (returns `true`/`false`).
- * 
- * - To display a warning message for user if validation of this specific input is not successful, simply add below (or elsewhere) :
- * ```js
- * {customForm.warningMessage("first_name", "text")}
- * ```
- * > **Note :** Here `warningMessage` will display a jsx generic warning message box for user if text input validation is not successful.
+ * > **Note :** `isValid` property is not mandatory, it can be used to change appearance of input if validation is not successful (see `isValid()` function hook function below).
  * 
  * ### Image file input 
  * 
@@ -135,14 +129,14 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  * {customForm.operation === "update" ? <img src={customForm.pic} /> : null}
  * ```
  * 
- * ### Radio buttons
+ * #### Radio buttons
  * 
- * - For accessing initial state of radio button and perform updates on value from jsx :
+ * - For accessing initial state of radio button and perform updates on value from JSX :
  * ```js
  * <input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} />
  * ```
  *
- * ### Select
+ * #### Select
  * 
  * - For select box :
  * ```js
@@ -155,7 +149,46 @@ import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalFo
  *</Select>
  * ```
  * 
- * ### Error message
+ * ## Input validation
+ * 
+ * The function `isValid(<input_name>)` can be used for input validation, it returns validation state of selected input. 
+ * 
+ * State can be either :
+ * 
+ * - `true` - Input content is valid. 
+ * - `false` - Input content is not valid.
+ * - `null`- Input is empty.
+ * 
+ * To display a simple warning message for user using `isValid()`, add this block below input (or elsewhere) :
+ * 
+ * ```js
+ * <input type="text" name="first_name" />
+ * {(customForm.isValid("first_name") || customForm.isValid("first_name") === null) ? "" : <p>Input is not valid !</p>}
+ * ```
+ * > **Note :** Here nothing will be displayed if input is either `true` or `null`.
+ * 
+ * If JSX to be displayed is more complex, it can be a good idea to use a custom function to verify `isValid` returned value :
+ * 
+ * ```js
+ * const warningBox = (inputName) => {
+ * 		let isVal = customForm.isValid(inputName);
+ * 		if(isVal || isVal === null) {
+ * 			return null;
+ * 		}
+ * 		else if (!isVal) {
+ * 			return <p>Not Valid !</p>
+ * 		}
+ * }
+ * ```
+ * 
+ * And then simply display message in component return :
+ * 
+ * ```js
+ * <input type="text" name="first_name" />
+ * {warningBox("first_name")}
+ * ```
+ * 
+ * ## Error message
  * 
  * - If something is wrong with data transfer to server an alert will be automatically displayed, but if you want to get exact error message do :
  * ```js
@@ -319,7 +352,7 @@ export const useCustForm = (formSetup) => {
 	 * @param {str} inputCategory 	Input category ("file", text", "email", "tel", "address", "postal", "textarea").
 	 * @returns {jsx}				JSX with styled-components.
 	 */
-	 const warningMessage = (inputName, inputCategory) => {
+	const warningMessage = (inputName, inputCategory) => {
 		// Correspond to categories of verification in FormValidation.js
 		const warnMessages = {
 			"file" : "L'image choisie est trop lourde (max 300 ko) ou non valide !",
@@ -334,6 +367,19 @@ export const useCustForm = (formSetup) => {
 		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
 	}
 
+	const isValid = (inputToCheck) => {
+		let isVal = sessionStorage.getItem(inputToCheck);
+		// Convert isVal to true boolean
+		if(isVal === "true") {
+			return true;
+		}
+		else if(isVal === "false") {
+			return false;
+		}
+		else {
+			return null;
+		}
+	}
     /**
 	 * Get values from inputs on keyboard press and polulate state "inputs".
 	 * @param {Object}  e   Event object passed by input.
@@ -474,7 +520,7 @@ export const useCustForm = (formSetup) => {
         picPreview: picPreview ? picPreview : null,
         pic: pic ? pic : null,
         radioButtons: radioState ? radioState : null,
-        warningMessage: warningMessage,
+		isValid: isValid,
         handleChange: handleChange,
         handleSubmit: handleSubmit,
 		submitError: submitError ? submitError.message : null,

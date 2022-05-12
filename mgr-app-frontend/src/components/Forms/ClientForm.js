@@ -12,6 +12,8 @@ import {
 	Textarea, 
 	AvatarWrapper, 
 	Avatar,
+	WarningBox,
+	WarnIcon
 } from "./FormStyles/GlobalForm.style";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
 
@@ -37,7 +39,34 @@ const ClientFormComponent = (props) => {
             invoice_numbering: false,
         }
     });
-	
+
+	/**
+	 * This function uses `isValid()` useCustForm hook function to display warning messages for user if input validation has failed.
+	 * @param	{string}	inputName	Input name property to ID input.
+	 * @param	{string}	inputType	Input type property to display according message.
+	 * @returns							JSX block or `null`.
+	 */
+	const warningBox = (inputName, inputType) => {
+		const warnMessages = {
+			"file" : "L'image choisie est trop lourde (max 300 ko) ou non valide !",
+			"text" : "Les caractères spéciaux ne sont pas autorisés !",
+			"email" : "L'adresse e-mail n'est pas valide !",
+			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
+			"address" : "L'adresse n'est pas valide !",
+			"postal" : "Le numéro postal n'est pas valide !",
+			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
+		}
+
+		let isVal = customForm.isValid(inputName);
+
+		if(isVal || isVal === null) {
+			return null;
+		}
+		else if (!isVal) {
+			return <WarningBox><WarnIcon /><p>{warnMessages[inputType]}</p></WarningBox>
+		}
+	}
+
     /**
 	 * For props formatting (ex : create => Create).
 	 * @param {str} str String to format. 
@@ -61,19 +90,19 @@ const ClientFormComponent = (props) => {
 				{customForm.operation === "update" ? <AvatarWrapper><Avatar src={customForm.pic} /></AvatarWrapper> : null}
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
 				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
-				{customForm.warningMessage("student_pic", "file")}
+				{warningBox("student_pic", "file")}
 				<Label>Prénom * :</Label>
-				<Input isValid={sessionStorage.getItem("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("first_name", "text")}
+				<Input isValid={customForm.isValid("first_name")} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
+				{warningBox("first_name", "text")}
 				<Label>Nom * :</Label>
-				<Input isValid={sessionStorage.getItem("last_name")} type="text" name="last_name" value={customForm.inputs.last_name || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("last_name", "text")}
+				<Input isValid={customForm.isValid("last_name")} type="text" name="last_name" value={customForm.inputs.last_name || ""} onChange={customForm.handleChange} required />
+				{warningBox("last_name", "text")}
 				<Label>Email client :</Label>
-				<Input isValid={sessionStorage.getItem("student_email")} type="email" name="student_email" value={customForm.inputs.student_email || ""} onChange={customForm.handleChange} />
-				{customForm.warningMessage("student_email", "email")}
+				<Input isValid={customForm.isValid("student_email")} type="email" name="student_email" value={customForm.inputs.student_email || ""} onChange={customForm.handleChange} />
+				{warningBox("student_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={sessionStorage.getItem("student_phone")} type="tel" name="student_phone" value={customForm.inputs.student_phone || ""} onChange={customForm.handleChange} />
-				{customForm.warningMessage("student_phone", "tel")}
+				<Input isValid={customForm.isValid("student_phone")} type="tel" name="student_phone" value={customForm.inputs.student_phone || ""} onChange={customForm.handleChange} />
+				{warningBox("student_phone", "tel")}
 				<Label>Date de naissance :</Label>
 				<Input type="date" name="student_birth" value={customForm.inputs.student_birth || ""} onChange={customForm.handleChange} />
 				<Legend><Bullet>2</Bullet>Infos cours</Legend>
@@ -101,8 +130,8 @@ const ClientFormComponent = (props) => {
 					<option value="Libre">A la carte</option>
 				</Select>
 				<Label>Instrument :</Label>
-				<Input isValid={sessionStorage.getItem("instrument")} type="text" name="instrument" value={customForm.inputs.instrument || ""} onChange={customForm.handleChange} />
-				{customForm.warningMessage("instrument", "text")}
+				<Input isValid={customForm.isValid("instrument")} type="text" name="instrument" value={customForm.inputs.instrument || ""} onChange={customForm.handleChange} />
+				{warningBox("instrument", "text")}
 				<Label>Niveau :</Label>
 				<Select name="student_level" defaultValue={"DEFAULT"} value={customForm.inputs.student_level} onChange={customForm.handleChange}>
 					<option value="DEFAULT" disabled>Choisir un niveau ...</option>
@@ -118,29 +147,29 @@ const ClientFormComponent = (props) => {
 				</Select>
 				<Legend><Bullet>3</Bullet>Infos Facturation</Legend>
 				<Label>Prénom Facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_fname")} type="text" name="invoice_fname" value={customForm.inputs.invoice_fname || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_fname", "text")}
+				<Input isValid={customForm.isValid("invoice_fname")} type="text" name="invoice_fname" value={customForm.inputs.invoice_fname || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_fname", "text")}
 				<Label>Nom Facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_lname")} type="text" name="invoice_lname" value={customForm.inputs.invoice_lname || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_lname", "text")}
+				<Input isValid={customForm.isValid("invoice_lname")} type="text" name="invoice_lname" value={customForm.inputs.invoice_lname || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_lname", "text")}
 				<Label>Email Facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_email")} type="email" name="invoice_email" value={customForm.inputs.invoice_email || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_email", "email")}
+				<Input isValid={customForm.isValid("invoice_email")} type="email" name="invoice_email" value={customForm.inputs.invoice_email || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_email", "email")}
 				<Label>Téléphone client :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_phone")} type="tel" name="invoice_phone" value={customForm.inputs.invoice_phone || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_phone", "tel")}
+				<Input isValid={customForm.isValid("invoice_phone")} type="tel" name="invoice_phone" value={customForm.inputs.invoice_phone || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_phone", "tel")}
 				<Label>Adresse facturation * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_address")} type="text" name="invoice_address" value={customForm.inputs.invoice_address || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_address", "address")}
+				<Input isValid={customForm.isValid("invoice_address")} type="text" name="invoice_address" value={customForm.inputs.invoice_address || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_address", "address")}
 				<Label>Code postal * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_postal")} type="text" name="invoice_postal" value={customForm.inputs.invoice_postal || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_postal", "postal")}
+				<Input isValid={customForm.isValid("invoice_postal")} type="text" name="invoice_postal" value={customForm.inputs.invoice_postal || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_postal", "postal")}
 				<Label>Ville * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_city")} type="text" name="invoice_city" value={customForm.inputs.invoice_city || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_city", "text")}
+				<Input isValid={customForm.isValid("invoice_city")} type="text" name="invoice_city" value={customForm.inputs.invoice_city || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_city", "text")}
 				<Label>Pays * :</Label>
-				<Input isValid={sessionStorage.getItem("invoice_country")} type="text" name="invoice_country" value={customForm.inputs.invoice_country || ""} onChange={customForm.handleChange} required />
-				{customForm.warningMessage("invoice_country", "text")}
+				<Input isValid={customForm.isValid("invoice_country")} type="text" name="invoice_country" value={customForm.inputs.invoice_country || ""} onChange={customForm.handleChange} required />
+				{warningBox("invoice_country", "text")}
 				<Legend><Bullet>4</Bullet>Tarification et règlement</Legend>
 				<Label>Tarif horaire * :</Label>
 				<Input type="number" name="billing_rate" value={customForm.inputs.billing_rate || ""} onChange={customForm.handleChange} required />
@@ -164,8 +193,8 @@ const ClientFormComponent = (props) => {
 				<RadioLabel htmlFor="numbering_false">Non</RadioLabel>
 				<Input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? !customForm.radioButtons["invoice_numbering"] || "" : !customForm.inputs.invoice_numbering || ""} value="false" onChange={customForm.handleChange} />  
                 <Legend><Bullet>5</Bullet>Notes</Legend>
-				<Textarea isValid={sessionStorage.getItem("notes")} name="notes" value={customForm.inputs.notes || ""} onChange={customForm.handleChange}></Textarea>
-				{customForm.warningMessage("notes", "textarea")}
+				<Textarea isValid={customForm.isValid("notes")} name="notes" value={customForm.inputs.notes || ""} onChange={customForm.handleChange}></Textarea>
+				{warningBox("notes", "textarea")}
 				<Input type="submit" value={upperFirstChar(customForm.operation)} />
 			</Form>
 		</>);

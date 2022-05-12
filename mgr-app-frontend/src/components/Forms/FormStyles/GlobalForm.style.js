@@ -70,8 +70,8 @@ export const Input = styled.input`
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
 		background-color: ${({isValid}) => 
-			(isValid === "true" && `${INPUTS_BCKG_COLOR}`) || 
-			(isValid === "false" &&  "red") ||
+			(isValid === true && `${INPUTS_BCKG_COLOR}`) || 
+			(isValid === false &&  "red") ||
 			`${INPUTS_BCKG_COLOR}` /* If isValid prop is not setup */
 		};
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
@@ -85,13 +85,13 @@ export const Input = styled.input`
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
 		border: ${({isValid}) => 
-			(isValid === "true" && "1px solid green") || 
-			(isValid === "false" &&  "1px solid red") ||
+			(isValid === true && "1px solid green") || 
+			(isValid === false &&  "1px solid red") ||
 			"none"
 		};
 		color: ${({isValid}) => 
-			(isValid === "true" && `${INPUTS_TEXT_COLOR}`) || 
-			(isValid === "false" &&  "red") ||
+			(isValid === true && `${INPUTS_TEXT_COLOR}`) || 
+			(isValid === false &&  "red") ||
 			`${INPUTS_TEXT_COLOR}`
 		};
 
@@ -195,8 +195,8 @@ export const Textarea = styled.textarea`
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box; 
 	background-color: ${({isValid}) => 
-		(isValid === "true" && `${INPUTS_BCKG_COLOR}`) || 
-		(isValid === "false" &&  "red") ||
+		(isValid === true && `${INPUTS_BCKG_COLOR}`) || 
+		(isValid === false &&  "red") ||
 		`${INPUTS_BCKG_COLOR}` /* If isValid prop is not setup */
 	};
 	color: #8a97a0;
@@ -208,8 +208,8 @@ export const Textarea = styled.textarea`
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
 		border: ${({isValid}) => 
-			(isValid === "true" && "1px solid green") || 
-			(isValid === "false" &&  "1px solid red") ||
+			(isValid === true && "1px solid green") || 
+			(isValid === false &&  "1px solid red") ||
 			"none"
 		};
 	}
