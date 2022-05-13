@@ -25,3 +25,16 @@ export const AppTitle = styled.h1`
     padding: 0;
     color: ${DarkColors.Light_Icon}
 `;
+
+export const LinkWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    margin: 20px 0px 10px 0px;
+`;
+
+export const LogOrSignLink = styled.a`
+    cursor: pointer;
+    margin: 0px 0px 0px 10px;
+    text-decoration: underline;
+    color: ${DarkColors.Neon_Blue};
+`;

@@ -1,23 +1,17 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
-import { 
-	Form,
-	Legend,
-	Bullet,
-	Label, 
-	LabelPic, 
-	RadioLabel, 
-	Input, 
-	Select, 
-	Textarea, 
-	AvatarWrapper, 
-	Avatar,
+import {
+	Input,
+    InputPassConf,
     WarningBox,
     WarnIcon
 } from "./FormStyles/GlobalForm.style";
+import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
+import { SignupContext } from "../../App";
 
 const SignupForm = () => {
     const formRef = useRef();
+    const { isSignup, setIsSignup } = useContext(SignupContext);
     const [customForm] = useCustForm({
         operation: "signup",
         endpoints: {
@@ -56,6 +50,19 @@ const SignupForm = () => {
 		}
 	}
     
+    const checkPasswdConf = () => {
+        let passwd = customForm.inputs.password;
+        let passConf = customForm.inputs.confirmPasswd;
+        if(passwd !== passConf) {
+            console.log(false)
+            return false;
+        }
+        else if(passwd === passConf) {
+            console.log(true)
+            return true;
+        }
+    }
+
     return(
         <>
             <form ref={formRef} onSubmit={customForm.handleSubmit}>
@@ -67,8 +74,14 @@ const SignupForm = () => {
             {warningBox("last_name", "text")}
             <Input isValid={customForm.isValid("email")} type="email" name="email" placeholder="Email" value={customForm.inputs.email || ""} onChange={customForm.handleChange} required />
             {warningBox("email", "email")}
-            <Input type="password" name="password" placeholder="Password" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
+            <Input type="password" name="password" placeholder="Mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
+            <InputPassConf isMatch={checkPasswdConf()} type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
             <Input type="submit" value="S'inscrire" />
+            <LinkWrapper>
+                <LinkWrapper>
+                    <span>Déjà inscrit ? <LogOrSignLink href={null} onClick={() => setIsSignup(false)}>Vers le login</LogOrSignLink></span>
+                </LinkWrapper>
+            </LinkWrapper>
         </form>
         </>
     );

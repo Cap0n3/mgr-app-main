@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
 import AuthContext from '../../context/AuthContext';
 import { Form, Input, WarningBox, WarnIcon } from "./FormStyles/GlobalForm.style";
-import { LogoWrapper, AppLogo, AppTitle } from "./FormStyles/LoginForm.style";
-
+import { LogoWrapper, AppLogo, AppTitle, LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
 
 const LoginFormComponent = () => {
@@ -28,7 +27,10 @@ const LoginFormComponent = () => {
                 <Input type="text" name="username" placeholder="Enter Username" />
                 <Input type="password" name="password" placeholder="Enter Password" />
                 <Input type="submit" value="Login" />
-                <button onClick={() => setIsSignup(true)}>Sign Up !</button>
+                <LinkWrapper>
+                    <span>Pas encore de compte ? <LogOrSignLink href={null} onClick={() => setIsSignup(true)}>S'inscrire !</LogOrSignLink></span>
+                </LinkWrapper>
+                
             </Form>
         </>
     );

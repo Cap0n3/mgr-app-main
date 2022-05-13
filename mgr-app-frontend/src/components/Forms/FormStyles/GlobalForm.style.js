@@ -78,6 +78,7 @@ export const Input = styled.input`
 		box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
 		color: ${INPUTS_TEXT_COLOR};
 	}
+	
 	&[type="radio"] {
 		margin: 0px 20px 30px 0px;
 	}
@@ -140,6 +141,10 @@ export const Input = styled.input`
 	&:-webkit-autofill:focus {
 		transition: background-color green;
 	}
+`;
+
+export const InputPassConf = styled(Input)`
+	background-color: green;
 `;
 
 export const LabelPic = styled.label`
