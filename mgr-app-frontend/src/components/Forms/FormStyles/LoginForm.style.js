@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Input } from "./GlobalForm.style";
 import { FaMagento } from "react-icons/fa";
 import { DarkColors } from "../../../Colors";
 

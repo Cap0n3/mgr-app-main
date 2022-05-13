@@ -69,9 +69,9 @@ export const Input = styled.input`
 		box-sizing: border-box; 
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
-		background-color: ${({isValid}) => 
+		background-color: ${({isValid, warnColor}) => 
 			(isValid === true && `${INPUTS_BCKG_COLOR}`) || 
-			(isValid === false &&  "red") ||
+			(isValid === false &&  warnColor) ||
 			`${INPUTS_BCKG_COLOR}` /* If isValid prop is not setup */
 		};
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
@@ -141,10 +141,6 @@ export const Input = styled.input`
 	&:-webkit-autofill:focus {
 		transition: background-color green;
 	}
-`;
-
-export const InputPassConf = styled(Input)`
-	background-color: green;
 `;
 
 export const LabelPic = styled.label`
