@@ -61,6 +61,7 @@ export const Image = styled.img`
 
 export const Title = styled.h1`
     text-transform: uppercase;
+    color: ${({titleColor}) => (titleColor ? titleColor : "#FFFFFF")}
 `;
 
 export const FormWrapper = styled.div`

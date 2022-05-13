@@ -31,6 +31,7 @@ export const LinkWrapper = styled.div`
     display: flex;
     justify-content: center;
     margin: 20px 0px 10px 0px;
+    color: ${DarkColors.Light_Icon}
 `;
 
 export const LogOrSignLink = styled.a`

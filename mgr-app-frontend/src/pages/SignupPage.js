@@ -8,9 +8,10 @@ import {
     Title,
     Image,
     FormWrapper,
-} from "./pagesStyles/Signup.style";
+} from "./pagesStyles/SignupPage.style";
 import Illustration from "../assets/illustration1.svg"
 import SignupForm from "../components/Forms/SignupForm";
+import { DarkColors } from "../Colors"; 
 
 const SignUp = () => {
     return(
@@ -22,7 +23,7 @@ const SignUp = () => {
                 </LeftSectionBody>
             </LeftSectionWrapper>
             <RightSectionWrapper>
-                <Title>Sign Up !</Title>
+                <Title titleColor={DarkColors.Light_Icon}>Sign Up !</Title>
                 <FormWrapper>
                     <SignupForm />
                 </FormWrapper>
