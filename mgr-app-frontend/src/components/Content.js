@@ -8,7 +8,6 @@ import CreateClient from "../pages/CreateClient";
 import UpdateClient from "../pages/UpdateClient";
 import Billing from "../pages/Billing";
 import Notes from "../pages/Notes";
-import SignUp from "../pages/SignupPage";
 
 const Content = () => {
 	return(

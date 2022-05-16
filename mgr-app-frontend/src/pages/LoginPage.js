@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { PageBody } from './pagesStyles/Login.style';
 import LoginFormComponent from '../components/Forms/LoginForm';
 

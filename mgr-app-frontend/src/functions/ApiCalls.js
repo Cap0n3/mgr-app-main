@@ -30,9 +30,9 @@ export const createEntry = async (endpoint, authTokens, user, inputs) => {
     const inputEntries = Object.entries(inputs)
 
     // Append input data to FormData object
-    inputEntries.map((item) => {
+    inputEntries.map((item) => (
         formData.append(item[0], item[1])
-    })
+    ));
     
     let response = await fetch(endpoint, {
         method: "POST",
@@ -54,9 +54,9 @@ export const signUpCall = async (endpoint, inputs) => {
     const inputEntries = Object.entries(inputs)
 
     // Append input data to FormData object
-    inputEntries.map((item) => {
+    inputEntries.map((item) => (
         formData.append(item[0], item[1])
-    })
+    ));
 
     // for (let el of formData) {
     //     console.log(el)

@@ -11,7 +11,7 @@ import SignUp from "./pages/SignupPage";
 const UI = () => {
 	const [isOpen, setOpen] = useState(false);
 	const { user } = useContext(AuthContext);
-    const { isSignup, setIsSignup } = useContext(SignupContext);
+    const { isSignup } = useContext(SignupContext);
     
     if(user === null) {
         // Find condition 

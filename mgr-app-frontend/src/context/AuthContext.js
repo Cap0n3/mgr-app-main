@@ -31,6 +31,14 @@ export const AuthProvider = ({ children }) => {
 			setUser(jwt_decode(data.access));
 			// Set Auth Cookie
 			localStorage.setItem('authTokens', JSON.stringify(data));
+			// If an unsuccessful attempt was made before, re-init state to true
+			if(loginState.state === false) {
+				let updatedStatus = { state : true, msg : ""};
+				setLoginState(loginState => ({
+					...loginState,
+					...updatedStatus
+				}));
+			}
 			navigate('/')
 		} else if (response.status === 401) {
 			// If unauthorized set state to false (user warning)

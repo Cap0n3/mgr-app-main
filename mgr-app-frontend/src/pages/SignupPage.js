@@ -3,13 +3,10 @@ import {
     PageBody,
     LeftSectionWrapper,
     RightSectionWrapper,
-    LeftSectionHeader,
     LeftSectionBody,
     Title,
-    Image,
     FormWrapper,
 } from "./pagesStyles/SignupPage.style";
-import Illustration from "../assets/illustration1.svg"
 import SignupForm from "../components/Forms/SignupForm";
 import { DarkColors } from "../Colors"; 
 
@@ -19,7 +16,6 @@ const SignUp = () => {
             <LeftSectionWrapper>
                 <LeftSectionBody>
                     <Title>Bienvenue</Title>
-                    {/* <Image src={Illustration} /> */}
                 </LeftSectionBody>
             </LeftSectionWrapper>
             <RightSectionWrapper>

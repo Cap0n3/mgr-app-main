@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from 'react-alert';
 import { inputValidation, clearFormCookies, fileValidation } from "./FormValidation";
 import { createEntry, getEntry, updateEntry, signUpCall } from "../../functions/ApiCalls";
-import { WarningBox, WarnIcon } from "../../components/Forms/FormStyles/GlobalForm.style";
+// This one won't be in standalone hook (to remove)
+import { SignupContext } from "../../App";
 
 /**
  * # Custom Form Hook
@@ -216,6 +217,7 @@ export const useCustForm = (formSetup) => {
 	const [picPreview, setPicPreview] = useState();
     const [radioState, setRadioState] = useState({});
 	const [submitError, setSubmitError] = useState();
+	const { setIsSignup } = useContext(SignupContext);
 
 	// ========= UTILS ========= //
 
@@ -344,28 +346,6 @@ export const useCustForm = (formSetup) => {
 	}, []);
 
 	// ========= CORE FUNCTIONS ========= //
-
-    /**
-	 * Display warning messages for user if input is wrong. This function retrieve form cookie and check its status,
-	 * if it's set to "false" then it displays the message. Input categories are based on FormValidation.js.
-	 * @param {str} inputName		Input name property.
-	 * @param {str} inputCategory 	Input category ("file", text", "email", "tel", "address", "postal", "textarea").
-	 * @returns {jsx}				JSX with styled-components.
-	 */
-	const warningMessage = (inputName, inputCategory) => {
-		// Correspond to categories of verification in FormValidation.js
-		const warnMessages = {
-			"file" : "L'image choisie est trop lourde (max 300 ko) ou non valide !",
-			"text" : "Les caractères spéciaux ne sont pas autorisés !",
-			"email" : "L'adresse e-mail n'est pas valide !",
-			"tel" : "Le numéro n'a pas un format valide (ex : 079 645 23 12).",
-			"address" : "L'adresse n'est pas valide !",
-			"postal" : "Le numéro postal n'est pas valide !",
-			"textarea" : "Les caractères spéciaux ne sont pas autorisés !",
-		}
-		let cookieStatus = sessionStorage.getItem(inputName)
-		return cookieStatus === "false" ? <WarningBox><WarnIcon /><p>{warnMessages[inputCategory]}</p></WarningBox> : null
-	}
 
 	const isValid = (inputToCheck) => {
 		let isVal = sessionStorage.getItem(inputToCheck);
@@ -506,7 +486,8 @@ export const useCustForm = (formSetup) => {
 				signUpCall(formSetup.endpoints.signup, inputs).then(() => {
 					// If success, clear form cookies & go to dashboard
 					clearFormCookies(formSetup.formRef.current)
-					navigate(formSetup.navigateTo);
+					setIsSignup(false);
+					//navigate(formSetup.navigateTo);
 				}).catch(fetchFail);
 			}
 		}
