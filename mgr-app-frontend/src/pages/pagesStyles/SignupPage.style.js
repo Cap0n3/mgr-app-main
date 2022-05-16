@@ -9,6 +9,7 @@ export const PageBody = styled.div`
     width: 100%;
     height: 100vh;
     background-color: ${DarkColors.Dark_Background};
+    overflow-y: scroll;
 `;
 
 export const LeftSectionWrapper = styled.div`
@@ -66,4 +67,8 @@ export const Title = styled.h1`
 
 export const FormWrapper = styled.div`
     width: 350px;
+
+    @media screen and (max-width: 720px) {
+        width: 300px;
+    }
 `;

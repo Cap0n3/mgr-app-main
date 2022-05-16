@@ -9,4 +9,5 @@ export const PageBody = styled.div`
     width: 100%;
     height: 100vh;
     background-color: ${DarkColors.Dark_Background};
+    overflow-y: scroll;
 `;

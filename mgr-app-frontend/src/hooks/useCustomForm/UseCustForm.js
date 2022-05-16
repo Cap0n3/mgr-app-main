@@ -380,7 +380,8 @@ export const useCustForm = (formSetup) => {
 			return null;
 		}
 	}
-    /**
+    
+	/**
 	 * Get values from inputs on keyboard press and polulate state "inputs".
 	 * @param {Object}  e   Event object passed by input.
 	 */
@@ -497,6 +498,11 @@ export const useCustForm = (formSetup) => {
 				}).catch(fetchFail);
 			}
 			else if (formSetup.operation === "signup") {
+				// First check if password and confirmation match
+				if(inputs.password !== inputs.confirmPasswd) {
+					alert.error("Les mots de passe pas identiques");
+					return;
+				}
 				signUpCall(formSetup.endpoints.signup, inputs).then(() => {
 					// If success, clear form cookies & go to dashboard
 					clearFormCookies(formSetup.formRef.current)

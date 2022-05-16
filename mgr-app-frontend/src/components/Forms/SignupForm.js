@@ -28,14 +28,12 @@ const SignupForm = () => {
         let enteredPasswd = customForm.inputs.confirmPasswd;
         let passwd = customForm.inputs.password;
         let passConf = customForm.inputs.confirmPasswd;
-        console.log(enteredPasswd)
+        
         if(enteredPasswd !== undefined) {
             if(passwd !== passConf) {
-                console.log(false)
                 setIsMatch(false)
             }
             else if(passwd === passConf) {
-                console.log(true)
                 setIsMatch(true)
             }
         }
@@ -84,6 +82,7 @@ const SignupForm = () => {
             {warningBox("email", "email")}
             <Input type="password" name="password" placeholder="Mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
             <Input isValid={isMatch} warnColor="yellow" type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
+            {(isMatch === false) ? <WarningBox><WarnIcon /><p>Mots de passe pas identiques !</p></WarningBox> : null}
             <Input type="submit" value="S'inscrire" />
             <LinkWrapper>
                 <LinkWrapper>
