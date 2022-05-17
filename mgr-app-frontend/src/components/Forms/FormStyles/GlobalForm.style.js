@@ -235,11 +235,11 @@ export const WarningBox = styled.div`
 	align-items: center;
 	padding: 10px 0px 10px 0px;
 	margin-bottom: 30px;
-	border: 1px dotted red;
+	border: 1px dotted ${({warnColor}) => (warnColor ? warnColor : "red")};
 	border-radius: 4px;
 
 	& > p {
-		color: red;
+		color: ${({warnColor}) => (warnColor ? warnColor : "red")};
 		font-size: 0.9em;
 		margin: 0px;
 	}
@@ -253,10 +253,42 @@ export const WarningBox = styled.div`
 
 export const WarnIcon = styled(RiErrorWarningLine)`
 	font-size: 1.2em;
-	color: red;
+	color: ${({warnColor}) => (warnColor ? warnColor : "red")};
 	margin: 0px 5px 0px 0px;
 
 	@media screen and (max-width: 960px) {
 		font-size: 1.0em;
 	}
+`;
+
+// === Password strengh indicator === //
+
+export const PassCheckWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 30px;
+	${'' /* border: 1px solid brown; */}
+`;
+
+export const IndicatorWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	${'' /* border: 1px solid blue; */}
+	margin-bottom: 15px;
+`;
+
+export const StrenghBar = styled.div`
+	width: 100%;
+	height: 3px;
+	margin-right: 5px;
+	background-color: ${({barColor}) => (barColor ? barColor : "lightgrey")};
+`;
+
+export const StrengthMsg = styled.div`
+	display: flex;
+	justify-content: center;
+	${'' /* border: 1px solid coral; */}
 `;

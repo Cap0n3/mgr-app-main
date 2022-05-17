@@ -3,7 +3,11 @@ import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
 import {
 	Input,
     WarningBox,
-    WarnIcon
+    WarnIcon,
+    PassCheckWrapper,
+    IndicatorWrapper,
+    StrenghBar,
+    StrengthMsg
 } from "./FormStyles/GlobalForm.style";
 import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
@@ -12,6 +16,7 @@ const SignupForm = () => {
     const formRef = useRef();
     const { setIsSignup } = useContext(SignupContext);
     const [isMatch, setIsMatch] = useState(null);
+    const [isStrong, setIsStrong] = useState({state:null, msg:"", color:""});
     const warnColor = "red";
     const [customForm] = useCustForm({
         operation: "signup",
@@ -24,6 +29,9 @@ const SignupForm = () => {
         formRef: formRef
     })
 
+    /**
+     * Here to control that password and password confirmation are matching. 
+     */
     useEffect(() => {
         let enteredPasswd = customForm.inputs.confirmPasswd;
         let passwd = customForm.inputs.password;
@@ -41,6 +49,44 @@ const SignupForm = () => {
             setIsMatch(null)
         }
     }, [customForm.inputs.password, customForm.inputs.confirmPasswd]);
+
+    /**
+     * Check password strength.
+     */
+    useEffect(() => {
+        let passwd = customForm.inputs.password;
+        
+        if(passwd !== undefined) {
+            // At least 1 capital letter, 1 digit and 1 of these special chars
+            let passRegex = new RegExp(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!?"'`/@#$%():;=^&*]).*$/);
+            let udpatedValue = {};
+            console.log(passwd)
+            if(passwd.length < 10) {
+                if(passwd === "") {
+                    udpatedValue = {state:null, msg:""};
+                }
+                else {
+                    udpatedValue = {state:false, msg:"Minimum 10 caractères pour le mot de passe.", color:"orange"};
+                }
+                setIsStrong(isStrong => ({
+                    ...isStrong,
+                    ...udpatedValue
+                }));
+            } else {
+                // Test passwd
+                if(passRegex.test(passwd)) {
+                    udpatedValue = {state:true, msg:"Mot de passe acceptable !", color:"green"};
+                }
+                else {
+                    udpatedValue = {state:false, msg:"Le mot de passe doit contenir au moins un caractère spécial, un chiffre et une majuscule !", color:"yellow"};
+                }
+                setIsStrong(isStrong => ({
+                    ...isStrong,
+                    ...udpatedValue
+                }));
+            }
+        }
+    }, [customForm.inputs.password]);
 
     /**
 	 * This function uses `isValid()` useCustForm hook function to display warning messages for user if input validation has failed.
@@ -82,7 +128,15 @@ const SignupForm = () => {
             {warningBox("email", "email")}
             <Input type="password" name="password" placeholder="Mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
             <Input isValid={isMatch} warnColor="yellow" type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
-            {(isMatch === false) ? <WarningBox><WarnIcon /><p>Mots de passe pas identiques !</p></WarningBox> : null}
+            {(isMatch === false) ? <WarningBox warnColor="yellow"><WarnIcon warnColor="yellow" /><p>Mots de passe pas identiques !</p></WarningBox> : null}
+            <PassCheckWrapper>
+                <IndicatorWrapper>
+                    <StrenghBar barColor={isStrong.color}></StrenghBar>
+                    <StrenghBar barColor=""></StrenghBar>
+                    <StrenghBar barColor=""></StrenghBar>
+                </IndicatorWrapper>
+                    <StrengthMsg>{isStrong.msg}</StrengthMsg>
+            </PassCheckWrapper>
             <Input type="submit" value="S'inscrire" />
             <LinkWrapper>
                 <LinkWrapper>
@@ -90,6 +144,7 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
+        {console.log(isStrong.msg)}
         </>
     );
 
