@@ -15,8 +15,6 @@ import { SignupContext } from "../../App";
 const SignupForm = () => {
     const formRef = useRef();
     const { setIsSignup } = useContext(SignupContext);
-    const [isMatch, setIsMatch] = useState(null);
-    const [isStrong, setIsStrong] = useState({state:null, msg:"", color:""});
     const warnColor = "red";
     const [customForm] = useCustForm({
         operation: "signup",
@@ -28,6 +26,12 @@ const SignupForm = () => {
         navigateTo: "/",
         formRef: formRef
     })
+    // For password
+    const [isMatch, setIsMatch] = useState(null);
+    const [isStrong, setIsStrong] = useState(null);
+    const [isLong, setIsLong] = useState(null);
+    const [msg, setMsg] = useState("");
+    const [isPerfect, setIsPerfect] = useState(null);
 
     /**
      * Here to control that password and password confirmation are matching. 
@@ -59,31 +63,36 @@ const SignupForm = () => {
         if(passwd !== undefined) {
             // At least 1 capital letter, 1 digit and 1 of these special chars
             let passRegex = new RegExp(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!?"'`/@#$%():;=^&*]).*$/);
-            let udpatedValue = {};
+
             console.log(passwd)
             if(passwd.length < 10) {
                 if(passwd === "") {
-                    udpatedValue = {state:null, msg:""};
+                    // Reset values to initial state
+                    setIsStrong(null);
+                    setIsLong(null);
+                    setIsPerfect(null);
+                    setMsg("");
                 }
                 else {
-                    udpatedValue = {state:false, msg:"Minimum 10 caractères pour le mot de passe.", color:"orange"};
+                    setIsLong(false);
+                    setIsStrong(null);
+                    setIsPerfect(null);
+                    setMsg("Le mot de passe est faible ...")
                 }
-                setIsStrong(isStrong => ({
-                    ...isStrong,
-                    ...udpatedValue
-                }));
             } else {
+                // Password is more thant 10 chars
+                setIsLong(true);
                 // Test passwd
                 if(passRegex.test(passwd)) {
-                    udpatedValue = {state:true, msg:"Mot de passe acceptable !", color:"green"};
+                    setIsStrong(true);
+                    setIsPerfect(true);
+                    setMsg("Le mot de passe est parfait !");
                 }
                 else {
-                    udpatedValue = {state:false, msg:"Le mot de passe doit contenir au moins un caractère spécial, un chiffre et une majuscule !", color:"yellow"};
+                    setIsStrong(false);
+                    setIsPerfect(null);
+                    setMsg("Le mot de passe est moyen ...");
                 }
-                setIsStrong(isStrong => ({
-                    ...isStrong,
-                    ...udpatedValue
-                }));
             }
         }
     }, [customForm.inputs.password]);
@@ -131,11 +140,11 @@ const SignupForm = () => {
             {(isMatch === false) ? <WarningBox warnColor="yellow"><WarnIcon warnColor="yellow" /><p>Mots de passe pas identiques !</p></WarningBox> : null}
             <PassCheckWrapper>
                 <IndicatorWrapper>
-                    <StrenghBar barColor={isStrong.color}></StrenghBar>
-                    <StrenghBar barColor=""></StrenghBar>
-                    <StrenghBar barColor=""></StrenghBar>
+                    <StrenghBar valState={isLong}></StrenghBar>
+                    <StrenghBar valState={isStrong}></StrenghBar>
+                    <StrenghBar valState={isPerfect}></StrenghBar>
                 </IndicatorWrapper>
-                    <StrengthMsg>{isStrong.msg}</StrengthMsg>
+                    <StrengthMsg>{msg}</StrengthMsg>
             </PassCheckWrapper>
             <Input type="submit" value="S'inscrire" />
             <LinkWrapper>
@@ -144,7 +153,6 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
-        {console.log(isStrong.msg)}
         </>
     );
 

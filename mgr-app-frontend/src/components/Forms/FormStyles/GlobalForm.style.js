@@ -284,7 +284,11 @@ export const StrenghBar = styled.div`
 	width: 100%;
 	height: 3px;
 	margin-right: 5px;
-	background-color: ${({barColor}) => (barColor ? barColor : "lightgrey")};
+	background-color: ${({valState}) => 
+		(valState === true && "green") ||
+		(valState === false && "orange") ||
+		"lightgrey"
+	};
 `;
 
 export const StrengthMsg = styled.div`
