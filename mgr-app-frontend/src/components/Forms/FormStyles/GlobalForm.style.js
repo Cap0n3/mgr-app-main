@@ -264,7 +264,7 @@ export const WarnIcon = styled(RiErrorWarningLine)`
 // === Password strengh indicator === //
 
 export const PassCheckWrapper = styled.div`
-	display: flex;
+	display: ${({show}) => (show ? "flex" : "none")};
 	flex-direction: column;
 	justify-content: center;
 	width: 100%;
@@ -277,18 +277,27 @@ export const IndicatorWrapper = styled.div`
 	justify-content: center;
 	width: 100%;
 	${'' /* border: 1px solid blue; */}
+	margin-top: 15px;
 	margin-bottom: 15px;
 `;
 
 export const StrenghBar = styled.div`
 	width: 100%;
-	height: 3px;
-	margin-right: 5px;
-	background-color: ${({valState}) => 
-		(valState === true && "green") ||
-		(valState === false && "orange") ||
+	height: 7px;
+	border-radius: ${({leftRounded, rightRounded}) => (
+		(leftRounded && `${leftRounded}px 0px 0px ${leftRounded}px`) ||
+		(rightRounded && `0px ${rightRounded}px ${rightRounded}px 0px`) ||
+		"0px 0px 0px 0px"
+	)};
+	background-color: ${({levelColor, levelCat}) => 
+		((levelColor === 1 && levelCat === "first") && "red") ||
+		((levelColor >= 1 && levelCat === "first") && "green") ||
+		((levelColor === 2 && levelCat === "second") && "orange") ||
+		((levelColor >= 2 && levelCat === "second") && "green") ||
+		(levelColor === 4 && "green") ||
 		"lightgrey"
 	};
+	
 `;
 
 export const StrengthMsg = styled.div`

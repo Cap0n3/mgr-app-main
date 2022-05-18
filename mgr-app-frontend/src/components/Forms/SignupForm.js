@@ -31,7 +31,7 @@ const SignupForm = () => {
     const [msg, setMsg] = useState("");
 
     const [passStrengh, setPassStrengh] = useState({isLong: null, haveSpecial: null, haveCap: null, haveNum: null});
-    const [strengthLevel, setStrengthLevel] = useState({msg: "", level: 0});
+    const [strengthLevel, setStrengthLevel] = useState({msg: "", level: null});
     /**
      * Here to control that password and password confirmation are matching. 
      */
@@ -73,7 +73,7 @@ const SignupForm = () => {
         if(passwd !== undefined) {
             // At least 1 capital letter, 1 digit and 1 of these special chars
             console.log(passwd)
-            if(passwd.length < 10) {
+            if(passwd.length < 12) {
                 if(passwd === "") {
                     // Reset messagef
                     setMsg("");
@@ -133,7 +133,7 @@ const SignupForm = () => {
                     setStrengthLevel({msg: "Excellent", level: 4});
                     break;
                 default:
-                    setStrengthLevel({msg: "", level: 0});
+                    setStrengthLevel({msg: "", level: null});
               }
         }
     }, [customForm.inputs.password]);
@@ -179,11 +179,11 @@ const SignupForm = () => {
             <Input type="password" name="password" placeholder="Mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
             <Input isValid={isMatch} warnColor="yellow" type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
             {(isMatch === false) ? <WarningBox warnColor="yellow"><WarnIcon warnColor="yellow" /><p>Mots de passe pas identiques !</p></WarningBox> : null}
-            <PassCheckWrapper>
+            <PassCheckWrapper show={strengthLevel.level !== null}>
                 <IndicatorWrapper>
-                    <StrenghBar color={null}></StrenghBar>
-                    <StrenghBar color={null}></StrenghBar>
-                    <StrenghBar color={null}></StrenghBar>
+                    <StrenghBar leftRounded="15" levelColor={strengthLevel.level} levelCat="first"></StrenghBar>
+                    <StrenghBar levelColor={strengthLevel.level} levelCat="second"></StrenghBar>
+                    <StrenghBar rightRounded="15" levelColor={strengthLevel.level} levelCat="third"></StrenghBar>
                 </IndicatorWrapper>
                     <StrengthMsg>{strengthLevel.msg}</StrengthMsg>
             </PassCheckWrapper>
@@ -194,7 +194,6 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
-        {console.log(strengthLevel)}
         </>
     );
 
