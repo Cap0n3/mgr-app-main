@@ -28,11 +28,10 @@ const SignupForm = () => {
     })
     // For password
     const [isMatch, setIsMatch] = useState(null);
-    const [isStrong, setIsStrong] = useState(null);
-    const [isLong, setIsLong] = useState(null);
     const [msg, setMsg] = useState("");
-    const [isPerfect, setIsPerfect] = useState(null);
 
+    const [passStrengh, setPassStrengh] = useState({isLong: null, haveSpecial: null, haveCap: null, haveNum: null});
+    const [strengthLevel, setStrengthLevel] = useState({msg: "", level: 0});
     /**
      * Here to control that password and password confirmation are matching. 
      */
@@ -59,41 +58,83 @@ const SignupForm = () => {
      */
     useEffect(() => {
         let passwd = customForm.inputs.password;
-        
+        let passwdState = {
+            isLong: null, 
+            haveSpecial: null, 
+            haveCap: null, 
+            haveNum: null
+        };
+        // Regex tests
+        let testSpecial = new RegExp(/[#]+/);
+        let testNumbers = new RegExp(/[0-9]+/);
+        let testCaps = new RegExp(/[A-Z]+/);
+        let passRegex = new RegExp(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!?"'`/@#$%():;=^&*]).*$/);
+
         if(passwd !== undefined) {
             // At least 1 capital letter, 1 digit and 1 of these special chars
-            let passRegex = new RegExp(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!?"'`/@#$%():;=^&*]).*$/);
-
             console.log(passwd)
             if(passwd.length < 10) {
                 if(passwd === "") {
-                    // Reset values to initial state
-                    setIsStrong(null);
-                    setIsLong(null);
-                    setIsPerfect(null);
+                    // Reset messagef
                     setMsg("");
                 }
                 else {
-                    setIsLong(false);
-                    setIsStrong(null);
-                    setIsPerfect(null);
-                    setMsg("Le mot de passe est faible ...")
+                    // Passwd is too short
+                    passwdState["isLong"] = false;
+                    // Does it have at least one special char ?
+                    testSpecial.test(passwd) ? passwdState["haveSpecial"] = true : passwdState["haveSpecial"] = false;
+                    // One number ?
+                    testNumbers.test(passwd) ? passwdState["haveNum"] = true : passwdState["haveNum"] = false;
+                    // One Cap letter ?
+                    testCaps.test(passwd) ? passwdState["haveCap"] = true : passwdState["haveCap"] = false;
                 }
+                // Update states
+                setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
             } else {
-                // Password is more thant 10 chars
-                setIsLong(true);
-                // Test passwd
+                // OK, password is more thant 10 chars
+                passwdState["isLong"] = true;
+                // Now test if passwd is strong (long enough, at least one capitialized, one special char, one number)
                 if(passRegex.test(passwd)) {
-                    setIsStrong(true);
-                    setIsPerfect(true);
-                    setMsg("Le mot de passe est parfait !");
+                    passwdState["haveSpecial"] = true;
+                    passwdState["haveCap"] = true;
+                    passwdState["haveNum"] = true;
                 }
                 else {
-                    setIsStrong(false);
-                    setIsPerfect(null);
-                    setMsg("Le mot de passe est moyen ...");
+                    // Ok so what's missing ?
+                    
+                    // Does it have at least one special char ?
+                    testSpecial.test(passwd) ? passwdState["haveSpecial"] = true : passwdState["haveSpecial"] = false;
+                    // One number ?
+                    testNumbers.test(passwd) ? passwdState["haveNum"] = true : passwdState["haveNum"] = false;
+                    // One Cap letter ?
+                    testCaps.test(passwd) ? passwdState["haveCap"] = true : passwdState["haveCap"] = false;
+                }
+                // Update states
+                setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
+            }
+            // Evaluate password strengh
+            let strength = 0
+            for (const key in passwdState) {
+                if(passwdState[key]) {
+                    strength++;
                 }
             }
+            switch(strength) {
+                case 1:
+                    setStrengthLevel({msg: "Faible", level: 1});
+                    break;
+                case 2:
+                    setStrengthLevel({msg: "Médiocre", level: 2});
+                    break;
+                case 3:
+                    setStrengthLevel({msg: "Bien", level: 3});
+                    break;
+                case 4:
+                    setStrengthLevel({msg: "Excellent", level: 4});
+                    break;
+                default:
+                    setStrengthLevel({msg: "", level: 0});
+              }
         }
     }, [customForm.inputs.password]);
 
@@ -140,11 +181,11 @@ const SignupForm = () => {
             {(isMatch === false) ? <WarningBox warnColor="yellow"><WarnIcon warnColor="yellow" /><p>Mots de passe pas identiques !</p></WarningBox> : null}
             <PassCheckWrapper>
                 <IndicatorWrapper>
-                    <StrenghBar valState={isLong}></StrenghBar>
-                    <StrenghBar valState={isStrong}></StrenghBar>
-                    <StrenghBar valState={isPerfect}></StrenghBar>
+                    <StrenghBar color={null}></StrenghBar>
+                    <StrenghBar color={null}></StrenghBar>
+                    <StrenghBar color={null}></StrenghBar>
                 </IndicatorWrapper>
-                    <StrengthMsg>{msg}</StrengthMsg>
+                    <StrengthMsg>{strengthLevel.msg}</StrengthMsg>
             </PassCheckWrapper>
             <Input type="submit" value="S'inscrire" />
             <LinkWrapper>
@@ -153,6 +194,7 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
+        {console.log(strengthLevel)}
         </>
     );
 
