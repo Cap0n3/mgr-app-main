@@ -3,6 +3,7 @@ import AuthContext from '../../context/AuthContext';
 import { Form, Input, WarningBox, WarnIcon } from "./FormStyles/GlobalForm.style";
 import { LogoWrapper, AppLogo, AppTitle, LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
+import { InputWarnNormal } from "../../Colors";
 
 const LoginFormComponent = () => {
     let { loginUser } = useContext(AuthContext);
@@ -15,7 +16,7 @@ const LoginFormComponent = () => {
      * @returns     JSX with styled-components.
      */
     const warningMessage = () => {
-		return loginState.state ?  null : <WarningBox><WarnIcon /><p>{loginState.msg}</p></WarningBox>
+		return loginState.state ?  null : <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal}/><p>{loginState.msg}</p></WarningBox>
 	}
     return (
         <>
