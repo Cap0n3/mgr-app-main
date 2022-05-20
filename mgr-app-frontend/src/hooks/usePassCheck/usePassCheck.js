@@ -59,7 +59,6 @@ export const usePassCheck = (passwd) => {
 
         if(passwd !== undefined) {
             // At least 1 capital letter, 1 digit and 1 of these special chars
-            console.log(passwd)
             if(passwd.length < 10) {
                 if(passwd === "") {
                     // Reset messagef

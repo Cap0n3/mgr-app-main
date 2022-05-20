@@ -14,3 +14,18 @@ export const DarkColors = {
     Neon_Green : "#549a44ff",
     Neon_Blue : "#3c81f6ff",
 }
+
+// ====== Input colors for user warning ====== //
+// Normal colors
+export const InputWarnNormal = {
+    background: "red",
+    border: "red",
+    text: "red"
+};
+
+// For password comparison
+export const InputWarnCompare = {
+    background: "yellow",
+    border: "yellow",
+    text: "yellow"
+};

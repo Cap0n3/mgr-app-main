@@ -69,9 +69,9 @@ export const Input = styled.input`
 		box-sizing: border-box; 
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
-		background-color: ${({isValid, warnColor}) => 
+		background-color: ${({isValid, warn_colors}) => 
 			(isValid === true && `${INPUTS_BCKG_COLOR}`) || 
-			(isValid === false &&  warnColor) ||
+			(isValid === false &&  warn_colors.background) ||
 			`${INPUTS_BCKG_COLOR}` /* If isValid prop is not setup */
 		};
 		-webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
@@ -85,14 +85,14 @@ export const Input = styled.input`
 	
 	&:focus {
 		background: ${INPUTS_FOCUS_COLOR};
-		border: ${({isValid}) => 
+		border: ${({isValid, warn_colors}) => 
 			(isValid === true && "1px solid green") || 
-			(isValid === false &&  "1px solid red") ||
+			(isValid === false &&  `1px solid ${warn_colors.border}`) ||
 			"none"
 		};
-		color: ${({isValid}) => 
+		color: ${({isValid, warn_colors}) => 
 			(isValid === true && `${INPUTS_TEXT_COLOR}`) || 
-			(isValid === false &&  "red") ||
+			(isValid === false &&  warn_colors.text) ||
 			`${INPUTS_TEXT_COLOR}`
 		};
 
@@ -235,11 +235,11 @@ export const WarningBox = styled.div`
 	align-items: center;
 	padding: 10px 0px 10px 0px;
 	margin-bottom: 30px;
-	border: 1px dotted ${({warnColor}) => (warnColor ? warnColor : "red")};
+	border: 1px dotted ${({warn_colors}) => (warn_colors ? warn_colors.text : "red")};
 	border-radius: 4px;
-
+	
 	& > p {
-		color: ${({warnColor}) => (warnColor ? warnColor : "red")};
+		color: ${({warn_colors}) => (warn_colors ? warn_colors.text : "red")};
 		font-size: 0.9em;
 		margin: 0px;
 	}
@@ -253,7 +253,7 @@ export const WarningBox = styled.div`
 
 export const WarnIcon = styled(RiErrorWarningLine)`
 	font-size: 1.2em;
-	color: ${({warnColor}) => (warnColor ? warnColor : "red")};
+	color: ${({warn_colors}) => (warn_colors ? warn_colors.text : "red")};
 	margin: 0px 5px 0px 0px;
 
 	@media screen and (max-width: 960px) {

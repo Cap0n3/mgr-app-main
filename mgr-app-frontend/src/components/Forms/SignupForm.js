@@ -12,11 +12,12 @@ import {
 import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
 import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
+import { InputWarnNormal, InputWarnCompare } from "../../Colors";
 
 const SignupForm = () => {
     const formRef = useRef();
     const { setIsSignup } = useContext(SignupContext);
-    const warnColor = "red";
+
     const [customForm] = useCustForm({
         operation: "signup",
         endpoints: {
@@ -75,24 +76,24 @@ const SignupForm = () => {
 			return null;
 		}
 		else if (!isVal) {
-			return <WarningBox><WarnIcon /><p>{warnMessages[inputType]}</p></WarningBox>
+			return <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal} /><p>{warnMessages[inputType]}</p></WarningBox>
 		}
 	}
     
     return(
         <>
             <form ref={formRef} onSubmit={customForm.handleSubmit}>
-            <Input isValid={customForm.isValid("username")} warnColor={warnColor} type="text" name="username" placeholder="Nom d'utilisateur" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
+            <Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" placeholder="Nom d'utilisateur" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
             {warningBox("username", "text")}
-            <Input isValid={customForm.isValid("first_name")} warnColor={warnColor} type="text" name="first_name" placeholder="Prénom" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
+            <Input isValid={customForm.isValid("first_name")} warn_colors={InputWarnNormal} type="text" name="first_name" placeholder="Prénom" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />
             {warningBox("first_name", "text")}
-            <Input isValid={customForm.isValid("last_name")} warnColor={warnColor} type="text" name="last_name" placeholder="Nom" value={customForm.inputs.last_name || ""} onChange={customForm.handleChange} required />
+            <Input isValid={customForm.isValid("last_name")} warn_colors={InputWarnNormal} type="text" name="last_name" placeholder="Nom" value={customForm.inputs.last_name || ""} onChange={customForm.handleChange} required />
             {warningBox("last_name", "text")}
-            <Input isValid={customForm.isValid("email")} warnColor={warnColor} type="email" name="email" placeholder="Email" value={customForm.inputs.email || ""} onChange={customForm.handleChange} required />
+            <Input isValid={customForm.isValid("email")} warn_colors={InputWarnNormal} type="email" name="email" placeholder="Email" value={customForm.inputs.email || ""} onChange={customForm.handleChange} required />
             {warningBox("email", "email")}
             <Input type="password" name="password" placeholder="Mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
-            <Input isValid={isMatch} warnColor="yellow" type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
-            {(isMatch === false) ? <WarningBox warnColor="yellow"><WarnIcon warnColor="yellow" /><p>Mots de passe pas identiques !</p></WarningBox> : null}
+            <Input isValid={isMatch} warn_colors={InputWarnCompare} type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
+            {(isMatch === false) ? <WarningBox warn_colors={InputWarnCompare}><WarnIcon warn_colors={InputWarnCompare} /><p>Mots de passe pas identiques !</p></WarningBox> : null}
             <PassCheckWrapper show={passCheck.level !== null}>
                 <IndicatorWrapper>
                     <StrenghBar leftRounded="15" levelColor={passCheck.level} levelCat="first"></StrenghBar>
