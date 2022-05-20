@@ -11,6 +11,7 @@ import {
 } from "./FormStyles/GlobalForm.style";
 import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
+import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
 
 const SignupForm = () => {
     const formRef = useRef();
@@ -26,12 +27,10 @@ const SignupForm = () => {
         navigateTo: "/",
         formRef: formRef
     })
-    // For password
+    // For password match & strength check
     const [isMatch, setIsMatch] = useState(null);
-    const [msg, setMsg] = useState("");
+    const [passCheck] = usePassCheck(customForm.inputs.password);
 
-    const [passStrengh, setPassStrengh] = useState({isLong: null, haveSpecial: null, haveCap: null, haveNum: null});
-    const [strengthLevel, setStrengthLevel] = useState({msg: "", level: null});
     /**
      * Here to control that password and password confirmation are matching. 
      */
@@ -52,91 +51,6 @@ const SignupForm = () => {
             setIsMatch(null)
         }
     }, [customForm.inputs.password, customForm.inputs.confirmPasswd]);
-
-    /**
-     * Check password strength.
-     */
-    useEffect(() => {
-        let passwd = customForm.inputs.password;
-        let passwdState = {
-            isLong: null, 
-            haveSpecial: null, 
-            haveCap: null, 
-            haveNum: null
-        };
-        // Regex tests
-        let testSpecial = new RegExp(/[#]+/);
-        let testNumbers = new RegExp(/[0-9]+/);
-        let testCaps = new RegExp(/[A-Z]+/);
-        let passRegex = new RegExp(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!?"'`/@#$%():;=^&*]).*$/);
-
-        if(passwd !== undefined) {
-            // At least 1 capital letter, 1 digit and 1 of these special chars
-            console.log(passwd)
-            if(passwd.length < 12) {
-                if(passwd === "") {
-                    // Reset messagef
-                    setMsg("");
-                }
-                else {
-                    // Passwd is too short
-                    passwdState["isLong"] = false;
-                    // Does it have at least one special char ?
-                    testSpecial.test(passwd) ? passwdState["haveSpecial"] = true : passwdState["haveSpecial"] = false;
-                    // One number ?
-                    testNumbers.test(passwd) ? passwdState["haveNum"] = true : passwdState["haveNum"] = false;
-                    // One Cap letter ?
-                    testCaps.test(passwd) ? passwdState["haveCap"] = true : passwdState["haveCap"] = false;
-                }
-                // Update states
-                setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
-            } else {
-                // OK, password is more thant 10 chars
-                passwdState["isLong"] = true;
-                // Now test if passwd is strong (long enough, at least one capitialized, one special char, one number)
-                if(passRegex.test(passwd)) {
-                    passwdState["haveSpecial"] = true;
-                    passwdState["haveCap"] = true;
-                    passwdState["haveNum"] = true;
-                }
-                else {
-                    // Ok so what's missing ?
-                    
-                    // Does it have at least one special char ?
-                    testSpecial.test(passwd) ? passwdState["haveSpecial"] = true : passwdState["haveSpecial"] = false;
-                    // One number ?
-                    testNumbers.test(passwd) ? passwdState["haveNum"] = true : passwdState["haveNum"] = false;
-                    // One Cap letter ?
-                    testCaps.test(passwd) ? passwdState["haveCap"] = true : passwdState["haveCap"] = false;
-                }
-                // Update states
-                setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
-            }
-            // Evaluate password strengh
-            let strength = 0
-            for (const key in passwdState) {
-                if(passwdState[key]) {
-                    strength++;
-                }
-            }
-            switch(strength) {
-                case 1:
-                    setStrengthLevel({msg: "Faible", level: 1});
-                    break;
-                case 2:
-                    setStrengthLevel({msg: "Médiocre", level: 2});
-                    break;
-                case 3:
-                    setStrengthLevel({msg: "Bien", level: 3});
-                    break;
-                case 4:
-                    setStrengthLevel({msg: "Excellent", level: 4});
-                    break;
-                default:
-                    setStrengthLevel({msg: "", level: null});
-              }
-        }
-    }, [customForm.inputs.password]);
 
     /**
 	 * This function uses `isValid()` useCustForm hook function to display warning messages for user if input validation has failed.
@@ -179,13 +93,13 @@ const SignupForm = () => {
             <Input type="password" name="password" placeholder="Mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
             <Input isValid={isMatch} warnColor="yellow" type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
             {(isMatch === false) ? <WarningBox warnColor="yellow"><WarnIcon warnColor="yellow" /><p>Mots de passe pas identiques !</p></WarningBox> : null}
-            <PassCheckWrapper show={strengthLevel.level !== null}>
+            <PassCheckWrapper show={passCheck.level !== null}>
                 <IndicatorWrapper>
-                    <StrenghBar leftRounded="15" levelColor={strengthLevel.level} levelCat="first"></StrenghBar>
-                    <StrenghBar levelColor={strengthLevel.level} levelCat="second"></StrenghBar>
-                    <StrenghBar rightRounded="15" levelColor={strengthLevel.level} levelCat="third"></StrenghBar>
+                    <StrenghBar leftRounded="15" levelColor={passCheck.level} levelCat="first"></StrenghBar>
+                    <StrenghBar levelColor={passCheck.level} levelCat="second"></StrenghBar>
+                    <StrenghBar rightRounded="15" levelColor={passCheck.level} levelCat="third"></StrenghBar>
                 </IndicatorWrapper>
-                    <StrengthMsg>{strengthLevel.msg}</StrengthMsg>
+                    <StrengthMsg>{passCheck.msg}</StrengthMsg>
             </PassCheckWrapper>
             <Input type="submit" value="S'inscrire" />
             <LinkWrapper>
