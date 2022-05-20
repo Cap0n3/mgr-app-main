@@ -3,13 +3,7 @@ import { PassCheckWrapper } from "../../components/Forms/FormStyles/GlobalForm.s
 
 /**
  * Documentation of Returned object of usePassCheck hook.
- * @typedef {Object} PassCheckResults
- * @property    {bool}      isLong          - Is password long enough ? (Minimum 10 characters).
- * @property    {bool}      haveSymbols     - Does password have at least one symbol ?
- * @property    {bool}      haveCaps        - Does password have at least one capitalized letter ?
- * @property    {bool}      haveNum         - Does password have at least one number ?
- * @property    {int}       level           - Level of security (1-4).
- * @property    {string}    msg             - Message for level ("Weak", "Medium", "Good", "Excellent")
+
  */
 
 /**
@@ -22,7 +16,7 @@ import { PassCheckWrapper } from "../../components/Forms/FormStyles/GlobalForm.s
  * ```js 
  *  const [passCheck] = usePassCheck(password);
  * ```
- * > Here `password` is the password to be checked.
+ * > **Note :** Here `password` is the password to be checked.
  * 
  * Then you can access these useful values like this (see PassCheckResults for more infos) :
  * 
@@ -30,9 +24,19 @@ import { PassCheckWrapper } from "../../components/Forms/FormStyles/GlobalForm.s
  * let secLevel = passCheck.level;
  * let secMsg = passCheck.msg;
  * ```
+ * ## Returned object
+ * 
+ * @typedef {Object} PassCheckResults
+ * @param    {bool}      isLong          - Is password long enough ? (Minimum 10 characters).
+ * @param    {bool}      haveSymbols     - Does password have at least one symbol ?
+ * @param    {bool}      haveCaps        - Does password have at least one capitalized letter ?
+ * @param    {bool}      haveNum         - Does password have at least one number ?
+ * @param    {int}       level           - Level of security (1-4).
+ * @param    {string}    msg             - Level ("Weak", "Medium", "Good", "Excellent").
  * 
  * ## Parameters & return
- * @param       {string}  passwd        Password to check & evaluate
+ * 
+ * @param       {string}  passwd        Password to check & evaluate.
  * @returns     {PassCheckResults}      Object containing various useful informations about the password.
  */
 export const usePassCheck = (passwd) => {
