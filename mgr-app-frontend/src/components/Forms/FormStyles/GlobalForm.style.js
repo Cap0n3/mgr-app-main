@@ -284,17 +284,20 @@ export const IndicatorWrapper = styled.div`
 export const StrenghBar = styled.div`
 	width: 100%;
 	height: 7px;
-	border-radius: ${({leftRounded, rightRounded}) => (
+	${'' /* border-radius: ${({leftRounded, rightRounded}) => (
 		(leftRounded && `${leftRounded}px 0px 0px ${leftRounded}px`) ||
 		(rightRounded && `0px ${rightRounded}px ${rightRounded}px 0px`) ||
 		"0px 0px 0px 0px"
-	)};
+	)}; */}
+	border-radius: 15px;
+	margin-right: ${({marginLeft}) => (marginLeft ? marginLeft : 0)}px;
 	background-color: ${({levelColor, levelCat}) => 
 		((levelColor === 1 && levelCat === "first") && "red") ||
-		((levelColor >= 1 && levelCat === "first") && "green") ||
-		((levelColor === 2 && levelCat === "second") && "orange") ||
-		((levelColor >= 2 && levelCat === "second") && "green") ||
-		(levelColor === 4 && "green") ||
+		((levelColor > 1 && levelCat === "first") && "green") ||
+		((levelColor === 3 && levelCat === "second") && "orange") ||
+		((levelColor > 3 && levelCat === "second") && "green") ||
+		((levelColor === 4 && levelCat === "third") && "orange") ||
+		((levelColor > 4 && levelCat === "third") && "green") ||
 		"lightgrey"
 	};
 	

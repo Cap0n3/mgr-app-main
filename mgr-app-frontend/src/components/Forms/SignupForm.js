@@ -96,8 +96,8 @@ const SignupForm = () => {
             {(isMatch === false) ? <WarningBox warn_colors={InputWarnCompare}><WarnIcon warn_colors={InputWarnCompare} /><p>Mots de passe pas identiques !</p></WarningBox> : null}
             <PassCheckWrapper show={passCheck.level !== null}>
                 <IndicatorWrapper>
-                    <StrenghBar leftRounded="15" levelColor={passCheck.level} levelCat="first"></StrenghBar>
-                    <StrenghBar levelColor={passCheck.level} levelCat="second"></StrenghBar>
+                    <StrenghBar leftRounded="15" marginLeft="5" levelColor={passCheck.level} levelCat="first"></StrenghBar>
+                    <StrenghBar marginLeft="5" levelColor={passCheck.level} levelCat="second"></StrenghBar>
                     <StrenghBar rightRounded="15" levelColor={passCheck.level} levelCat="third"></StrenghBar>
                 </IndicatorWrapper>
                     <StrengthMsg>{passCheck.msg}</StrengthMsg>
@@ -109,6 +109,12 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
+        {console.log(passCheck.haveSymbols)}
+        {console.log(passCheck.expertLevel)}
+        {console.log(passCheck.estimatedGuesses)}
+        {console.log(passCheck.estimatedTime)}
+        {console.log(passCheck.feedbackWarning)}
+        {console.log(passCheck.feedbackHint)}
         </>
     );
 
