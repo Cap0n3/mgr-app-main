@@ -12,10 +12,12 @@ import {
 import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
 import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
+import { useAlert } from 'react-alert';
 import { InputWarnNormal, InputWarnCompare } from "../../Colors";
 
 const SignupForm = () => {
     const formRef = useRef();
+    const alert = useAlert();
     const { setIsSignup } = useContext(SignupContext);
 
     const [customForm] = useCustForm({
@@ -29,8 +31,9 @@ const SignupForm = () => {
         formRef: formRef
     })
     // For password match & strength check
+    const levelMessages = ['Mauvais', 'Faible', 'Moyen', 'Pas mal', 'Bien']
     const [isMatch, setIsMatch] = useState(null);
-    const [passCheck] = usePassCheck(customForm.inputs.password);
+    const [passCheck] = usePassCheck(customForm.inputs.password, levelMessages);
 
     /**
      * Here to control that password and password confirmation are matching. 
@@ -79,10 +82,30 @@ const SignupForm = () => {
 			return <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal} /><p>{warnMessages[inputType]}</p></WarningBox>
 		}
 	}
-    
+
+    /**
+     * Before submitting, check if password and password confirmation are a match and if password strength is ok.
+     * @param   {Object}    e           - Event object. 
+     * @param   {int}       passLevel   - Current password strength.
+     */
+    const checkSubmit = (e, passLevel) => {
+        e.preventDefault();
+        if(isMatch) {
+            if(passLevel >= 4) {
+                customForm.handleSubmit(e);
+            }
+            else {
+                alert.show("Le mot de passe n'est pas sûr !");
+            }
+        } else {
+            alert.show("Les mots de passe ne correspondent pas !");
+        }
+        
+    }
+
     return(
         <>
-            <form ref={formRef} onSubmit={customForm.handleSubmit}>
+            <form ref={formRef} onSubmit={e => {checkSubmit(e, passCheck.level)}}>
             <Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" placeholder="Nom d'utilisateur" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
             {warningBox("username", "text")}
             <Input isValid={customForm.isValid("first_name")} warn_colors={InputWarnNormal} type="text" name="first_name" placeholder="Prénom" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />

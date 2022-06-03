@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
  * numbers, capital letters, symbols and is at least 10 chars and a more advanced checking.
  * 
  * The more advanced password checking is based on zxcvbn (see https://github.com/dropbox/zxcvbn), it gives a more accurate security level score 
- * but also the guesses it took to find the password, the time it would take to crack the current password & some hint and warnings about the password.
+ * but also the guesses & time it took to crack the password plus some hints and warnings about the password.
  * 
  * ## Set up
  * 
@@ -26,7 +26,20 @@ import { useState, useEffect } from "react";
  * ```js
  * let secLevel = passCheck.level;
  * let secMsg = passCheck.msg;
+ * let expertScore = passCheck.expertLevel;
+ * // ... etc ... //
  * ```
+ *
+ * ## Set custom password level messages
+ * 
+ * It is possible to set custom messages for password security level instead of default ones ("bad", "weak", "medium", etc...) .
+ * To do that, simply define a list of 5 string elements representing the five levels of security like this :
+ * 
+ * ```js 
+ * const [passCheck] = usePassCheck(password, ['Mauvais', 'Faible', 'Moyen', 'Pas mal', 'Bien']);
+ * ```
+ * > **Note :** only for basic level of security. For expert mode you'll have to implement messages yourself with password expert score level.
+ * 
  * ## Returned object
  * 
  * @typedef {Object} PassCheckResults
@@ -35,9 +48,9 @@ import { useState, useEffect } from "react";
  * @param   {bool}      haveCaps            - Does password have at least one capitalized letter ?
  * @param   {bool}      haveNum             - Does password have at least one number ?
  * @param   {int}       level               - Level of security (1-5).
- * @param   {string}    msg                 - Level ("Bad", "Weak", "Medium", "Good", "Excellent").
+ * @param   {string}    msg                 - Level ("Very Bad", "Weak", "Medium", "Pretty Good", "Good").
  * @param   {int}       expertLevel         - More accurate score for password securite (1-4).
- * @param   {int}       estimatedGuesses    - estimated guesses needed to crack password.
+ * @param   {int}       estimatedGuesses    - Estimated guesses needed to crack password.
  * @param   {string}    estimatedTime       - Time for an online attack on a service that doesn't ratelimit.
  * @param   {string}    feedbackWarning     - Explains what's wrong with password (not always set).
  * @param   {list}      feedbackHint        - A (possibly-empty) list of suggestions to help choose a less guessable password.
@@ -47,14 +60,42 @@ import { useState, useEffect } from "react";
  * @param       {string}  passwd        Password to check & evaluate.
  * @returns     {PassCheckResults}      Object containing various useful informations about the password.
  */
-export const usePassCheck = (passwd) => {
+export const usePassCheck = (passwd, customLevelMsg) => {
     const [passStrengh, setPassStrengh] = useState({isLong: null, haveSpecial: null, haveCap: null, haveNum: null});
     const [strengthLevel, setStrengthLevel] = useState({msg: "", level: null});
     const [expertScore, setExpertScore] = useState({score: null, guesses: null, time: null, warning: null, hint: null})
+    const [levelMessages, setLevelMessages] = useState(['Very Bad', 'Weak', 'Medium', 'Pretty Good', 'Good'])
     // Setup zxcvbn tool for password (https://github.com/dropbox/zxcvbn)
     const zxcvbn = require('zxcvbn');
     let passwdExpert = null;
-    
+
+    /**
+     * On first render check if hook custom level messages list (if any) was correctly initialized.
+     * Note : For user defined terms for password level messages.
+     */
+    useEffect(() => {
+        if(customLevelMsg !== undefined) {
+            let isListValid = true;
+            // Check list length and content
+            if(customLevelMsg.length !== 5) {
+                console.warn("Your list of custom messages is too long, only 5 password strengh level messages are accepted !");
+                isListValid = false;
+            } else {
+                for(let index in customLevelMsg) {
+                    if(typeof(customLevelMsg[index]) !== "string") {
+                        console.warn(`${customLevelMsg[index]} in list is not a string ! Only strings are accepted as password strengh level messages.`)
+                        isListValid = false;
+                    }
+                }
+            }
+            
+            if (isListValid) setLevelMessages(customLevelMsg);
+        }    
+    }, [])
+     
+    /**
+     * Check password strength on each password change.
+     */
     useEffect(() => {
         // Objects to update with current states
         let passwdState = {
@@ -76,7 +117,7 @@ export const usePassCheck = (passwd) => {
         setStrengthLevel({msg: "", level: null});
         setExpertScore(expertScore => ({...expertScore, ...passwdExpertState}));
         // Regex tests
-        let testSpecial = new RegExp(/[#+"()'?!$@^_<>*%&`]+/);
+        let testSpecial = new RegExp(/[#+"¨()'?!$£:;@^_<>/*%&§°=`]+/);
         let testNumbers = new RegExp(/[0-9]+/);
         let testCaps = new RegExp(/[A-Z]+/);
         let passRegex = new RegExp(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!?"'`/@#$%():;=^&*]).*$/);
@@ -138,19 +179,19 @@ export const usePassCheck = (passwd) => {
              
             switch(strength) {
                 case 1:
-                    setStrengthLevel({msg: "Mauvais", level: 1});
+                    setStrengthLevel({msg: levelMessages[0], level: 1});
                     break;
                 case 2:
-                    setStrengthLevel({msg: "Faible", level: 2});
+                    setStrengthLevel({msg: levelMessages[1], level: 2});
                     break;
                 case 3:
-                    setStrengthLevel({msg: "Médiocre", level: 3});
+                    setStrengthLevel({msg: levelMessages[2], level: 3});
                     break;
                 case 4:
-                    setStrengthLevel({msg: "Bien", level: 4});
+                    setStrengthLevel({msg: levelMessages[3], level: 4});
                     break;
                 case 5:
-                    setStrengthLevel({msg: "Excellent", level: 5});
+                    setStrengthLevel({msg: levelMessages[4], level: 5});
                     break;
                 default:
                     setStrengthLevel({msg: "", level: null});

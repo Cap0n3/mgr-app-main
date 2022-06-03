@@ -212,7 +212,7 @@ import { SignupContext } from "../../App";
 export const useCustForm = (formSetup) => {
     const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
-    const alert = useAlert()
+    const alert = useAlert();
     const [pic, setPic] = useState();
 	const [picPreview, setPicPreview] = useState();
     const [radioState, setRadioState] = useState({});
