@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 /**
  * This hook checks password strength and evalutes its level of security. It has a basic level of checking based on password content like
- * numbers, capital letters, symbols and is at least 10 chars and a more advanced checking.
+ * numbers, capital letters, symbols and is at least 8 characters and a more advanced checking.
  * 
  * The more advanced password checking is based on zxcvbn (see https://github.com/dropbox/zxcvbn), it gives a more accurate security level score 
  * but also the guesses & time it took to crack the password plus some hints and warnings about the password.
@@ -84,32 +84,39 @@ export const usePassCheck = (passwd, customLevelMsg) => {
         return Object.values(frequencies).reduce((sum, f) => sum - f/len * Math.log2(f/len), 0)
     }
 
+    /**
+     * Function to calculate strength of password based on :
+     * - Length of password
+     * - Content of password (Symbols, Cap letters, Numbers)
+     * - zxcvbn score
+     * - Entrpy score
+     * 
+     * @param   {string}    pwd         - Password to evaluate. 
+     * @param   {Object}    pwdObject   - Correspond to passwdState object.
+     * @returns {int}                   - Strength score (1-5)
+     */
     const calculateStrength = (pwd, pwdObject) => {
-        let strength = 0
-        // Attibute points for each key set to true
-        for (const key in pwdObject) {
-            if(pwdObject[key]) {
-                strength++;
-            }
-        }
-        // Substract 2 points for short passwords
-        if (pwdObject["isLong"] === false) {
-            strength -= 2;
-        }
-        // Substract 2 points for passwords with low entropy
-        let entropyScore = entropy(pwd);
-        if (entropyScore <= 2) {
-            strength -= 2;
-        } 
-        else if (entropyScore > 3 ) {
-            strength += 2;
-        }
-        console.log(strength)
+        let strength = 0;
+        let zxcvbnResult = zxcvbn(pwd);
+
+        // Add points on basic characteristics (max 5 points)
+        if (pwdObject["isLong"]) strength += 2;
+        if (pwdObject['haveSpecial']) strength += 1;
+        if (pwdObject['haveCap']) strength += 1;
+        if (pwdObject['haveNum']) strength += 1;
         
-        // If strength score is more than 5, set it to 5
-        if(strength > 5) strength = 5
-        // Set to 1 if score is less than 1
-        return (strength < 1) ? 1 : strength;
+        // Add rounded entropy score as points (max 4 points)
+        let entropyScore = Math.round(entropy(pwd));
+        strength += entropyScore;
+
+        // Add zxcvbn score (max 4)
+        strength += zxcvbnResult.score;
+
+        // Calculate average on a 5 points scale (1-5)
+        let averageStrength = Math.round((strength / 13) * 5)
+        averageStrength = (averageStrength === 0) ? 1 : averageStrength;
+        
+        return averageStrength;
     }
 
     /**
@@ -169,7 +176,7 @@ export const usePassCheck = (passwd, customLevelMsg) => {
             // OK something was typed
             passwdState["exists"] = true;
             // Test password
-            if(passwd.length < 10) {
+            if(passwd.length < 8) {
                 if(passwd === "") {
                     // Reset state
                     passwdState["exists"] = null;
@@ -207,20 +214,9 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                 // Update states
                 setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
             }
-            // Evaluate password strengh
-            // let strength = 0
-            // for (const key in passwdState) {
-            //     if(passwdState[key]) {
-            //         strength++;
-            //     }
-            // }
-
-            let strength = calculateStrength(passwd, passwdState);
-            console.log(strength)
-            // // Is password is not long enough, set it to "weak" (no matter what)
-            // if(passwdState["isLong"] === false && strength > 2) {
-            //     strength = 2;
-            // }
+            
+            // If there's no password in input then set strength to 0 (to reinit state)
+            let strength = passwd ? calculateStrength(passwd, passwdState) : 0;
              
             switch(strength) {
                 case 1:

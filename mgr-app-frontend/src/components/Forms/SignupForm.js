@@ -140,6 +140,7 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
+        {console.log(passCheck.level)}
         </>
     );
 
