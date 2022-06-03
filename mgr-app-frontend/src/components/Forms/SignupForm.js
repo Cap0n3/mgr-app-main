@@ -7,7 +7,8 @@ import {
     PassCheckWrapper,
     IndicatorWrapper,
     StrenghBar,
-    StrengthMsg
+    StrengthMsg,
+    HintBox
 } from "./FormStyles/GlobalForm.style";
 import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
@@ -124,6 +125,13 @@ const SignupForm = () => {
                     <StrenghBar rightRounded="15" levelColor={passCheck.level} levelCat="third"></StrenghBar>
                 </IndicatorWrapper>
                     <StrengthMsg>{passCheck.msg}</StrengthMsg>
+                <HintBox>
+                    <span>Score expert : {passCheck.expertLevel}</span>
+                    <span>Temps pour cracker le mot de passe : {passCheck.estimatedTime}</span>
+                    <ul>
+                        {passCheck.feedbackHint ? passCheck.feedbackHint.map((item,index)=>{return <li key={index}>{item}</li>}) : null}
+                    </ul>
+                </HintBox>
             </PassCheckWrapper>
             <Input type="submit" value="S'inscrire" />
             <LinkWrapper>

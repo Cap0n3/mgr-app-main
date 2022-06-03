@@ -308,3 +308,15 @@ export const StrengthMsg = styled.div`
 	justify-content: center;
 	${'' /* border: 1px solid coral; */}
 `;
+
+export const HintBox = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-items: center;
+	align-items: center;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 30px;
+	border: 1px solid yellow;
+`;

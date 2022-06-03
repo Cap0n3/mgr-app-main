@@ -70,6 +70,49 @@ export const usePassCheck = (passwd, customLevelMsg) => {
     let passwdExpert = null;
 
     /**
+     * Utility function to calculate entropy on a given string. 
+     * A result of 4 would be a string with strong entropy and 0 with very low entropy.
+     * 
+     * @param       {string}    str     - String to analyse.
+     * @returns     {int}               - Result 1 to 4.   
+     */
+    const entropy = (str) => {
+        const len = str.length
+        // Build a frequency map from the string.
+        const frequencies = Array.from(str).reduce((freq, c) => (freq[c] = (freq[c] || 0) + 1) && freq, {})
+        // Sum the frequency of each character.
+        return Object.values(frequencies).reduce((sum, f) => sum - f/len * Math.log2(f/len), 0)
+    }
+
+    const calculateStrength = (pwd, pwdObject) => {
+        let strength = 0
+        // Attibute points for each key set to true
+        for (const key in pwdObject) {
+            if(pwdObject[key]) {
+                strength++;
+            }
+        }
+        // Substract 2 points for short passwords
+        if (pwdObject["isLong"] === false) {
+            strength -= 2;
+        }
+        // Substract 2 points for passwords with low entropy
+        let entropyScore = entropy(pwd);
+        if (entropyScore <= 2) {
+            strength -= 2;
+        } 
+        else if (entropyScore > 3 ) {
+            strength += 2;
+        }
+        console.log(strength)
+        
+        // If strength score is more than 5, set it to 5
+        if(strength > 5) strength = 5
+        // Set to 1 if score is less than 1
+        return (strength < 1) ? 1 : strength;
+    }
+
+    /**
      * On first render check if hook custom level messages list (if any) was correctly initialized.
      * Note : For user defined terms for password level messages.
      */
@@ -165,17 +208,19 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                 setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
             }
             // Evaluate password strengh
-            let strength = 0
-            for (const key in passwdState) {
-                if(passwdState[key]) {
-                    strength++;
-                }
-            }
+            // let strength = 0
+            // for (const key in passwdState) {
+            //     if(passwdState[key]) {
+            //         strength++;
+            //     }
+            // }
 
-            // Is password is not long enough, set it to "weak" (no matter what)
-            if(passwdState["isLong"] === false && strength > 2) {
-                strength = 2;
-            }
+            let strength = calculateStrength(passwd, passwdState);
+            console.log(strength)
+            // // Is password is not long enough, set it to "weak" (no matter what)
+            // if(passwdState["isLong"] === false && strength > 2) {
+            //     strength = 2;
+            // }
              
             switch(strength) {
                 case 1:
@@ -211,10 +256,8 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                 };
                 setExpertScore(expertScore => ({...expertScore, ...passwdExpertState}));
             }
-            // console.log(passwd)
-            // console.log(passStrengh)
-            // console.log(strengthLevel)
         }
+        console.log(passwd)
     }, [passwd]);
 
     // Returned object
