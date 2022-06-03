@@ -109,12 +109,6 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
-        {console.log(passCheck.haveSymbols)}
-        {console.log(passCheck.expertLevel)}
-        {console.log(passCheck.estimatedGuesses)}
-        {console.log(passCheck.estimatedTime)}
-        {console.log(passCheck.feedbackWarning)}
-        {console.log(passCheck.feedbackHint)}
         </>
     );
 

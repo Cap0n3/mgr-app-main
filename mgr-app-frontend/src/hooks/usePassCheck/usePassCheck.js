@@ -88,15 +88,8 @@ export const usePassCheck = (passwd) => {
             // Test password
             if(passwd.length < 10) {
                 if(passwd === "") {
-                    console.log("REINIT !") // GET RID OF THIS BLOCK !!! NEVER HAPPENS !
-                    // If user deleted input content then re-init
+                    // Reset state
                     passwdState["exists"] = null;
-                    // Reset message & level
-                    setStrengthLevel({msg: "", level: null});
-                    // Reset expert score
-                    //setExpertScore({score: null, guesses: null, time: null})
-                    
-                    setExpertScore(expertScore => ({...expertScore, ...null}));
                 }
                 else {
                     // Passwd is too short
@@ -178,8 +171,9 @@ export const usePassCheck = (passwd) => {
                 };
                 setExpertScore(expertScore => ({...expertScore, ...passwdExpertState}));
             }
-            console.log(passwd)
-            console.log(expertScore.time)
+            // console.log(passwd)
+            // console.log(passStrengh)
+            // console.log(strengthLevel)
         }
     }, [passwd]);
 
