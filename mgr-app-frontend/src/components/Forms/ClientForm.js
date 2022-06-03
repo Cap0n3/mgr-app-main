@@ -16,15 +16,14 @@ import {
 	WarnIcon
 } from "./FormStyles/GlobalForm.style";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
-import { InputWarnNormal, InputWarnCompare } from "../../Colors";
+import { InputWarnNormal } from "../../Colors";
 
 /**
  * Form React Component that is used to CREATE or UPDATE client data throught API calls.
  */
 const ClientFormComponent = (props) => {
 	const formRef = useRef();
-    const {authTokens, user} = useContext(AuthContext)
-	const warnColor = "red";
+    const {authTokens, user} = useContext(AuthContext);
 
     const [customForm] = useCustForm({
         operation: props.target,

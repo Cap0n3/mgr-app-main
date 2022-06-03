@@ -19,7 +19,7 @@ const SignUp = () => {
                 </LeftSectionBody>
             </LeftSectionWrapper>
             <RightSectionWrapper>
-                <Title titleColor={DarkColors.Light_Icon}>Sign Up !</Title>
+                <Title titleColor={DarkColors.Light_Icon}>Inscription</Title>
                 <FormWrapper>
                     <SignupForm />
                 </FormWrapper>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { PassCheckWrapper } from "../../components/Forms/FormStyles/GlobalForm.style";
 
 /**
  * Documentation of Returned object of usePassCheck hook.
