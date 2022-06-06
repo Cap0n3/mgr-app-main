@@ -62,7 +62,7 @@ import { useState, useEffect } from "react";
  */
 export const usePassCheck = (passwd, customLevelMsg) => {
     const [passStrengh, setPassStrengh] = useState({isLong: null, haveSpecial: null, haveCap: null, haveNum: null});
-    const [strengthLevel, setStrengthLevel] = useState({msg: "", level: null});
+    const [strengthLevel, setStrengthLevel] = useState({msg: "", entropyScore: null, level: null});
     const [expertScore, setExpertScore] = useState({score: null, guesses: null, time: null, warning: null, hint: null})
     const [levelMessages, setLevelMessages] = useState(['Very Bad', 'Weak', 'Medium', 'Pretty Good', 'Good'])
     // Setup zxcvbn tool for password (https://github.com/dropbox/zxcvbn)
@@ -215,27 +215,31 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                 setPassStrengh(passStrengh => ({...passStrengh,...passwdState}))
             }
             
-            // If there's no password in input then set strength to 0 (to reinit state)
+            // Calculate strength of password and set message and password level
+            // If there's no password in input then set strength to 0 (to reinit state in switch)
             let strength = passwd ? calculateStrength(passwd, passwdState) : 0;
+
+            // Get entropy score
+            let entropy_score = passwd ? entropy(passwd) : null;
              
             switch(strength) {
                 case 1:
-                    setStrengthLevel({msg: levelMessages[0], level: 1});
+                    setStrengthLevel({msg: levelMessages[0], entropyScore: entropy_score, level: 1});
                     break;
                 case 2:
-                    setStrengthLevel({msg: levelMessages[1], level: 2});
+                    setStrengthLevel({msg: levelMessages[1], entropyScore: entropy_score, level: 2});
                     break;
                 case 3:
-                    setStrengthLevel({msg: levelMessages[2], level: 3});
+                    setStrengthLevel({msg: levelMessages[2], entropyScore: entropy_score, level: 3});
                     break;
                 case 4:
-                    setStrengthLevel({msg: levelMessages[3], level: 4});
+                    setStrengthLevel({msg: levelMessages[3], entropyScore: entropy_score, level: 4});
                     break;
                 case 5:
-                    setStrengthLevel({msg: levelMessages[4], level: 5});
+                    setStrengthLevel({msg: levelMessages[4], entropyScore: entropy_score, level: 5});
                     break;
                 default:
-                    setStrengthLevel({msg: "", level: null});
+                    setStrengthLevel({msg: "", entropyScore: null, level: null});
             }
 
             // === Expert mode === //
@@ -246,7 +250,7 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                 passwdExpertState = {
                     score: passwdExpert.score, 
                     guesses: passwdExpert.guesses, 
-                    time: passwdExpert.crack_times_display.offline_slow_hashing_1e4_per_second,
+                    time: passwdExpert.crack_times_seconds.offline_slow_hashing_1e4_per_second,
                     warning: passwdExpert.feedback.warning,
                     hint: passwdExpert.feedback.suggestions
                 };
@@ -258,16 +262,17 @@ export const usePassCheck = (passwd, customLevelMsg) => {
 
     // Returned object
     let PassCheckResults = {
-        isLong: passStrengh.isLong,
+        is8chars: passStrengh.isLong,
         haveSymbols: passStrengh.haveSpecial,
         haveCaps: passStrengh.haveCap,
         haveNum: passStrengh.haveNum,
+        entropy: strengthLevel.entropyScore, 
         level: strengthLevel.level,
         msg: strengthLevel.msg,
-        // Expert
-        expertLevel: expertScore.score,
+        // Expert (zxcvbn)
+        zxcvbnScore: expertScore.score,
         estimatedGuesses: expertScore.guesses,
-        estimatedTime: expertScore.time,
+        time2crack: expertScore.time,
         feedbackWarning: expertScore.warning,
         feedbackHint: expertScore.hint
     }

@@ -58,6 +58,77 @@ const SignupForm = () => {
     }, [customForm.inputs.password, customForm.inputs.confirmPasswd]);
 
     /**
+     * Utility function to convert seconds in a readable format for humans.
+     * @param   {int}       sec2format  - Seconds.
+     * @returns {string}                - String representing time (ex : 4 hours).
+     */
+    const formatTime = (sec2format) => {
+        let time = null;
+        let unit = null;
+        // Is a list to change with ease to other language witout having to change it manually
+        const units = ["milliseconde", "seconde", "minute", "heure", "jour", "mois", "ans", "siècle"];
+        // One milliseconds, minute, hour, day, month, year is equal to N seconds.
+        const inSeconds = {
+            millisec: 0.001,
+            minute : 60,
+            hour: 3600,
+            day: 86400,
+            month: 2592000,
+            year: 31104000,
+            century: 3110400000
+        }
+        // Milliseconds
+        if(sec2format < 1) {
+            // We always want round numbers
+            time = Math.round(sec2format * 1000);
+            unit = (time < 2) ? units[0] : units[0] + "s";
+        }
+        // Seconds
+        else if(sec2format >= 1 && sec2format < inSeconds["minute"]) {
+            time = Math.round(sec2format);
+            unit = (time < 2) ? units[1] : units[1] + "s";
+        }
+        // Minutes
+        else if (sec2format >= inSeconds["minute"] && sec2format < inSeconds["hour"]) {
+            let minutes = Math.round(sec2format / inSeconds["minute"]);
+            unit = (minutes < 2) ? units[2] : units[2] + "s";
+            time = minutes;
+        }
+        // Hours
+        else if(sec2format >= inSeconds["hour"] && sec2format < inSeconds["day"]) {
+            let hours = Math.round(sec2format / inSeconds["hour"]);
+            unit = (hours < 2) ? units[3] : units[3] + "s";
+            time = hours;
+        }
+        // Days
+        else if(sec2format >= inSeconds["day"] && sec2format < inSeconds["month"]) {
+            let days = Math.round(sec2format / inSeconds["day"]);
+            unit = (days < 2) ? units[4] : units[4] + "s";
+            time = days;
+        }
+        // Months
+        else if(sec2format >= inSeconds["month"] && sec2format < inSeconds["year"]) {
+            let months = Math.round(sec2format / inSeconds["month"]);
+            unit = units[5];
+            time = months;
+        }
+        // Years
+        else if(sec2format >= inSeconds["year"] && sec2format < inSeconds["century"]) {
+            let years = Math.round(sec2format / inSeconds["year"]);
+            unit = units[6];
+            time = years;
+        }
+        // Centuries
+        else if(sec2format >= inSeconds["century"]) {
+            let centuries = Math.round(sec2format / inSeconds["century"])
+            unit = (centuries < 2) ? units[7] : units[7] + "s";
+            time = centuries;
+        }
+
+        return (time && unit) ? time + " " + unit : null;
+    }
+
+    /**
 	 * This function uses `isValid()` useCustForm hook function to display warning messages for user if input validation has failed.
 	 * @param	{string}	inputName	Input name property to ID input.
 	 * @param	{string}	inputType	Input type property to display according message.
@@ -126,8 +197,8 @@ const SignupForm = () => {
                 </IndicatorWrapper>
                     <StrengthMsg>{passCheck.msg}</StrengthMsg>
                 <HintBox>
-                    <span>Score expert : {passCheck.expertLevel}</span>
-                    <span>Temps pour cracker le mot de passe : {passCheck.estimatedTime}</span>
+                    <span>Score expert : {passCheck.zxcvbnScore}</span>
+                    <span>Temps pour cracker le mot de passe : {formatTime(passCheck.time2crack)}</span>
                     <ul>
                         {passCheck.feedbackHint ? passCheck.feedbackHint.map((item,index)=>{return <li key={index}>{item}</li>}) : null}
                     </ul>
@@ -140,7 +211,7 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
-        {console.log(passCheck.level)}
+        {console.log(passCheck)}
         </>
     );
 
