@@ -13,11 +13,20 @@
 	--notif-icon-spacing: 20px;
 }
 
-body {
+@font-face {
+	font-family: "Source Sans Pro";
+	src: url("./fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf") format("truetype");
+}
+
+body, html {
 	margin: 0;
 	overflow: hidden;
 	color: var(--font-color);
-	font-family: 'Source Sans Pro', sans-serif;
+	font-family: "Source Sans Pro";
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-weight: 200 900;
+	/* font-family: 'Source Sans Pro', sans-serif; */
 }
 
 .App {

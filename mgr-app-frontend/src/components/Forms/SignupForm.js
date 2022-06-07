@@ -8,7 +8,10 @@ import {
     IndicatorWrapper,
     StrenghBar,
     StrengthMsg,
-    HintBox
+    HintBox,
+    HintText,
+    HintCheckIcon,
+    HintCrossIcon
 } from "./FormStyles/GlobalForm.style";
 import { LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
 import { SignupContext } from "../../App";
@@ -197,8 +200,13 @@ const SignupForm = () => {
                 </IndicatorWrapper>
                     <StrengthMsg>{passCheck.msg}</StrengthMsg>
                 <HintBox>
-                    <span>Score expert : {passCheck.zxcvbnScore}</span>
-                    <span>Temps pour cracker le mot de passe : {formatTime(passCheck.time2crack)}</span>
+                    <HintText>{passCheck.is8chars ? <HintCheckIcon /> : <HintCrossIcon />} Au moins 8 caractères</HintText>
+                    <HintText>{passCheck.haveCaps ? <HintCheckIcon /> : <HintCrossIcon />} Au moins une majuscule (A-Z)</HintText>
+                    <HintText>{passCheck.haveNums ? <HintCheckIcon /> : <HintCrossIcon />} Au moins un chiffre (0-9)</HintText>
+                    <HintText>{passCheck.haveSymbols ? <HintCheckIcon /> : <HintCrossIcon />} Au moins un symbole (#+"%&, etc...)</HintText>
+                    <HintText><span>Score zxcvbn :</span> {passCheck.zxcvbnScore}</HintText>
+                    <HintText><span>Cassé en :</span> {formatTime(passCheck.time2crack)}</HintText>
+
                     <ul>
                         {passCheck.feedbackHint ? passCheck.feedbackHint.map((item,index)=>{return <li key={index}>{item}</li>}) : null}
                     </ul>

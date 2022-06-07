@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { RiErrorWarningLine } from "react-icons/ri";
+import { AiOutlineCheck } from "react-icons/ai";
+import { ImCross } from "react-icons/im";
+import { DarkColors } from "../../../Colors";
 
 // FORM COLOR PALETTE
 const FORM_BCKG_COLOR = "#202750ff";
@@ -312,11 +315,40 @@ export const StrengthMsg = styled.div`
 export const HintBox = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-items: center;
+	justify-items: flex-start;
 	align-items: center;
 	box-sizing: border-box;
 	width: 100%;
-	padding: 10px;
+	padding: 15px;
 	margin-bottom: 30px;
-	border: 1px solid yellow;
+	background-color: ${DarkColors.Light_Foreground};
+	border-radius: 5px;
+`;
+
+export const HintText = styled.div`
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0px;
+	margin: 5px 0px 5px 0px;
+
+	& > span {
+		display: inline-block;
+		width: 120px;
+		font-weight: 700;
+	}
+`;
+
+export const HintCheckIcon = styled(AiOutlineCheck)`
+	margin-right: 10px;
+	font-size: 20px;
+	color: green;
+	width: 30px;
+`;
+
+export const HintCrossIcon = styled(ImCross)`
+	margin-right: 10px;
+	font-size: 15px;
+	color: red;
+	width: 30px;
 `;
