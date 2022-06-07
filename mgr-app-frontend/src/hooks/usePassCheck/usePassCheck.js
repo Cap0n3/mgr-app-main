@@ -6,11 +6,20 @@ import { useState, useEffect } from "react";
  */
 
 /**
- * This hook checks password strength and evalutes its level of security. It has a basic level of checking based on password content like
- * numbers, capital letters, symbols and is at least 8 characters and a more advanced checking.
+ * This hook checks password strength and evalutes its level of security. It's basic strength checking is based on password content like
+ * numbers, capital letters, symbols, length (at least 8 characters) and it's level of entropy.
  * 
- * The more advanced password checking is based on zxcvbn (see https://github.com/dropbox/zxcvbn), it gives a more accurate security level score 
- * but also the guesses & time it took to crack the password plus some hints and warnings about the password.
+ * In summary, the basic final security level is an average of points based on :
+ * - Password content (numbers ? capital letters ? Symbols and length)
+ * - Password entropy.
+ * - The zxcvbn score.
+ * 
+ * The resulting level of security is given on a scale from 1 to 5 (5 being a strong password).
+ * 
+ * There's also a more demanding password checking that is based on zxcvbn (see https://github.com/dropbox/zxcvbn), it gives a more accurate 
+ * security level score but also the guesses & time it took to crack the password plus some hints and warnings about the password. 
+ * 
+ * You can use either the basic security level (1-5) or directly the zxcvbn score to implement a strength bar (0-4). 
  * 
  * ## Set up
  * 
@@ -26,7 +35,7 @@ import { useState, useEffect } from "react";
  * ```js
  * let secLevel = passCheck.level;
  * let secMsg = passCheck.msg;
- * let expertScore = passCheck.expertLevel;
+ * let zxcvbnScore = passCheck.zxcvbnScore;
  * // ... etc ... //
  * ```
  *
@@ -38,20 +47,21 @@ import { useState, useEffect } from "react";
  * ```js 
  * const [passCheck] = usePassCheck(password, ['Mauvais', 'Faible', 'Moyen', 'Pas mal', 'Bien']);
  * ```
- * > **Note :** only for basic level of security. For expert mode you'll have to implement messages yourself with password expert score level.
+ * > **Note :** only for basic level of security. For zxcvbn you'll have to implement messages yourself with password expert score level.
  * 
  * ## Returned object
  * 
  * @typedef {Object} PassCheckResults
- * @param   {bool}      isLong              - Is password long enough ? (Minimum 10 characters).
+ * @param   {bool}      is8chars            - Is password long enough ? (Minimum 8 characters).
  * @param   {bool}      haveSymbols         - Does password have at least one symbol ?
  * @param   {bool}      haveCaps            - Does password have at least one capitalized letter ?
  * @param   {bool}      haveNum             - Does password have at least one number ?
+ * @param   {float}     entropy             - Level of password entropy.
  * @param   {int}       level               - Level of security (1-5).
- * @param   {string}    msg                 - Level ("Very Bad", "Weak", "Medium", "Pretty Good", "Good").
- * @param   {int}       expertLevel         - More accurate score for password securite (1-4).
+ * @param   {string}    msg                 - Level ("Very Bad", "Weak", "Medium", "Pretty Good", "Good") or custom messages.
+ * @param   {int}       zxcvbnScore         - More accurate score for password securite (0-4).
  * @param   {int}       estimatedGuesses    - Estimated guesses needed to crack password.
- * @param   {string}    estimatedTime       - Time for an online attack on a service that doesn't ratelimit.
+ * @param   {float}     time2crack          - Time to crack password (in seconds) for an online attack on a service that doesn't ratelimit.
  * @param   {string}    feedbackWarning     - Explains what's wrong with password (not always set).
  * @param   {list}      feedbackHint        - A (possibly-empty) list of suggestions to help choose a less guessable password.
  * 
@@ -242,7 +252,7 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                     setStrengthLevel({msg: "", entropyScore: null, level: null});
             }
 
-            // === Expert mode === //
+            // === Expert mode (zxcvbn) === //
             // Pass password to module
             if (passwd !== "") {
                 passwdExpert = zxcvbn(passwd);
@@ -265,7 +275,7 @@ export const usePassCheck = (passwd, customLevelMsg) => {
         is8chars: passStrengh.isLong,
         haveSymbols: passStrengh.haveSpecial,
         haveCaps: passStrengh.haveCap,
-        haveNum: passStrengh.haveNum,
+        haveNums: passStrengh.haveNum,
         entropy: strengthLevel.entropyScore, 
         level: strengthLevel.level,
         msg: strengthLevel.msg,
