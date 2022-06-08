@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { DarkColors } from "../../Colors";
-import BackImage from "../../assets/img2.jpeg";
+import BackImage from "../../assets/backSignup.jpeg";
 
 export const PageBody = styled.div`
     display: flex;
