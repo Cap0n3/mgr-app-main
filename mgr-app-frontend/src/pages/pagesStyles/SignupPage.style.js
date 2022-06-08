@@ -7,9 +7,10 @@ export const PageBody = styled.div`
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: ${DarkColors.Dark_Background};
-    overflow-y: scroll;
+    overflow-y: auto;
+    box-sizing: border-box;
 `;
 
 export const LeftSectionWrapper = styled.div`
@@ -22,7 +23,7 @@ export const LeftSectionWrapper = styled.div`
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover; /* Resize the background image to cover the entire container */
-    overflow: scroll;
+    overflow: hidden;
 
     @media screen and (max-width: 960px) {
         display: none;
