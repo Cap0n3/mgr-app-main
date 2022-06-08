@@ -43,9 +43,11 @@ __pycache__
 *.mov
 *.mp3
 *.mp4
+
 # Project specific (MGR)
 !ProfilPic.png
 !genericLogo.png
+!backSignup.jpeg
 
 # == MISC == #
 .env.local
