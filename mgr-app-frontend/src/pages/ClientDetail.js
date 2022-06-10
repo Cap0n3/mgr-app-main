@@ -46,27 +46,29 @@ const ClientDetail = () => {
 		navigate("/");
 	}
 
+	/**
+	 * Request client informations to API.
+	 */
 	useEffect(() => {
 		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((data) => {
 			setData(data);
 		}).catch(fetchFail);
 	}, [clientID]);
 	
+	/**
+	 * This useEffect is here to set height of HeaderWrapper in Client detail page to be exactly equal to square 
+	 * client profile pic width at all times.
+	 */
 	useEffect(() => {
-		/**
-		 * This function is here to set height of HeaderWrapper in Client detail page to be exactly equal to square 
-		 * client profile pic width at all times.
-		 */
 		const clientPic = clientPicRef.current;
 
 		const firstRender = () => {
-			
-			setWidth(clientPic.clientWidth)
+			setWidth(clientPic.clientWidth);
 		}
 		const resizeListener = () => {
 			if(clientPic !== null) {
 				// Don't know why but clientPic ref is somtimes === null
-				setWidth(clientPic.clientWidth)
+				setWidth(clientPic.clientWidth);
 			}
 			
 		};
@@ -74,8 +76,7 @@ const ClientDetail = () => {
 		firstRender();
 
 		// Place an event listener for resize
-		window.addEventListener('resize', resizeListener)
-		
+		window.addEventListener('resize', resizeListener);	
 	}, []);
 
 	const tabContent = {
@@ -98,6 +99,8 @@ const ClientDetail = () => {
 			</InfoList>,
 		"Notes" : clientData.notes,
 	}
+
+	// Set active tab
 	const [active, setActive] = useState(Object.keys(tabContent)[0]);
 
 	return (

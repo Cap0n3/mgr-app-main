@@ -1,3 +1,6 @@
+/**
+ * Style used for client detail page and teacher informations.
+ */
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { HiOutlineMail, HiPhone } from "react-icons/hi";

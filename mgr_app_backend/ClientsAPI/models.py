@@ -24,6 +24,7 @@ COUNTRY = (
 # ====== TEACHER ====== #
 class Teacher(models.Model):
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+	teacher_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True)
 	business_name = models.CharField(max_length=50, default='My School', blank=True, validators=[validateBusinessName])
 	business_logo = models.ImageField(default='genericLogo.png', null=True, blank=True)
 	business_website = models.CharField(max_length=100, default='www.myschool.com', blank=True)

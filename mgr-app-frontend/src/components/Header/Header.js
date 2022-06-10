@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../layout.css";
 import { FaRegBell } from "react-icons/fa"
 import { RiArrowDownSLine } from "react-icons/ri"
@@ -23,9 +24,10 @@ import AuthContext from "../../context/AuthContext";
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
-	const {user} = useContext(AuthContext)
-	const profilMenuRef = useRef(null)
-	const notifListRef = useRef(null)
+	const {user} = useContext(AuthContext);
+	const profilMenuRef = useRef(null);
+	const notifListRef = useRef(null);
+	const navigate = useNavigate();
 
 	// Check window width
 	const isSmallScreen = () => {
@@ -90,7 +92,7 @@ const Header = (props) => {
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>
-					<MenuItem>Your Profile</MenuItem>
+					<MenuItem onClick={() => navigate("/teacher")}>Your Profile</MenuItem>
 					<MenuItem>Settings</MenuItem>
 					<MenuItem>Sign Out</MenuItem>
 				</MenuList>
