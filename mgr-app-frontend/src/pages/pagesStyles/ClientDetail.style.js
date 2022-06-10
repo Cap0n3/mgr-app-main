@@ -1,9 +1,14 @@
+/**
+ * Style used for client detail page and teacher informations.
+ */
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { HiOutlineMail, HiPhone } from "react-icons/hi";
 import { FaBirthdayCake } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io"
-import { BiEdit } from "react-icons/bi"
+import { BiEdit } from "react-icons/bi";
+import { CgWebsite } from "react-icons/cg";
+import { DarkColors } from "../../Colors";
 
 // To see all borders (design debug)
 var DEBUG = false
@@ -62,6 +67,15 @@ export const ClientPic = styled.img`
     @media screen and (max-width: 960px) {
         margin-bottom: 15px;
     }
+`;
+
+export const BusinessPicWrapper = styled.div`
+    display: inline-block;
+    background-color: ${DarkColors.Light_Foreground};
+    width: 100px;
+    height: 100px;
+    padding: 20px;
+    border-radius: 10%;
 `;
 
 export const AsideTitle = styled.h3`
@@ -135,7 +149,7 @@ export const InfoList = styled.ul`
 `;
 
 export const Li = styled.li`
-    margin: 0px 0px 5px 0px;
+    margin: 0px 0px 10px 0px;
     padding: 0px;
 
     @media screen and (max-width: 960px) {
@@ -145,7 +159,7 @@ export const Li = styled.li`
 
 export const Label = styled.div`
     display: inline-block;
-    vertical-align: bottom;
+    vertical-align: top;
     width: ${(props) => (props.offset ? props.offset : "80")}px;
     text-transform: uppercase;
     font-weight: bold;
@@ -285,6 +299,11 @@ export const PhoneIcon = styled(HiPhone)`
 `;
 
 export const BirthdayIcon = styled(FaBirthdayCake)`
+    margin-right: 15px;
+    font-size: 1.5em;
+`;
+
+export const WebsiteIcon = styled(CgWebsite)`
     margin-right: 15px;
     font-size: 1.5em;
 `;

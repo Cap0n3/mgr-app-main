@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
+import { getEntry } from "../functions/ApiCalls";
+import { useAlert } from 'react-alert';
+import { useNavigate } from "react-router-dom";
 import {
 	StyledLink,
 	PreviousIcon,
@@ -27,53 +30,53 @@ import {
 } from "./pagesStyles/ClientDetail.style";
 
 
-const Cloud = () => {
+const ClientDetail = () => {
 
 	const [clientData, setData ] = useState([])
 	const [picWidth, setWidth] = useState(0);
 	const { clientID } = useParams()
-	const {authTokens} = useContext(AuthContext)
+	const {authTokens, user} = useContext(AuthContext)
 	const clientPicRef = useRef();
+	const navigate = useNavigate();
+	const alert = useAlert();
 	
+	const fetchFail = (err) => {
+        alert.show("Une erreur s'est produite !");
+		console.error(err);
+		navigate("/");
+	}
+
+	/**
+	 * Request client informations to API.
+	 */
 	useEffect(() => {
-		const getClient = async() => {
-			let response = await fetch(`http://127.0.0.1:8000/client/${clientID}`, {
-				method:'GET',
-				headers:{
-					'Content-Type':'application/json',
-					'Authorization':'Bearer ' + String(authTokens.access)
-				}
-			})
-			let clientData = await response.json()
-			setData(clientData)
-		}
-		getClient();
+		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((data) => {
+			setData(data);
+		}).catch(fetchFail);
 	}, [clientID]);
 	
+	/**
+	 * This useEffect is here to set height of HeaderWrapper in Client detail page to be exactly equal to square 
+	 * client profile pic width at all times.
+	 */
 	useEffect(() => {
-		/**
-		 * This function is here to set height of HeaderWrapper in Client detail page to be exactly equal to square 
-		 * client profile pic width at all times.
-		 */
 		const clientPic = clientPicRef.current;
 
 		const firstRender = () => {
-			
-			setWidth(clientPic.clientWidth)
+			// clientWidth is the inner width of an element in pixels (standard js)
+			setWidth(clientPic.clientWidth);
 		}
 		const resizeListener = () => {
 			if(clientPic !== null) {
 				// Don't know why but clientPic ref is somtimes === null
-				setWidth(clientPic.clientWidth)
-			}
-			
+				setWidth(clientPic.clientWidth);
+			}	
 		};
 		// Get image width on first render
 		firstRender();
 
 		// Place an event listener for resize
-		window.addEventListener('resize', resizeListener)
-		
+		window.addEventListener('resize', resizeListener);	
 	}, []);
 
 	const tabContent = {
@@ -89,13 +92,15 @@ const Cloud = () => {
 			</InfoList>,
 		"Facturation" : 
 			<InfoList>
-				<Li><Label offset="200" mobileOffset="180">Facture numérotée :</Label>{(clientData.nvoice_numbering) ? "Oui" : "Non"}</Li>
+				<Li><Label offset="200" mobileOffset="180">Facture numérotée :</Label>{(clientData.invoice_numbering) ? "Oui" : "Non"}</Li>
 				<Li><Label offset="200" mobileOffset="180">Taux horaire :</Label>{clientData.billing_rate} {clientData.billing_currency}</Li>
 				<Li><Label offset="200" mobileOffset="180">Monnaie :</Label>{clientData.billing_currency}</Li>
 				<Li><Label offset="200" mobileOffset="180">Option paiement :</Label>{clientData.payment_option}</Li>
 			</InfoList>,
 		"Notes" : clientData.notes,
 	}
+
+	// Set active tab
 	const [active, setActive] = useState(Object.keys(tabContent)[0]);
 
 	return (
@@ -158,4 +163,4 @@ const Cloud = () => {
 	);
 }
 
-export default Cloud;
+export default ClientDetail;

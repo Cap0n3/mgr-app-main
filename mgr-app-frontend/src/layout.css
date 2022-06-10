@@ -4,7 +4,7 @@
 	--dark-sidebar-color: #191f3f;
 	--dark-header-color: #11162fff;
 	--dark-icon: #44578eff;
-	--font-color: #ffffffff;
+	--font-color: #FFFFFF;
 	/* LAYOUT DESIGN */
 	--header-height: 60px;
 	--sidebar-width: 60px;
@@ -13,11 +13,30 @@
 	--notif-icon-spacing: 20px;
 }
 
+@font-face {
+	font-family: "Source Sans Pro";
+	src: url("./fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf") format("truetype");
+}
+
+html {
+	height: 100vh;
+	box-sizing: border-box;
+	
+}
+
+body, #root {
+	height: 100%;
+}
+
 body {
 	margin: 0;
-	overflow: hidden;
+	padding: 0;
+	overflow: auto;
 	color: var(--font-color);
-	font-family: 'Source Sans Pro', sans-serif;
+	font-family: "Source Sans Pro";
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-weight: 200 900;
 }
 
 .App {
@@ -25,13 +44,12 @@ body {
 	height: 100%;
 	width: 100%;
 	z-index: 1;
-	/* background-color: purple; */
 }
 
 .main-container {
 	display: flex;
 	flex-direction: column;
-	height: 100vh;
+	height: 100%;
 	width: 100%;
 	overflow: hidden;
 }
@@ -95,9 +113,8 @@ body {
 	background-color: var(--dark-background-color);
 	width: 100%;
 	padding: 10px 30px 10px 30px;
-	height: calc(100vh - var(--header-height));
+	height: calc(100% - var(--header-height));
 	overflow-y: auto;
-	/* border: 1px solid red; */
 }
 
 /* ===================== */
@@ -110,7 +127,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-content: space-between;
-	height: 100vh;
+	height: 100%;
 	width: var(--sidebar-width);
 	min-width: var(--sidebar-width);
 	background-color: var(--dark-sidebar-color);
@@ -131,7 +148,6 @@ body {
 	box-sizing: border-box;
 	margin-top: 10px;
 	white-space: nowrap;
-	/* border: 1px solid brown; */
 }
 
 .site-logo {
@@ -142,7 +158,6 @@ body {
 	height: var(--sidebar-li-height);
 	min-width: var(--sidebar-width);
 	cursor: pointer;
-	/* border: 1px solid purple; */
 }
 
 .app-logo {
@@ -161,7 +176,6 @@ body {
 	padding: 0px;
 	list-style: none;
 	white-space: nowrap;
-	/* border: 1px solid red; */
 }
 
 .nav-list-container li {
@@ -170,7 +184,6 @@ body {
 	height: var(--sidebar-li-height);
 	width: 100%;
 	cursor: pointer;
-	/* border: 1px solid white; */
 }
 
 .nav-list-container li:hover {
@@ -248,7 +261,7 @@ for icon.
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100vh;
+		height: 100%;
 		background: linear-gradient(
 			rgba(0, 0, 0, 0.9), 
 			rgba(0, 0, 0, 0.9)

@@ -24,6 +24,7 @@ COUNTRY = (
 # ====== TEACHER ====== #
 class Teacher(models.Model):
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+	teacher_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True)
 	business_name = models.CharField(max_length=50, default='My School', blank=True, validators=[validateBusinessName])
 	business_logo = models.ImageField(default='genericLogo.png', null=True, blank=True)
 	business_website = models.CharField(max_length=100, default='www.myschool.com', blank=True)
@@ -35,8 +36,8 @@ class Teacher(models.Model):
 	teacher_postal = models.CharField(max_length=50, default='1200', validators=[validatePostal])
 	teacher_city = models.CharField(max_length=80, default='Genève', validators=[validateCharField])
 	teacher_country = models.CharField(max_length=50, default='Suisse', choices=COUNTRY)
-	teacher_bankNumber = models.CharField(max_length=100, default='45-875468-3', validators=[validateBankNumber])
-	teacher_iban = models.CharField(max_length=100, default='CH65 7654 5221 0000 4587 5468 3', validators=[validateBankIban])
+	teacher_bankNumber = models.CharField(max_length=100, default='00-000000-0', validators=[validateBankNumber])
+	teacher_iban = models.CharField(max_length=100, default='CH00 0000 0000 0000 0000 0000 0', validators=[validateBankIban])
 	teacher_bicSwift = models.CharField(max_length=200, default='POSXF', validators=[validateBankSwift])
 	teacher_taxLabel = models.CharField(max_length=50, default="Taxe", validators=[validateCharField])
 	teacher_tax = models.IntegerField(default=0)

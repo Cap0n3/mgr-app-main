@@ -7,7 +7,7 @@
  * This custom function sets a cookie (I didn't use react-cookie library).
  * @param {str} cookieName Name of cookie. 
  * @param {*} cookieValue Any value.
- * @param {int} expireDays Days before expiration
+ * @param {int} expireDays Days before expiration.
  */
 export const setCookie = (cookieName, cookieValue, expireDays) => {
     const date = new Date();
@@ -62,4 +62,4 @@ export const checkCookie = (cookieName) => {
     } else {
       return false; 
     }
-  }
+}

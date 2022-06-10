@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Clients, Teacher
-from .serializers import ClientSerializer, TeacherSerializer
+from django.contrib.auth.models import User
+from .serializers import UserSerializer, ClientSerializer, TeacherSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAdminOrOwner
+from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher, IsSignUp
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
@@ -31,9 +32,16 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
 	serializer_class = MyTokenObtainPairSerializer
 
-
+# ======================== #
 # === APP VIEW CLASSES === #
+# ======================== #
+
+# === TEACHER === #
 class TeachersView(generics.ListAPIView):
+	'''
+	This view handles viewing of all teacher personal infos.
+	Note : One user can have only one teacher
+	'''
 	queryset = Teacher.objects.all()
 	serializer_class = TeacherSerializer
 	permission_classes = [IsAuthenticated]
@@ -41,13 +49,47 @@ class TeachersView(generics.ListAPIView):
 	def get_queryset(self):
 		isAdmin = self.request.user.is_superuser
 		currentUser = self.request.user
-		allTeachers = Teacher.objects.all()
 		if not isAdmin:
 			# Get teacher linked to user
 			linkedTeacher = Teacher.objects.filter(user=currentUser)
+		allTeachers = Teacher.objects.all()
 		return allTeachers if isAdmin else linkedTeacher
 
+class UpdateTeacherView(generics.RetrieveUpdateAPIView):
+	'''
+	View used to update Teacher infos.
+	'''
+	queryset = Teacher.objects.all()
+	serializer_class = TeacherSerializer
+	permission_classes = [IsAuthenticated, IsAdminOrTeacher]
+
+	def perform_update(self, serializer):
+		instance = serializer.save()
+
+# === USER === #
+class CreateUserView(generics.CreateAPIView):
+	'''
+	View to create a new user during signup, a new teacher will be automatically 
+	created after user creation (thx to post_save receiver from signals.py).
+	
+	Note : One user <=> one teacher
+	'''
+	serializer_class = UserSerializer
+	permission_classes = [IsSignUp]
+
+class DeleteUserView(generics.DestroyAPIView):
+	'''
+	View used to delete User, it'll also delete associated teacher.
+	'''
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	permission_classes = [IsAuthenticated, IsAdminOrUser]
+
+# === CLIENTS === #
 class ClientsView(generics.ListAPIView):
+	'''
+	View used to display all clients owned by a specific teacher.
+	'''
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated]
 
@@ -62,6 +104,9 @@ class ClientsView(generics.ListAPIView):
 		return allClients if isAdmin else allClients.filter(teacher=linkedTeacher.id)
 
 class ClientDetailView(generics.RetrieveAPIView):
+	'''
+	View used to display client informations.
+	'''
 	queryset = Clients.objects.all()
 	serializer_class = ClientSerializer
 	permission_classes = [IsAuthenticated, IsAdminOrOwner]
