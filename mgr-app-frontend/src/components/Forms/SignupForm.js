@@ -204,12 +204,6 @@ const SignupForm = () => {
                     <HintText>{passCheck.haveCaps ? <HintCheckIcon /> : <HintCrossIcon />} Au moins une majuscule (A-Z)</HintText>
                     <HintText>{passCheck.haveNums ? <HintCheckIcon /> : <HintCrossIcon />} Au moins un chiffre (0-9)</HintText>
                     <HintText>{passCheck.haveSymbols ? <HintCheckIcon /> : <HintCrossIcon />} Au moins un symbole (#+"%&, etc...)</HintText>
-                    <HintText><span>Score zxcvbn :</span> {passCheck.zxcvbnScore}</HintText>
-                    <HintText><span>Cassé en :</span> {formatTime(passCheck.time2crack)}</HintText>
-
-                    <ul>
-                        {passCheck.feedbackHint ? passCheck.feedbackHint.map((item,index)=>{return <li key={index}>{item}</li>}) : null}
-                    </ul>
                 </HintBox>
             </PassCheckWrapper>
             <Input type="submit" value="S'inscrire" />
@@ -219,7 +213,6 @@ const SignupForm = () => {
                 </LinkWrapper>
             </LinkWrapper>
         </form>
-        {console.log(passCheck)}
         </>
     );
 

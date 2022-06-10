@@ -320,7 +320,7 @@ export const HintBox = styled.div`
 	box-sizing: border-box;
 	width: 100%;
 	padding: 15px;
-	margin-bottom: 30px;
+	margin: 30px 0px 0px 0px;
 	background-color: ${DarkColors.Light_Foreground};
 	border-radius: 5px;
 `;

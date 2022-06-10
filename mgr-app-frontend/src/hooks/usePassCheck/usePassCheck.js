@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
  */
 
 /**
- * This hook checks password strength and evalutes its level of security. It's basic strength checking is based on password content like
+ * This hook checks password strength and evalutes its level of security. It's built-in strength checking is based on password content like
  * numbers, capital letters, symbols, length (at least 8 characters) and it's level of entropy.
  * 
  * In summary, the basic final security level is an average of points based on :
@@ -16,8 +16,11 @@ import { useState, useEffect } from "react";
  * 
  * The resulting level of security is given on a scale from 1 to 5 (5 being a strong password).
  * 
- * There's also a more demanding password checking that is based on zxcvbn (see https://github.com/dropbox/zxcvbn), it gives a more accurate 
- * security level score but also the guesses & time it took to crack the password plus some hints and warnings about the password. 
+ * > **Note :** Should be based on https://www.uic.edu/apps/strong-password/ (University of Illinois at Chicago)
+ * 
+ * There's also a password checking option based on popular zxcvbn (see https://github.com/dropbox/zxcvbn), it gives a different 
+ * perspective on security level score and offer cool informations like guesses & time it took to crack the password (plus some hints 
+ * and warnings about the password). 
  * 
  * You can use either the basic security level (1-5) or directly the zxcvbn score to implement a strength bar (0-4). 
  * 
@@ -267,7 +270,6 @@ export const usePassCheck = (passwd, customLevelMsg) => {
                 setExpertScore(expertScore => ({...expertScore, ...passwdExpertState}));
             }
         }
-        console.log(passwd)
     }, [passwd]);
 
     // Returned object
