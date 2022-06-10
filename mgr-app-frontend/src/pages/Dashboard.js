@@ -19,6 +19,9 @@ const Dashboard = () => {
 		console.error(err);
 	}
 	
+	/**
+	 * Request all clients info from API.
+	 */
 	useEffect(() => {	
 		// Necessary syntax (.then) for external async funcs
 		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then((data) => {

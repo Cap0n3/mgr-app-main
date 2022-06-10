@@ -11,6 +11,7 @@ import {
 	Aside, 
 	Section,
 	ClientPic,
+    BusinessPicWrapper,
 	AsideTitle,
 	ClientInfoWrapper, 
 	InfoList, 
@@ -26,6 +27,7 @@ import {
 	EmailIcon,
 	PhoneIcon,
 	BirthdayIcon,
+    WebsiteIcon,
 	BodyWrapper
 } from "./pagesStyles/ClientDetail.style";
 
@@ -50,8 +52,9 @@ const TeacherDetail = () => {
 	 */
 	useEffect(() => {
 		getEntries("http://127.0.0.1:8000/teacher/", authTokens, user).then((data) => {
-            console.log(data)
-			setData(data);
+            //console.log(data)
+            // Get array single entry (API pass an array with only one entry - the teacher)
+			setData(data[0]);
 		}).catch(fetchFail);
 	}, []);
 	
@@ -63,13 +66,13 @@ const TeacherDetail = () => {
 		const teacherPic = teacherPicRef.current;
 
 		const firstRender = () => {
-			
-			setWidth(teacherPic.teacherWidth)
+            // clientWidth is the inner width of an element in pixels (standard js)
+			setWidth(teacherPic.clientWidth)
 		}
 		const resizeListener = () => {
 			if(teacherPic !== null) {
 				// Don't know why but clientPic ref is somtimes === null
-				setWidth(teacherPic.teacherWidth)
+				setWidth(teacherPic.clientWidth)
 			}
 			
 		};
@@ -81,35 +84,76 @@ const TeacherDetail = () => {
 		
 	}, []);
 
-	// const tabContent = {
-	// 	"Infos Facture" : 
-	// 		<InfoList>
-	// 			<Li><Label offset="150" mobileOffset="100">Prénom :</Label>{teacherData.invoice_fname}</Li>
-	// 			<Li><Label offset="150" mobileOffset="100">Nom :</Label>{teacherData.invoice_lname}</Li>
-	// 			<Li><Label offset="150" mobileOffset="100">Email :</Label>{teacherData.invoice_email}</Li>
-	// 			<Li><Label offset="150" mobileOffset="100">Tél :</Label>{teacherData.invoice_phone}</Li>
-	// 			<Li><Label offset="150" mobileOffset="100">Adresse :</Label>{teacherData.invoice_address}</Li>
-	// 			<Li><Label offset="150" mobileOffset="100">Ville/Code :</Label>{teacherData.invoice_city}, {teacherData.invoice_postal}</Li>
-	// 			<Li><Label offset="150" mobileOffset="100">Pays :</Label>{teacherData.invoice_country}</Li>
-	// 		</InfoList>,
-	// 	"Facturation" : 
-	// 		<InfoList>
-	// 			<Li><Label offset="200" mobileOffset="180">Facture numérotée :</Label>{(teacherData.invoice_numbering) ? "Oui" : "Non"}</Li>
-	// 			<Li><Label offset="200" mobileOffset="180">Taux horaire :</Label>{teacherData.billing_rate} {teacherData.billing_currency}</Li>
-	// 			<Li><Label offset="200" mobileOffset="180">Monnaie :</Label>{teacherData.billing_currency}</Li>
-	// 			<Li><Label offset="200" mobileOffset="180">Option paiement :</Label>{teacherData.payment_option}</Li>
-	// 		</InfoList>,
-	// 	"Notes" : teacherData.notes,
-	// }
+	const tabContent = {
+		"Infos Facture" : 
+			<InfoList>
+				<Li><Label offset="150" mobileOffset="120">No Compte :</Label>{teacherData.teacher_bankNumber}</Li>
+				<Li><Label offset="150" mobileOffset="50">IBAN :</Label>{teacherData.teacher_iban}</Li>
+				<Li><Label offset="150" mobileOffset="120">BIC/SWIFT :</Label>{teacherData.teacher_bicSwift}</Li>
+                <Li><Label offset="150" mobileOffset="120">Taxe :</Label>{teacherData.teacher_taxLabel}</Li>
+                <Li><Label offset="150" mobileOffset="120">Montant taxe :</Label>{teacherData.teacher_tax}%</Li>
+                <Li><Label offset="150" mobileOffset="120">Délai paiement :</Label>{teacherData.teacher_dueDays} jours</Li>   
+			</InfoList>,
+		"Etablissement" : 
+			<InfoList>
+				<Li><Label offset="150" mobileOffset="120">Nom business :</Label>{teacherData.business_name}</Li>
+				<Li><Label offset="150" mobileOffset="120">Website</Label>{teacherData.business_website}</Li>
+				<Li><Label offset="150" mobileOffset="120">Logo :</Label><BusinessPicWrapper><ClientPic src={teacherData.business_logo} /></BusinessPicWrapper></Li>
+			</InfoList>,
+	}
 
-	// const [active, setActive] = useState(Object.keys(tabContent)[0]);
+	const [active, setActive] = useState(Object.keys(tabContent)[0]);
 
 	return (
 		<>
+            <StyledLink to="/"><PreviousIcon /></StyledLink>
             <MainWrapper>
                 <Aside>
                     <ClientPic src={teacherData.teacher_pic} ref={teacherPicRef}/>
-                </Aside>
+                    <Title mobile="show">{teacherData.first_name} {teacherData.last_name} <StyledLink to={`/client/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
+					<AsideTitle mobile="hide">Infos</AsideTitle>
+					<ClientInfoWrapper mobile="hide">
+						<InfoList>
+                            <Li><Label>Nom :</Label>{teacherData.teacher_fname} {teacherData.teacher_lname}</Li>
+							<Li><Label>Adresse :</Label>{teacherData.teacher_address}</Li>
+							<Li><Label>Ville :</Label>{teacherData.teacher_postal}, {teacherData.teacher_city}</Li>
+							<Li><Label>Pays :</Label>{teacherData.teacher_country}</Li>
+						</InfoList>
+					</ClientInfoWrapper>
+				</Aside>
+                <Section>
+					<HeaderWrapper height={picWidth}>
+						<InfosSubWrapper>
+							<Title mobile="hide">{teacherData.teacher_fname} {teacherData.teacher_lname}<StyledLink to={`/client/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
+							<ContactInfo><EmailIcon />{teacherData.teacher_email}</ContactInfo>
+							<ContactInfo><PhoneIcon />{teacherData.teacher_phone}</ContactInfo>
+							<ContactInfo><WebsiteIcon />{teacherData.business_website}</ContactInfo>
+						</InfosSubWrapper>
+						{/* Only appears for mobile */}
+						<AsideTitle mobile="show">Cours</AsideTitle>
+						<ClientInfoWrapper mobile="show">
+							<InfoList>
+                                <ContactInfo><EmailIcon />{teacherData.teacher_email}</ContactInfo>
+                                <ContactInfo><PhoneIcon />{teacherData.teacher_phone}</ContactInfo>
+                                <ContactInfo><WebsiteIcon />{teacherData.business_website}</ContactInfo>
+							</InfoList>
+						</ClientInfoWrapper>
+						<ButtonGroup>
+							{Object.keys(tabContent).map(type => (
+								<Tab
+									key={type}
+									active={active === type}
+									onClick={() => setActive(type)}
+								>
+									{type}
+								</Tab>
+								))}
+						</ButtonGroup>
+					</HeaderWrapper>
+					<BodyWrapper>
+						<div>{tabContent[active]} </div>
+					</BodyWrapper>
+				</Section>
             </MainWrapper>
 		</>
 	);

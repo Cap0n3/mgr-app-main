@@ -63,14 +63,14 @@ const ClientDetail = () => {
 		const clientPic = clientPicRef.current;
 
 		const firstRender = () => {
+			// clientWidth is the inner width of an element in pixels (standard js)
 			setWidth(clientPic.clientWidth);
 		}
 		const resizeListener = () => {
 			if(clientPic !== null) {
 				// Don't know why but clientPic ref is somtimes === null
 				setWidth(clientPic.clientWidth);
-			}
-			
+			}	
 		};
 		// Get image width on first render
 		firstRender();
