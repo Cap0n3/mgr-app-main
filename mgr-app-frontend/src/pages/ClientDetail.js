@@ -109,7 +109,7 @@ const ClientDetail = () => {
 			<MainWrapper>
 				<Aside>
 					<ClientPic src={clientData.student_pic} ref={clientPicRef}/>
-					<Title mobile="show">{clientData.first_name} {clientData.last_name} <StyledLink to={`/client/update/${clientData.id}`}><EditButton /></StyledLink></Title>
+					<Title mobile="show"><h1>{clientData.first_name} {clientData.last_name}</h1><StyledLink to={`/client/update/${clientData.id}`}><EditButton /></StyledLink></Title>
 					<AsideTitle mobile="hide">Cours</AsideTitle>
 					<ClientInfoWrapper mobile="hide">
 						<InfoList>

@@ -11,7 +11,7 @@ import { CgWebsite } from "react-icons/cg";
 import { DarkColors } from "../../Colors";
 
 // To see all borders (design debug)
-var DEBUG = false
+var DEBUG = false;
 
 export const StyledLink = styled(Link)`
     margin-left: 10px;
@@ -217,10 +217,11 @@ export const Title = styled.h1`
         (props.mobile === "hide" && "block") ||
         "block"
     };
-    line-height: 15px; 
+    ${'' /* align-items: flex-start; */}
+    line-height: 10px;
     margin: 0px 0px 55px 0px;
-    padding-top: 0px;
-    font-size: 2em;
+    padding: 0px 0px 0px 0px;
+    font-size: 2.5em;
     ${(DEBUG) ? "border: 1px solid purple;" : ""}
 
     @media screen and (max-width: 960px) {
@@ -233,16 +234,23 @@ export const Title = styled.h1`
         align-items: center;
         margin: 15px 0px 15px 0px;
         padding-top: 0px;
-        font-size: 2em;
+        font-size: 1.5em;
         line-height: normal; 
     }
 `;
 
 export const EditButton = styled(BiEdit)`
+    display: inline-block;
     color: #44578eff;
     font-size: 0.6em;
-    margin-left: 10px;
+    margin: 0px 0px 0px 10px;
+    padding: 0px;
     ${(DEBUG) ? "border: 1px solid lightblue;" : ""}
+
+    @media screen and (max-width: 960px) {
+        margin: 12px 0px 0px 10px;
+        font-size: 1.3em;
+    }
 `;
 
 // === TABS === //
