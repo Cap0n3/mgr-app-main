@@ -110,7 +110,7 @@ const TeacherDetail = () => {
             <MainWrapper>
                 <Aside>
                     <ClientPic src={teacherData.teacher_pic} ref={teacherPicRef}/>
-                    <Title mobile="show">{teacherData.first_name} {teacherData.last_name} <StyledLink to={`/client/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
+                    <Title mobile="show">{teacherData.first_name} {teacherData.last_name} <StyledLink to={`/teacher/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
 					<AsideTitle mobile="hide">Infos</AsideTitle>
 					<ClientInfoWrapper mobile="hide">
 						<InfoList>
@@ -124,7 +124,7 @@ const TeacherDetail = () => {
                 <Section>
 					<HeaderWrapper height={picWidth}>
 						<InfosSubWrapper>
-							<Title mobile="hide">{teacherData.teacher_fname} {teacherData.teacher_lname}<StyledLink to={`/client/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
+							<Title mobile="hide">{teacherData.teacher_fname} {teacherData.teacher_lname}<StyledLink to={`/teacher/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
 							<ContactInfo><EmailIcon />{teacherData.teacher_email}</ContactInfo>
 							<ContactInfo><PhoneIcon />{teacherData.teacher_phone}</ContactInfo>
 							<ContactInfo><WebsiteIcon />{teacherData.business_website}</ContactInfo>

@@ -321,8 +321,8 @@ export const useCustForm = (formSetup) => {
             setInputs(values => ({ ...values}));
         }
         else if (formSetup.operation === "update") {
-            // On first render check if it's an update (to get client infos)
-            getEntry("http://127.0.0.1:8000/client/", formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
+            // On first render check if it's an update (to get entry infos)
+            getEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
                 let serverData = createDataObject(formSetup.formRef.current, data)
                 // Fill inputs with data received from server
                 setInputs(inputs => ({
