@@ -263,18 +263,20 @@ export const useCustForm = (formSetup) => {
 
 	/**
 	 * This function creates a data object which will be used during update opreation to populate form inputs with received data from server.
-	 * In order achieve this, it's take all input names from a form reference object and use it to create keys of data object.
+	 * In order achieve this, it takes all input names from a form reference object and use it to create keys of data object.
 	 * @param   {Object}  formReference   Form reference object.
 	 * @returns {Object}                  Data object with inputs and its data.
 	 */
 	const createDataObject = (formReference, data) => {
 		let htmlElements = [];
 		let allInputNames = [];
+
 		// Extract all inputs from form
 		let keys = Object.keys(formReference);
 		keys.forEach((key, index) => {
 			htmlElements.push(formReference[key]);
 		})
+
 		// Put name properties of inputs in an unfiltered list
 		for(let i = 0; i < htmlElements.length; i++) {
 			let inputName = htmlElements[i].name;
@@ -291,6 +293,7 @@ export const useCustForm = (formSetup) => {
 		for (let i = 0; i < filteredNames.length; i++) {
 			dataObj[filteredNames[i]] = data[filteredNames[i]];
 		}
+		
 		return dataObj;
 	}
 
