@@ -114,7 +114,7 @@ import { SignupContext } from "../../App";
  * ```js
  * <input type="file" id="img_upload" name="student_pic" onChange={customForm.handleChange} />
  * ```
- * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
+ * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" or "logo" (ex : "student_pic" or "student_image").
  * 
  * #### Image preview & displaying
  * 
