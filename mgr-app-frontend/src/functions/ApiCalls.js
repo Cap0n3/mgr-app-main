@@ -151,10 +151,11 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
 
     // Append input data to FormData object & test if image is not a link to server stored image.
     inputEntries.map((item) => {
-        const isImage = /(pic|picture|image|img)/i;
+        // Only entries with these terms will be evaluated
+        const isImage = /(pic|picture|image|img|logo)/i;
         /* 
-            If value of image input is equal to a string then it's a link to a an img stored by server. 
-            Basically, this means that user have not updated his/her profile pic so don't update value of 
+            If value of image input is equal to a string then it's a link to a an image stored by the server. 
+            Basically, this means that user have not updated image so don't update value of 
             this var with a string because ONLY a file object is expected by the server.
         */ 
         if(isImage.test(item[0]) && typeof(item[1]) !== "string"){
