@@ -5,11 +5,8 @@ import {
 	Legend,
 	Bullet,
 	Label, 
-	LabelPic, 
-	RadioLabel, 
+	LabelPic,
 	Input, 
-	Select, 
-	Textarea, 
 	AvatarWrapper, 
 	Avatar,
 	WarningBox,
@@ -87,10 +84,10 @@ const TeacherFormComponent = (props) => {
 				*/}
 				<Legend><Bullet>1</Bullet>Infos Professeur</Legend>
 				<Label>Photo :</Label>
-				{customForm.picPreview &&  customForm.operation === "create" ? <AvatarWrapper><Avatar src={customForm.picPreview} /></AvatarWrapper> : null }
-				{customForm.operation === "update" ? <AvatarWrapper><Avatar src={customForm.pic} /></AvatarWrapper> : null}
-				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
-				<Input type="file" id="img_upload" name="teacher_pic" className="ClientPic" onChange={customForm.handleChange} />
+				{customForm.picPreviews.teacher_pic ? <AvatarWrapper><Avatar src={customForm.picPreviews.teacher_pic} /></AvatarWrapper> : null }
+				{customForm.operation === "update" && !customForm.picPreviews.teacher_pic ? <AvatarWrapper><Avatar src={customForm.inputs.teacher_pic} /></AvatarWrapper> : null}
+				<LabelPic htmlFor="upload_teacherPic">Upload Client Pic</LabelPic>
+				<Input type="file" id="upload_teacherPic" name="teacher_pic" onChange={customForm.handleChange} />
 				{warningBox("teacher_pic", "file")}
 				<Label>Prénom * :</Label>
 				<Input isValid={customForm.isValid("teacher_fname")} warn_colors={InputWarnNormal} type="text" name="teacher_fname" value={customForm.inputs.teacher_fname || ""} onChange={customForm.handleChange} required />
@@ -123,6 +120,12 @@ const TeacherFormComponent = (props) => {
                 <Label>Business website :</Label>
 				<Input isValid={customForm.isValid("business_website")} warn_colors={InputWarnNormal} type="text" name="business_website" value={customForm.inputs.business_website || ""} onChange={customForm.handleChange} />
 				{warningBox("business_website", "text")}
+                <Label>Logo business :</Label>
+				{customForm.picPreviews.business_logo ? <AvatarWrapper><Avatar src={customForm.picPreviews.business_logo} /></AvatarWrapper> : null }
+				{customForm.operation === "update" && !customForm.picPreviews.business_logo ? <AvatarWrapper><Avatar src={customForm.inputs.business_logo} /></AvatarWrapper> : null}
+				<LabelPic htmlFor="upload_logo">Upload Logo</LabelPic>
+                <Input type="file" id="upload_logo" name="business_logo" onChange={customForm.handleChange} />
+				{warningBox("business_logo", "file")}
                 <Legend><Bullet>3</Bullet>Infos Facturation</Legend>
                 <Label>No compte bancaire :</Label>
 				<Input isValid={customForm.isValid("teacher_bankNumber")} warn_colors={InputWarnNormal} type="text" name="teacher_bankNumber" value={customForm.inputs.teacher_bankNumber || ""} onChange={customForm.handleChange} required />

@@ -112,7 +112,7 @@ import { SignupContext } from "../../App";
  * 
  * - To set up a file input to choose image :
  * ```js
- * <input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
+ * <input type="file" id="img_upload" name="student_pic" onChange={customForm.handleChange} />
  * ```
  * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
  * 
@@ -125,12 +125,12 @@ import { SignupContext } from "../../App";
  * 
  * - For "create" entry operation with a preview of choosen image :
  * ```js
- * {customForm.picPreviews.myPic &&  customForm.operation === "create" ? <img src={customForm.picPreviews.myPic} /> : null }
+ * {customForm.picPreviews.myPic ? <img src={customForm.picPreviews.myPic} /> : null }
  * ```
  * 
- * - For "update" operation with displaying of image URL received by server, simply write corresponding input :
+ * - For "update" operation, we want of course to display stored image first but if user load another one, preview it :
  * ```js
- * {customForm.operation === "update" ? <img src={customForm.inputs.myPic} /> : null}
+ * {customForm.operation === "update" && !customForm.picPreviews.myPic ? <img src={customForm.inputs.myPic} /> : null}
  * ```
  * 
  * #### Radio buttons
