@@ -52,7 +52,7 @@ import { SignupContext } from "../../App";
  * FormHandling = {
  *		inputs: inputs, // Current value of all inputs
  *		operation: formSetup.operation, // Operation
- *		picPreview: picPreview, // Pic image for preview by user
+ *		picPreviews: picPreviews, // Pic image for preview by user
  *		pic: pic, // Pic source URL sent by server (if entry already exists in database)
  *		radioButtons: radioState, // Radio initial state
  *		isValid: isValid, // Check input validation
@@ -118,16 +118,19 @@ import { SignupContext } from "../../App";
  * 
  * #### Image preview & displaying
  * 
- * To set up a profile picture with preview here's the way to go.
+ * To set up a image preview, this hook provide `picPreviews` object containing all choosen images by user. You can select them using
+ * their input names.
+ * 
+ * For and "update" operation, you can simply select input value from `inputs` object (as any other input).
  * 
  * - For "create" entry operation with a preview of choosen image :
  * ```js
- * {customForm.picPreview &&  customForm.operation === "create" ? <img src={customForm.picPreview} /> : null }
+ * {customForm.picPreviews.myPic &&  customForm.operation === "create" ? <img src={customForm.picPreviews.myPic} /> : null }
  * ```
  * 
- * - For "update" operation with displaying of image URL received by server :
+ * - For "update" operation with displaying of image URL received by server, simply write corresponding input :
  * ```js
- * {customForm.operation === "update" ? <img src={customForm.pic} /> : null}
+ * {customForm.operation === "update" ? <img src={customForm.inputs.myPic} /> : null}
  * ```
  * 
  * #### Radio buttons
@@ -213,8 +216,7 @@ export const useCustForm = (formSetup) => {
     const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
     const alert = useAlert();
-    const [pic, setPic] = useState();
-	const [picPreview, setPicPreview] = useState();
+	const [picPreviews, setPicPreviews] = useState({});
     const [radioState, setRadioState] = useState({});
 	const [submitError, setSubmitError] = useState();
 	const { setIsSignup } = useContext(SignupContext);
@@ -331,9 +333,6 @@ export const useCustForm = (formSetup) => {
                 setInputs(inputs => ({
                     ...serverData,
                 }))
-                // Set profile picture
-                // NOT UNIVERSAL !!! Think of a better way
-                setPic(serverData["student_pic"])
             }).catch(fetchFail);
         }
         else {
@@ -389,14 +388,15 @@ export const useCustForm = (formSetup) => {
 				if(isValid === true)
 				{
 					// Set image preview for user
+					// Convert image object to local URL for preview
 					let file_local_URL = URL.createObjectURL(inputValue);
-					setPicPreview(file_local_URL)
+					setPicPreviews(values => ({...values, [inputName] : [file_local_URL]}));
 					
 					// Convert file object to readable format (for upload to server)
 					let reader  = new FileReader();
 					reader.onload = (e) => {
 						// Set updated image
-						setPic(e.target.result);
+						//setPic(e.target.result);
 					}
 					reader.readAsDataURL(inputValue);
 
@@ -415,7 +415,7 @@ export const useCustForm = (formSetup) => {
 						Nasty trick to force re-render on file input to take into
 						account set cookie and display warning message below input.
 					*/
-					setPicPreview(null);
+					setPicPreviews(values => ({...values, [inputName] : null}));
 
 					// Clear value of file input
 					e.target.value = null;
@@ -437,7 +437,6 @@ export const useCustForm = (formSetup) => {
 
 			// Check if input is valid (no special chars etc...)
 			inputValidation(inputValue, inputType, inputName);
-			
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
 	}
@@ -507,8 +506,7 @@ export const useCustForm = (formSetup) => {
     let FormHandling = {
         inputs: inputs,
         operation: formSetup.operation,
-        picPreview: picPreview ? picPreview : null,
-        pic: pic ? pic : null,
+        picPreviews: picPreviews ? picPreviews : null,
         radioButtons: radioState ? radioState : null,
 		isValid: isValid,
         handleChange: handleChange,
