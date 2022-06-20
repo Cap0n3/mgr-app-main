@@ -85,8 +85,8 @@ const Header = (props) => {
 	 */
 	useEffect(() => {
 		getEntry("http://127.0.0.1:8000/teacher/", authTokens, user, "").then(teacherData => {
-			console.log(teacherData)
 			setData(teacherData[0]);
+			console.log("HELLO")
 		}).catch(fetchFail);
 	}, []);
 
@@ -102,7 +102,7 @@ const Header = (props) => {
 		<ProfileWrapper>
 			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>{ user.isAdmin ? user.username : teacherData.teacher_fname.charAt(0) + "." + teacherData.teacher_fname }</ProfileName>
+				<ProfileName>{ user.isAdmin ? user.username : (teacherData.teacher_fname ? teacherData.teacher_fname.charAt(0) + "." + teacherData.teacher_lname : "UU")}</ProfileName>
 				<ProfileRole>{ user.role }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -123,7 +123,7 @@ const Header = (props) => {
 				</MenuList>
 			</DropMenu>
 		</div>
-		{console.log(teacherData.teacher_lname)}
+		{console.log(teacherData.teacher_fname)}
 	</div>;
 };
 
