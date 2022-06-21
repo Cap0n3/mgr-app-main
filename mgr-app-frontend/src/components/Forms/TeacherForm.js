@@ -89,26 +89,32 @@ const TeacherFormComponent = (props) => {
         let first_name = e.target.teacher_fname.value;
         let last_name = e.target.teacher_lname.value
 
-        // First, get updated first name and last name
-        let updatedInfos = {
-            user_fname : first_name,
-            user_lname : last_name
-        };
+        // Check first name & last name for bad chars (for full pre API call validation, see FormValidation.js)
+        let badFirst = first_name.search(/[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ'-]+/);
+        let badLast = last_name.search(/[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ'-]+/);
 
-        // Then, check if there's a new valid picture (to avoid error in case of invalid image upload)
-        if(rawProfilePic) {
-            // Convert image object to local URL for preview
-            let file_local_URL = URL.createObjectURL(rawProfilePic);
-            // Update object with new image
-            updatedInfos["user_profilePic"] = file_local_URL;
+        if(badFirst === -1 && badLast === -1) {
+            // First, get updated first name and last name
+            let updatedInfos = {
+                user_fname : first_name,
+                user_lname : last_name
+            };
+
+            // Then, check if there's a new valid picture (to avoid error in case of invalid image upload)
+            if(rawProfilePic) {
+                // Convert image object to local URL for preview
+                let file_local_URL = URL.createObjectURL(rawProfilePic);
+                // Update object with new image
+                updatedInfos["user_profilePic"] = file_local_URL;
+            }
+            
+            // Set them globaly (mainly for header)
+            setUserInfos(userInfos => ({
+                ...userInfos,
+                ...updatedInfos
+            }));
         }
         
-        // Set them globaly (mainly for header)
-        setUserInfos(userInfos => ({
-            ...userInfos,
-            ...updatedInfos
-        }));
-
         // Handle submit and send all updated infos to server 
         customForm.handleSubmit(e);
     }
