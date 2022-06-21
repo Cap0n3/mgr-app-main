@@ -6,6 +6,22 @@ const AuthContext = createContext();
 
 export default AuthContext;
 
+/**
+ * Context data custom type (object returned by `AuthProvider`).
+ * @typedef			{Object}		contextData
+ * @property		{Object}		user			Infos concerning user & token (isAdmin, id, username, etc...).
+ * @property		{Object}		authtoken		Infos concerning authentification token (access, refresh).
+ * @property		{function}		loginUser		Function managing user login.
+ * @property		{function}		logoutUser		Function managing user logout.
+ * @property		{Object}		loginState		Current state of login (msg & login state boolean).	
+ */
+
+/**
+ * This context function is used to handle authentification token life cycle.
+ * 
+ * @param		{Object}		children		App.
+ * @returns		{contextData}					All useful context variables related to authentification.
+ */
 export const AuthProvider = ({ children }) => {
 	const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null);
 	const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null);

@@ -447,29 +447,33 @@ export const useCustForm = (formSetup) => {
      */
     const handleSubmit = (event) => {
 		event.preventDefault();
+		
+		// === First,  check if there are wrong inputs in form === //
+		
+		// Get inputs infos from submit button
+		let allInputs = getFormInputInfos(event);
+			
+		let wrongInputs = []
+
+		// Check if an input cookie is set to false (last input verification before sending)
+		allInputs.forEach(element => {
+			if(sessionStorage.getItem(element.name) !== null) {
+				if(sessionStorage.getItem(element.name) === "false") {
+					wrongInputs.push(element.name);
+				}
+			}
+		})
+
+		// Warn user if inputs are wrong and quit function (without sending data)
+		if (wrongInputs.length !== 0){
+			alert.error("Des entrées ne sont pas valides !")
+			return;
+		}
+		
+		// === If there no bad inputs, send appropriate API Call === //
 
 		// Evaluate if it's an update or a creation
 		if (formSetup.operation === "create" || formSetup.operation === "signup") {
-			
-			// Get inputs infos from submit button
-			let allInputs = getFormInputInfos(event);
-			
-			let wrongInputs = []
-
-			// Check if an input cookie is set to false (last input verification before sending)
-			allInputs.forEach(element => {
-				if(sessionStorage.getItem(element.name) !== null) {
-					if(sessionStorage.getItem(element.name) === "false") {
-						wrongInputs.push(element.name);
-					}
-				}
-			})
-
-			// Warn user if inputs are wrong and quit function (without sending data)
-			if (wrongInputs.length !== 0){
-				alert.error("Des entrées ne sont pas valides !")
-				return;
-			}
 			
 			// Make API call to server
 			if (formSetup.operation === "create") {

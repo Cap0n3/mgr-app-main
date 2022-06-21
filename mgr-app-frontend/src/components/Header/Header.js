@@ -20,14 +20,15 @@ import {
 } from "./Header.elements";
 import { isMenuClicked } from "./isMenuClicked";
 import AuthContext from "../../context/AuthContext";
-import { getEntry } from "../../functions/ApiCalls";
+import { UserContext } from "../../context/UserContext";
 
 
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
 	const [ teacherData, setData ] = useState([]);
-	const {authTokens, user} = useContext(AuthContext);
+	const { user } = useContext(AuthContext);
+	const { userInfos } = useContext(UserContext);
 	const alert = useAlert();
 	const profilMenuRef = useRef(null);
 	const notifListRef = useRef(null);
@@ -36,17 +37,6 @@ const Header = (props) => {
 	// Check window width
 	const isSmallScreen = () => {
 		return (window.innerWidth <= 960) ? true : false;
-	}
-
-	/**
-	 * This function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, it'll display it to console,
-	 * and pass the error message to `FormHandling` (hook return value) object.
-	 * @param   {Object}    err     		Error object.
-	 * @param	{string}	err.message		Error message.
-	 */
-	 const fetchFail = (err) => {
-        alert.show("Une erreur s'est produite !");
-		console.error(err);
 	}
 
 	/**
@@ -80,16 +70,6 @@ const Header = (props) => {
 		};
 	}, [profilMenuRef, openProfilMenu, notifListRef, openNotifList]);
 	
-	/**
-	 * Get infos on teacher
-	 */
-	useEffect(() => {
-		getEntry("http://127.0.0.1:8000/teacher/", authTokens, user, "").then(teacherData => {
-			setData(teacherData[0]);
-			console.log("HELLO")
-		}).catch(fetchFail);
-	}, []);
-
 	return <div className="header">
 		<FaRegBell className="notif-icons" size="25" onClick={() => setOpenNotifList(!openNotifList)} />
 		<DropMenu isOpen={openNotifList} ref={notifListRef} rightOffset={() => isSmallScreen() ? "78px" : "190px"}>
@@ -100,9 +80,9 @@ const Header = (props) => {
 			</MenuList>
 		</DropMenu>
 		<ProfileWrapper>
-			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
+			<ProfileImage src={userInfos.user_profilePic} alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>{ user.isAdmin ? user.username : (teacherData.teacher_fname ? teacherData.teacher_fname.charAt(0) + "." + teacherData.teacher_lname : "UU")}</ProfileName>
+				<ProfileName>{ user.isAdmin ? user.username : (userInfos.user_fname ? userInfos.user_fname.charAt(0) + "." + userInfos.user_lname : "NoName")}</ProfileName>
 				<ProfileRole>{ user.role }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -112,7 +92,7 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>{ user.isAdmin ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+						<ProfileName>{ user.isAdmin ? user.username : (userInfos.user_fname ? userInfos.user_fname.charAt(0) + "." + userInfos.user_lname : "NoName")}</ProfileName>
 						<ProfileRole>{ user.role }</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
@@ -123,7 +103,6 @@ const Header = (props) => {
 				</MenuList>
 			</DropMenu>
 		</div>
-		{console.log(teacherData.teacher_fname)}
 	</div>;
 };
 

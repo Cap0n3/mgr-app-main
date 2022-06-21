@@ -1,5 +1,6 @@
 import React, { useRef, useContext } from "react";
 import AuthContext from "../../context/AuthContext";
+import { UserContext } from "../../context/UserContext";
 import { 
 	Form,
 	Legend,
@@ -20,9 +21,9 @@ import { InputWarnNormal } from "../../Colors";
  */
 const TeacherFormComponent = (props) => {
 	const formRef = useRef();
-    const {authTokens, user} = useContext(AuthContext);
-
-    const [customForm] = useCustForm({
+    const { authTokens, user } = useContext(AuthContext);
+    const { userInfos, setUserInfos } = useContext(UserContext);
+    const [ customForm ] = useCustForm({
         operation: props.target,
 		endpoints: {
 			create: "",
@@ -66,6 +67,53 @@ const TeacherFormComponent = (props) => {
 	}
 
     /**
+     * This function first sets first name, last name and profile pic globaly using `UserContext` and then handle submit with `useCustHook` hook.
+     * 
+     * First & last name & profile pic setup is mainly here to have a more dynamic user infos displaying if user changes them (here for app header user infos). 
+     * Of course, it could also be set from `user` object from `AuthContext` but it would need user to relog to take into account changes (which is a pain
+     * just for just changing first & last name or profile pic).
+     * 
+     * > Note : `userInfos` object created by `UserContext` will be updated here if there's new valid infos entered in form. Please not that entry in server will be
+     * handled by `handleSubmit` function.
+     * 
+     * @param   {Object}    e   Event object. 
+     */
+    const formSubmit = (e) => {
+        e.preventDefault();
+
+        // Init URL variable to null
+        let file_local_URL = null;
+
+        // Get infos from form
+        let rawProfilePic = e.target.teacher_pic.files[0];
+        let first_name = e.target.teacher_fname.value;
+        let last_name = e.target.teacher_lname.value
+
+        // First, get updated first name and last name
+        let updatedInfos = {
+            user_fname : first_name,
+            user_lname : last_name
+        };
+
+        // Then, check if there's a new valid picture (to avoid error in case of invalid image upload)
+        if(rawProfilePic) {
+            // Convert image object to local URL for preview
+            let file_local_URL = URL.createObjectURL(rawProfilePic);
+            // Update object with new image
+            updatedInfos["user_profilePic"] = file_local_URL;
+        }
+        
+        // Set them globaly (mainly for header)
+        setUserInfos(userInfos => ({
+            ...userInfos,
+            ...updatedInfos
+        }));
+
+        // Handle submit and send all updated infos to server 
+        customForm.handleSubmit(e);
+    }
+
+    /**
 	 * For props formatting (ex : create => Create).
 	 * @param {str} str String to format. 
 	 * @returns {str} Formatted string.
@@ -77,7 +125,7 @@ const TeacherFormComponent = (props) => {
 
 	return (
 		<>
-			<Form ref={formRef} onSubmit={customForm.handleSubmit}>
+			<Form ref={formRef} onSubmit={formSubmit}>
 				{/* 
 					Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs 
 					Note: here getItem() get input validation strings "true" or "false" or value null from cookies.
