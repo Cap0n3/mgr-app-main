@@ -88,11 +88,10 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 	permission_classes = [IsAuthenticated, IsAdminOrUser]
 
 	def get_queryset(self):
-		print(self.request.user)
 		isAdmin = self.request.user.is_superuser
 		currentUser = self.request.user
 		if not isAdmin:
-			# Get current user infos
+			# Get all infos of current user
 			userInfos = User.objects.filter(username=currentUser)
 		allUsers = User.objects.all()
 		return allUsers if isAdmin else userInfos

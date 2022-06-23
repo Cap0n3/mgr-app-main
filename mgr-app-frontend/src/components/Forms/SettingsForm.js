@@ -1,23 +1,25 @@
-import React, { useContext, useRef } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import AuthContext from '../../context/AuthContext';
 import { 
 	Form,
 	Legend,
 	Bullet,
-	Label, 
-	LabelPic, 
-	RadioLabel, 
-	Input, 
-	Select, 
-	Textarea, 
-	AvatarWrapper, 
-	Avatar,
+	Label,
+	Input,
 	WarningBox,
-	WarnIcon
+	WarnIcon,
+    PassCheckWrapper,
+    IndicatorWrapper,
+    StrenghBar,
+    StrengthMsg,
+    HintBox,
+    HintText,
+    HintCheckIcon,
+    HintCrossIcon
 } from "./FormStyles/GlobalForm.style";
-import { LogoWrapper, AppLogo, AppTitle, LinkWrapper, LogOrSignLink } from "./FormStyles/LoginForm.style";
+import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
-import { InputWarnNormal } from "../../Colors";
+import { InputWarnNormal, InputWarnCompare } from "../../Colors";
 
 const SettingsForm = (props) => {
     const formRef = useRef();
@@ -26,14 +28,40 @@ const SettingsForm = (props) => {
         operation: props.target,
 		endpoints: {
 			create: "",
-			update: "http://127.0.0.1:8000/teacher/update/"
+			update: "http://127.0.0.1:8000/settings/"
 		},
         authTokens: authTokens,
         user: user,
-        entryID: "",
+        entryID: user.user_id,
 		navigateTo: "/",
         formRef: formRef,
     });
+
+    // For password match & strength check
+    const levelMessages = ['Mauvais', 'Faible', 'Moyen', 'Pas mal', 'Bien']
+    const [isMatch, setIsMatch] = useState(null);
+    const [passCheck] = usePassCheck(customForm.inputs.new_password, levelMessages);
+
+    /**
+     * Here to control that password and password confirmation are matching. 
+     */
+     useEffect(() => {
+        let enteredPasswd = customForm.inputs.confirmPasswd;
+        let passwd = customForm.inputs.password;
+        let passConf = customForm.inputs.confirmPasswd;
+        
+        if(enteredPasswd !== undefined) {
+            if(passwd !== passConf) {
+                setIsMatch(false)
+            }
+            else if(passwd === passConf) {
+                setIsMatch(true)
+            }
+        }
+        else {
+            setIsMatch(null)
+        }
+    }, [customForm.inputs.password, customForm.inputs.confirmPasswd]);
 
     /**
 	 * This function uses `isValid()` useCustForm hook function to display warning messages for user if input validation has failed.
@@ -65,13 +93,30 @@ const SettingsForm = (props) => {
     return(
         <Form ref={formRef} onSubmit={customForm.handleSubmit}>
 				<Legend><Bullet>1</Bullet>Utilisateur</Legend>
-				<Label>Nom d'utilisateur :</Label>
-				<Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="teacher_fname" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
+				<Label>Changer le nom d'utilisateur :</Label>
+				<Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
 				{warningBox("username", "text")}
                 <Legend><Bullet>2</Bullet>Mot de passe</Legend>
-				<Label>Mot de passe :</Label>
-				<Input isValid={customForm.isValid("password")} warn_colors={InputWarnNormal} type="password" name="teacher_lname" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
-				{warningBox("password", "password")}
+                <Label>Mot de passe actuel :</Label>
+                <Input type="password" name="current_password" placeholder="Mot de passe actuel" value={customForm.inputs.current_password || ""} onChange={customForm.handleChange} required />
+				<Label>Nouveau mot de passe :</Label>
+                <Input type="password" name="new_password" placeholder="Nouveau mot de passe" value={customForm.inputs.new_password || ""} onChange={customForm.handleChange} required />
+                <Input isValid={isMatch} warn_colors={InputWarnCompare} type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
+                {(isMatch === false) ? <WarningBox warn_colors={InputWarnCompare}><WarnIcon warn_colors={InputWarnCompare} /><p>Mots de passe pas identiques !</p></WarningBox> : null}
+                <PassCheckWrapper show={passCheck.level !== null}>
+                    <IndicatorWrapper>
+                        <StrenghBar leftRounded="15" marginLeft="5" levelColor={passCheck.level} levelCat="first"></StrenghBar>
+                        <StrenghBar marginLeft="5" levelColor={passCheck.level} levelCat="second"></StrenghBar>
+                        <StrenghBar rightRounded="15" levelColor={passCheck.level} levelCat="third"></StrenghBar>
+                    </IndicatorWrapper>
+                        <StrengthMsg>{passCheck.msg}</StrengthMsg>
+                    <HintBox>
+                        <HintText>{passCheck.is8chars ? <HintCheckIcon /> : <HintCrossIcon />} Au moins 8 caractères</HintText>
+                        <HintText>{passCheck.haveCaps ? <HintCheckIcon /> : <HintCrossIcon />} Au moins une majuscule (A-Z)</HintText>
+                        <HintText>{passCheck.haveNums ? <HintCheckIcon /> : <HintCrossIcon />} Au moins un chiffre (0-9)</HintText>
+                        <HintText>{passCheck.haveSymbols ? <HintCheckIcon /> : <HintCrossIcon />} Au moins un symbole (#+"%&, etc...)</HintText>
+                    </HintBox>
+                </PassCheckWrapper>
 				<Input type="submit" value="Sauver" />
 			</Form>
     );
