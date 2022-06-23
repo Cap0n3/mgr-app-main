@@ -36,7 +36,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 # === APP VIEW CLASSES === #
 # ======================== #
 
-# === TEACHER === #
+# ====== TEACHER ====== #
+
 class TeachersView(generics.ListAPIView):
 	'''
 	This view handles viewing of all teacher personal infos.
@@ -66,7 +67,8 @@ class UpdateTeacherView(generics.RetrieveUpdateAPIView):
 	def perform_update(self, serializer):
 		instance = serializer.save()
 
-# === USER === #
+# ====== USER ====== #
+
 class CreateUserView(generics.CreateAPIView):
 	'''
 	View to create a new user during signup, a new teacher will be automatically 
@@ -77,6 +79,24 @@ class CreateUserView(generics.CreateAPIView):
 	serializer_class = UserSerializer
 	permission_classes = [IsSignUp]
 
+class ListUpdateUserView(generics.RetrieveUpdateAPIView):
+	'''
+	View to view and update basic user infos.
+	'''
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	permission_classes = [IsAuthenticated, IsAdminOrUser]
+
+	def get_queryset(self):
+		print(self.request.user)
+		isAdmin = self.request.user.is_superuser
+		currentUser = self.request.user
+		if not isAdmin:
+			# Get current user infos
+			userInfos = User.objects.filter(username=currentUser)
+		allUsers = User.objects.all()
+		return allUsers if isAdmin else userInfos
+
 class DeleteUserView(generics.DestroyAPIView):
 	'''
 	View used to delete User, it'll also delete associated teacher.
@@ -85,7 +105,8 @@ class DeleteUserView(generics.DestroyAPIView):
 	serializer_class = UserSerializer
 	permission_classes = [IsAuthenticated, IsAdminOrUser]
 
-# === CLIENTS === #
+# ====== CLIENTS ====== #
+
 class ClientsView(generics.ListAPIView):
 	'''
 	View used to display all clients owned by a specific teacher.

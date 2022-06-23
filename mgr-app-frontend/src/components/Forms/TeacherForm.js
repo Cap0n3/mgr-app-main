@@ -134,7 +134,6 @@ const TeacherFormComponent = (props) => {
 			<Form ref={formRef} onSubmit={formSubmit}>
 				{/* 
 					Form style no5 from https://www.sanwebe.com/2014/08/css-html-forms-designs 
-					Note: here getItem() get input validation strings "true" or "false" or value null from cookies.
 				*/}
 				<Legend><Bullet>1</Bullet>Infos Professeur</Legend>
 				<Label>Photo :</Label>

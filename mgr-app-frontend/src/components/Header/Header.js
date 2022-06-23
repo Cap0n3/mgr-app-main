@@ -98,7 +98,7 @@ const Header = (props) => {
 				</ProfileMobileWrapper>
 				<MenuList>
 					<MenuItem onClick={() => navigate("/teacher")}>Your Profile</MenuItem>
-					<MenuItem>Settings</MenuItem>
+					<MenuItem onClick={() => navigate("/settings")}>Settings</MenuItem>
 					<MenuItem>Sign Out</MenuItem>
 				</MenuList>
 			</DropMenu>

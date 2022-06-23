@@ -11,4 +11,5 @@ urlpatterns = [
 	path('client/create/', CreateClientView.as_view(), name="client-creation"),
 	path('client/update/<pk>', UpdateClientView.as_view(), name="client-update"),
 	path('client/delete/<pk>', DeleteClientView.as_view(), name="client-delete"),
+	path('settings/<pk>', ListUpdateUserView.as_view(), name="settings")
 ]
