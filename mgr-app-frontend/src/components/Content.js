@@ -8,7 +8,7 @@ import UpdateTeacher from "../pages/UpdateTeacher";
 import ClientDetail from "../pages/ClientDetail";
 import CreateClient from "../pages/CreateClient";
 import UpdateClient from "../pages/UpdateClient";
-import SettingPage from "../pages/SettingsPage";
+import AccountPage from "../pages/AccountPage";
 import Billing from "../pages/Billing";
 import Notes from "../pages/Notes";
 
@@ -23,7 +23,7 @@ const Content = () => {
 				<Route path="/client/:clientID" element={<ClientDetail />} />
 				<Route path="/client/create" element={<CreateClient />} />
 				<Route path="/client/update/:clientID" element={<UpdateClient />} />
-				<Route path="/settings" element={<SettingPage />} />
+				<Route path="/account" element={<AccountPage />} />
 				<Route path="/billing" element={<Billing />} />
 				<Route path="/notes" element={<Notes />} />
 		</Routes>

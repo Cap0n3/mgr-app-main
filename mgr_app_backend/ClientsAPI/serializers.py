@@ -15,10 +15,21 @@ class UserSerializer(serializers.ModelSerializer):
 		model = User
 		fields = ['id', 'username', 'first_name', 'last_name', 'is_active', 'email', 'password']
 	
-	# Hash Password
 	def create(self, validated_data):
+		'''
+		Hash Password (with pbkdf2) & create user
+		'''
 		validated_data['password'] = make_password(validated_data.get('password'))
 		return super(UserSerializer, self).create(validated_data)
+
+	def update(self, instance, validated_data):
+		'''
+		Update user information and new password
+		'''
+		instance.username = validated_data.get('username')
+		instance.password = make_password(validated_data.get('password'))
+		instance.save()
+		return instance
 
 class TeacherSerializer(serializers.ModelSerializer):
 	class Meta:

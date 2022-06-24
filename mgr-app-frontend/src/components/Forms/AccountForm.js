@@ -21,7 +21,7 @@ import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
 import { InputWarnNormal, InputWarnCompare } from "../../Colors";
 
-const SettingsForm = (props) => {
+const AccountForm = (props) => {
     const formRef = useRef();
     const { authTokens, user } = useContext(AuthContext);
     const [ customForm ] = useCustForm({
@@ -100,7 +100,7 @@ const SettingsForm = (props) => {
                 <Label>Mot de passe actuel :</Label>
                 <Input type="password" name="current_password" placeholder="Mot de passe actuel" value={customForm.inputs.current_password || ""} onChange={customForm.handleChange} required />
 				<Label>Nouveau mot de passe :</Label>
-                <Input type="password" name="new_password" placeholder="Nouveau mot de passe" value={customForm.inputs.new_password || ""} onChange={customForm.handleChange} required />
+                <Input type="password" name="password" placeholder="Nouveau mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} required />
                 <Input isValid={isMatch} warn_colors={InputWarnCompare} type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} required />
                 {(isMatch === false) ? <WarningBox warn_colors={InputWarnCompare}><WarnIcon warn_colors={InputWarnCompare} /><p>Mots de passe pas identiques !</p></WarningBox> : null}
                 <PassCheckWrapper show={passCheck.level !== null}>
@@ -122,4 +122,4 @@ const SettingsForm = (props) => {
     );
 }
 
-export default SettingsForm;
+export default AccountForm;

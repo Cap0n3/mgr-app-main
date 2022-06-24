@@ -97,8 +97,8 @@ const Header = (props) => {
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>
-					<MenuItem onClick={() => navigate("/teacher")}>Your Profile</MenuItem>
-					<MenuItem onClick={() => navigate("/settings")}>Settings</MenuItem>
+					<MenuItem onClick={() => navigate("/teacher")}>Profil</MenuItem>
+					<MenuItem onClick={() => navigate("/account")}>Compte</MenuItem>
 					<MenuItem>Sign Out</MenuItem>
 				</MenuList>
 			</DropMenu>

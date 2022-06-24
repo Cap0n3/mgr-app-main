@@ -1,10 +1,10 @@
 import React from "react";
-import SettingsForm from "../components/Forms/SettingsForm";
+import AccountForm from "../components/Forms/AccountForm";
 
 const SettingPage = () => {
     return(
         <>
-            <SettingsForm target="update" />
+            <AccountForm target="update" />
         </>
     );
 }

@@ -8,6 +8,7 @@ from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher, IsSign
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
+from django.contrib.auth.hashers import make_password
 
 # === JWT TOKEN CUSTOM VIEWS === #
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -81,7 +82,7 @@ class CreateUserView(generics.CreateAPIView):
 
 class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 	'''
-	View to view and update basic user infos.
+	View to view and update basic user account infos.
 	'''
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
@@ -95,6 +96,9 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 			userInfos = User.objects.filter(username=currentUser)
 		allUsers = User.objects.all()
 		return allUsers if isAdmin else userInfos
+	
+	def perform_update(self, serializer):
+		instance = serializer.save()
 
 class DeleteUserView(generics.DestroyAPIView):
 	'''
