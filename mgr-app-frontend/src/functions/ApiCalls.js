@@ -241,6 +241,6 @@ const checkErrors = (httpResponse, user, operation) => {
 
 // TO FINISH !!!! (Already used in AuthContext, to implement in other files)
 export const fetchFail = (err) => {
-    alert("Hello! I am an alert box!!");
-	console.error(err);
+    console.error(err);
+    alert("Une erreur est survenue !" + "\n" + err);
 }
