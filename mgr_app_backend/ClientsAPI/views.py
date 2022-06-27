@@ -8,7 +8,7 @@ from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher, IsSign
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
-from django.contrib.auth.hashers import make_password
+from rest_framework.exceptions import APIException
 
 # === JWT TOKEN CUSTOM VIEWS === #
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -97,12 +97,20 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 		allUsers = User.objects.all()
 		return allUsers if isAdmin else userInfos
 	
+	# TO FINISH !!!
 	def perform_update(self, serializer):
+		# Get user instance (to use check_password)
+		currentUser = self.request.user
+		user = User.objects.get(username=currentUser)
+		# Get current password entered by user
 		currentPasswd = self.request.POST.get('current_password')
-		# TO FINISH !!!
-		print(self.request.data)
-		#print(User.check_password("Kjj0825qqkk"))
-		instance = serializer.save()
+		# Compare passwd entered by user with stored password (to allow password update)
+		if user.check_password(currentPasswd):
+			# Authorize update of profile infos (username and/or password)
+			print("PASSWORDS MATCH")
+			#instance = serializer.save()
+		else:
+			print("PASSWORD DON'T MATCH !!!")
 
 class DeleteUserView(generics.DestroyAPIView):
 	'''

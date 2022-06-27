@@ -47,6 +47,12 @@ export const createEntry = async (endpoint, authTokens, user, inputs) => {
     return checkErrors(response, user, "CREATE")
 }
 
+/**
+ * This function creates an API request to create a new user during signup.
+ * @param   {string}    endpoint    String representing server endpoint URL. 
+ * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).
+ * @returns 
+ */
 export const signUpCall = async (endpoint, inputs) => {
     let formData = new FormData();
     
