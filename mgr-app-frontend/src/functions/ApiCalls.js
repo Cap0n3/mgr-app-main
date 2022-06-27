@@ -240,6 +240,13 @@ const checkErrors = (httpResponse, user, operation) => {
 }
 
 // TO FINISH !!!! (Already used in AuthContext, to implement in other files)
+
+/**
+ * This function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, it'll display 
+ * it to console and display a standard (non-react) alert box for user.
+ * @param   {Object}    err     		Error object.
+ * @param	{string}	err.message		Error message.
+ */
 export const fetchFail = (err, endpoint) => {
     console.error(`${err.message} ${endpoint} (${err.name})`);
     alert(`API CALL ERROR (${err.name}) : Une erreur est survenue lors du chargement !\n ${err.message} ${endpoint}`);

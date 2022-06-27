@@ -300,10 +300,12 @@ export const useCustForm = (formSetup) => {
 	}
 
     /**
-	 * This function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, it'll display it to console,
-	 * and pass the error message to `FormHandling` (hook return value) object.
-	 * @param   {Object}    err     		Error object.
-	 * @param	{string}	err.message		Error message.
+	 * This custom `fetchFail()` function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, 
+	 * it'll display it to console and pass the error message to `FormHandling` (hook return value) object.
+	 * 
+	 * > **Note :** For simple API call error displaying, please use `ApiCalls.js` `fetchFail` function.
+	 * 
+	 * @param   {Object}    err     Error object.
 	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");

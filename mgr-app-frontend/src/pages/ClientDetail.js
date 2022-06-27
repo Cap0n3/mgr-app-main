@@ -40,6 +40,14 @@ const ClientDetail = () => {
 	const navigate = useNavigate();
 	const alert = useAlert();
 	
+	/**
+	 * This custom `fetchFail()` function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, 
+	 * it'll display it to console and cancel page displaying (by navigating back to home).
+	 * 
+	 * > **Note :** For simple API call error displaying, please use `ApiCalls.js` `fetchFail()` function.
+	 * 
+	 * @param	{Object}	err		Standard error object.
+	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
 		console.error(err);

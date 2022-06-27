@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from 'react-alert';
 import AuthContext from '../context/AuthContext';
-import { getEntries, deleteEntry } from "../functions/ApiCalls";
+import { getEntries, deleteEntry, fetchFail } from "../functions/ApiCalls";
 import { Button } from "./pagesStyles/Global.style";
 import { ClientTable, HeaderCell, FooterCell, Cell, Line, ProfilePic, EyeIcon, EditIcon, TrashIcon } from "./pagesStyles/Tables.style";
 
@@ -13,12 +13,6 @@ const Dashboard = () => {
 	const navigate = useNavigate();
 	const alert = useAlert();
 
-	// If API call error
-	const fetchFail = (err) => {
-		alert.show("Une erreur s'est produite !");
-		console.error(err);
-	}
-	
 	/**
 	 * Request all clients info from API.
 	 */
@@ -27,7 +21,7 @@ const Dashboard = () => {
 		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then((data) => {
 			// If API call is success, populate clientData
 			setData(data);
-		}).catch(fetchFail);
+		}).catch(err => fetchFail(err, "http://127.0.0.1:8000/clients/"));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -53,7 +47,7 @@ const Dashboard = () => {
 			deleteEntry("http://127.0.0.1:8000/client/delete/", authTokens, user, clientID).then(() => {
 				// Refresh client list
 				window.location.reload();
-			}).catch(fetchFail);;
+			}).catch(err => fetchFail(err, "http://127.0.0.1:8000/client/delete/"));;
 		}
 	}
 	
