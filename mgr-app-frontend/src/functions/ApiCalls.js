@@ -58,10 +58,6 @@ export const signUpCall = async (endpoint, inputs) => {
         formData.append(item[0], item[1])
     ));
 
-    // for (let el of formData) {
-    //     console.log(el)
-    // }
-
     // Get user name from input data
     let user = formData.get("username");
     
@@ -121,7 +117,7 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         }
     })
-
+    
     if (checkErrors(response, user, "READ")) {
         let data = await response.json()
         return data;
@@ -241,4 +237,10 @@ const checkErrors = (httpResponse, user, operation) => {
         throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n`+ 
             `${operation} operation has failed : ${httpResponse.status} ${httpResponse.statusText}`);
     }
+}
+
+// TO FINISH !!!! (Already used in AuthContext, to implement in other files)
+export const fetchFail = (err) => {
+    alert("Hello! I am an alert box!!");
+	console.error(err);
 }

@@ -3,7 +3,6 @@ import "./layout.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import UI from "./UI"
 import { AuthProvider } from "./context/AuthContext";
-import { UserProvider } from "./context/UserContext";
 import { transitions, positions, type, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from "react-alert-template-basic";
 import { createContext } from "react";
@@ -29,13 +28,11 @@ export default function App() {
 		<Router>
 			<SignupContext.Provider value={value}>
 				<AuthProvider>
-					<UserProvider>
-						<AlertProvider template={AlertTemplate} {...options}>
-							<div className="App">
-								<UI />
-							</div>	
-						</AlertProvider>
-					</UserProvider>
+					<AlertProvider template={AlertTemplate} {...options}>
+						<div className="App">
+							<UI />
+						</div>	
+					</AlertProvider>
 				</AuthProvider>
 			</SignupContext.Provider>
 		</Router>

@@ -1,6 +1,5 @@
 import React, { useRef, useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-import { UserContext } from "../../context/UserContext";
 import { 
 	Form,
 	Legend,
@@ -21,8 +20,7 @@ import { InputWarnNormal } from "../../Colors";
  */
 const TeacherFormComponent = (props) => {
 	const formRef = useRef();
-    const { authTokens, user } = useContext(AuthContext);
-    const { userInfos, setUserInfos } = useContext(UserContext);
+    const { authTokens, user, setUserData } = useContext(AuthContext);
     const [ customForm ] = useCustForm({
         operation: props.target,
 		endpoints: {
@@ -67,13 +65,13 @@ const TeacherFormComponent = (props) => {
 	}
 
     /**
-     * This function first sets first name, last name and profile pic globaly using `UserContext` and then handle submit with `useCustHook` hook.
+     * This function first sets first name, last name and profile pic globaly using `AuthContext` and then handle submit with `useCustHook` hook.
      * 
      * First & last name & profile pic setup is mainly here to have a more dynamic user infos displaying if user changes them (here for app header user infos). 
      * Of course, it could also be set from `user` object from `AuthContext` but it would need user to relog to take into account changes (which is a pain
      * just for just changing first & last name or profile pic).
      * 
-     * > Note : `userInfos` object created by `UserContext` will be updated here if there's new valid infos entered in form. Please not that entry in server will be
+     * > Note : `userData` object created by `AuthContext` will be updated here if there's new valid infos entered in form. Please not that entry in server will be
      * handled by `handleSubmit` function.
      * 
      * @param   {Object}    e   Event object. 
@@ -109,8 +107,8 @@ const TeacherFormComponent = (props) => {
             }
             
             // Set them globaly (mainly for header)
-            setUserInfos(userInfos => ({
-                ...userInfos,
+            setUserData(userData => ({
+                ...userData,
                 ...updatedInfos
             }));
         }

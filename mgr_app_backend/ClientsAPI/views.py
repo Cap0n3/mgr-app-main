@@ -82,7 +82,7 @@ class CreateUserView(generics.CreateAPIView):
 
 class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 	'''
-	View to view and update basic user account infos.
+	View to view and update basic user account infos (username & password).
 	'''
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
@@ -98,6 +98,9 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 		return allUsers if isAdmin else userInfos
 	
 	def perform_update(self, serializer):
+		currentPasswd = self.request.POST.get('current_password')
+		print(self.request.data)
+		#print(User.check_password("Kjj0825qqkk"))
 		instance = serializer.save()
 
 class DeleteUserView(generics.DestroyAPIView):

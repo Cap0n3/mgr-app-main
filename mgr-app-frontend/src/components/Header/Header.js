@@ -20,15 +20,13 @@ import {
 } from "./Header.elements";
 import { isMenuClicked } from "./isMenuClicked";
 import AuthContext from "../../context/AuthContext";
-import { UserContext } from "../../context/UserContext";
 
 
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
 	const [ teacherData, setData ] = useState([]);
-	const { user } = useContext(AuthContext);
-	const { userInfos } = useContext(UserContext);
+	const { user, userData } = useContext(AuthContext);
 	const alert = useAlert();
 	const profilMenuRef = useRef(null);
 	const notifListRef = useRef(null);
@@ -80,9 +78,9 @@ const Header = (props) => {
 			</MenuList>
 		</DropMenu>
 		<ProfileWrapper>
-			<ProfileImage src={userInfos.user_profilePic} alt="profile-pic" />
+			<ProfileImage src={userData.user_profilePic} alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>{ user.isAdmin ? user.username : (userInfos.user_fname ? userInfos.user_fname.charAt(0) + "." + userInfos.user_lname : "NoName")}</ProfileName>
+				<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
 				<ProfileRole>{ user.role }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -92,7 +90,7 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>{ user.isAdmin ? user.username : (userInfos.user_fname ? userInfos.user_fname.charAt(0) + "." + userInfos.user_lname : "NoName")}</ProfileName>
+						<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
 						<ProfileRole>{ user.role }</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
