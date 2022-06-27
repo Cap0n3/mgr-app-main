@@ -240,7 +240,7 @@ const checkErrors = (httpResponse, user, operation) => {
 }
 
 // TO FINISH !!!! (Already used in AuthContext, to implement in other files)
-export const fetchFail = (err) => {
-    console.error(err);
-    alert("API CALL ERROR : " + "Une erreur est survenue lors du chargement !\n" + err);
+export const fetchFail = (err, endpoint) => {
+    console.error(`${err.message} ${endpoint} (${err.name})`);
+    alert(`API CALL ERROR (${err.name}) : Une erreur est survenue lors du chargement !\n ${err.message} ${endpoint}`);
 }

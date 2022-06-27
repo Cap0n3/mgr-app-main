@@ -33,6 +33,12 @@ export const AuthProvider = ({ children }) => {
 	const [userData, setUserData] = useState({});
 	const navigate = useNavigate();
 
+	/**
+	 * This function fetches user data (username, names and pics) for displaying.
+	 * 
+	 * @param	{string}	endpoint	Endpoint to fetch data. 
+	 * @param	{Object}	data		Data returned by JWT Auth. 
+	 */
 	const getUserData = async (endpoint, data) => {
 		getEntry(endpoint, data, jwt_decode(data.access), "").then(_data => {
 			// Select relevant infos from data
@@ -46,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 				...userData,
 				...infos
 			}));
-		}).catch(fetchFail);
+		}).catch(err => fetchFail(err, endpoint));
 	}
 	
 	const loginUser = async (e) => {

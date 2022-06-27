@@ -99,6 +99,7 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 	
 	def perform_update(self, serializer):
 		currentPasswd = self.request.POST.get('current_password')
+		# TO FINISH !!!
 		print(self.request.data)
 		#print(User.check_password("Kjj0825qqkk"))
 		instance = serializer.save()

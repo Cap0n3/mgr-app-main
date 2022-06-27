@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAlert } from 'react-alert';
 import "../../layout.css";
 import { FaRegBell } from "react-icons/fa"
 import { RiArrowDownSLine } from "react-icons/ri"
@@ -25,9 +24,7 @@ import AuthContext from "../../context/AuthContext";
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
-	const [ teacherData, setData ] = useState([]);
 	const { user, userData } = useContext(AuthContext);
-	const alert = useAlert();
 	const profilMenuRef = useRef(null);
 	const notifListRef = useRef(null);
 	const navigate = useNavigate();
