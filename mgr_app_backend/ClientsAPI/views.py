@@ -9,6 +9,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.exceptions import APIException
+from django.core.exceptions import PermissionDenied
 
 # === JWT TOKEN CUSTOM VIEWS === #
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -88,6 +89,7 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 	serializer_class = UserSerializer
 	permission_classes = [IsAuthenticated, IsAdminOrUser]
 
+	# CUSTOMIZE QUERYSET TO AVOID GIVING PASSWD HASH !!!
 	def get_queryset(self):
 		isAdmin = self.request.user.is_superuser
 		currentUser = self.request.user
@@ -97,20 +99,20 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 		allUsers = User.objects.all()
 		return allUsers if isAdmin else userInfos
 	
-	# TO FINISH !!!
+	# IS OK NOW
 	def perform_update(self, serializer):
 		# Get user instance (to use check_password)
 		currentUser = self.request.user
 		user = User.objects.get(username=currentUser)
 		# Get current password entered by user
 		currentPasswd = self.request.POST.get('current_password')
-		# Compare passwd entered by user with stored password (to allow password update)
+		# Compare passwd entered by user with stored password (to allow password/username update)
 		if user.check_password(currentPasswd):
 			# Authorize update of profile infos (username and/or password)
 			print("PASSWORDS MATCH")
 			#instance = serializer.save()
 		else:
-			print("PASSWORD DON'T MATCH !!!")
+			raise PermissionDenied
 
 class DeleteUserView(generics.DestroyAPIView):
 	'''
