@@ -9,7 +9,21 @@ from django.contrib.auth.models import User
 from .models import Teacher
 from .models import Clients
 
+class ReadUserSerializer(serializers.ModelSerializer):
+	'''
+	Used to serialize read informations about user (and not giving away password hash).
+	'''
+	class Meta:
+		model = User
+		fields = ['username', 'first_name', 'last_name', 'email']
+
 class UserSerializer(serializers.ModelSerializer):
+	'''
+	Used to create new user and update existing user infos (username, password, etc...).
+
+	Note : Only for user creation & update. Don't use this one for reading user infos since it'll 
+	give away passsword hash
+	'''
 	password = serializers.CharField(required=True, max_length=128, style={'input_type': 'password'})
 	class Meta:
 		model = User

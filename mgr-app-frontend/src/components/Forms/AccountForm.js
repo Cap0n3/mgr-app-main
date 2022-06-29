@@ -28,7 +28,7 @@ const AccountForm = (props) => {
         operation: props.target,
 		endpoints: {
 			create: "",
-			update: "http://127.0.0.1:8000/settings/"
+			update: "http://127.0.0.1:8000/account/"
 		},
         authTokens: authTokens,
         user: user,
@@ -40,15 +40,14 @@ const AccountForm = (props) => {
     // For password match & strength check
     const levelMessages = ['Mauvais', 'Faible', 'Moyen', 'Pas mal', 'Bien']
     const [isMatch, setIsMatch] = useState(null);
-    const [passwdInput, setPasswd] = useState({});
-    const [passCheck] = usePassCheck(passwdInput.password, levelMessages);
+    const [passCheck] = usePassCheck(customForm.inputs.password, levelMessages);
 
     /**
      * Here to control that password and password confirmation are matching. 
      */
      useEffect(() => {
         let enteredPasswd = customForm.inputs.confirmPasswd;
-        let passwd = passwdInput.password;
+        let passwd = customForm.inputs.password;
         let passConf = customForm.inputs.confirmPasswd;
         
         if(enteredPasswd !== undefined) {
@@ -62,7 +61,7 @@ const AccountForm = (props) => {
         else {
             setIsMatch(null)
         }
-    }, [passwdInput.password, customForm.inputs.confirmPasswd]);
+    }, [customForm.inputs.password, customForm.inputs.confirmPasswd]);
 
     /**
 	 * This function uses `isValid()` useCustForm hook function to display warning messages for user if input validation has failed.
@@ -91,18 +90,6 @@ const AccountForm = (props) => {
 		}
 	}
 
-    /**
-     * This custom handle change function was created to avoid using useCustForm's handleChange() function that would automatically 
-     * receive and display password hash in input (default behaviour).
-     * 
-     * @param   {Object}      e     Event object.  
-     */
-    const handleChange = (e) => {
-        let inputName = e.target.name;
-        let inputValue = e.target.value;
-        setPasswd(values => ({ ...values, [inputName]: inputValue }));
-    }
-
     return(
         <Form ref={formRef} onSubmit={customForm.handleSubmit}>
 				<Legend><Bullet>1</Bullet>Utilisateur</Legend>
@@ -113,7 +100,7 @@ const AccountForm = (props) => {
                 <Label>Mot de passe actuel :</Label>
                 <Input type="password" name="current_password" placeholder="Mot de passe actuel" value={customForm.inputs.current_password || ""} onChange={customForm.handleChange} required />
 				<Label>Nouveau mot de passe :</Label>
-                <Input type="password" name="password" placeholder="Nouveau mot de passe" value={passwdInput.password || ""} onChange={handleChange} />
+                <Input type="password" name="password" placeholder="Nouveau mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} />
                 <Input isValid={isMatch} warn_colors={InputWarnCompare} type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} />
                 {(isMatch === false) ? <WarningBox warn_colors={InputWarnCompare}><WarnIcon warn_colors={InputWarnCompare} /><p>Mots de passe pas identiques !</p></WarningBox> : null}
                 <PassCheckWrapper show={passCheck.level !== null}>

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import Clients, Teacher
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, ClientSerializer, TeacherSerializer
+from .serializers import UserSerializer, ClientSerializer, TeacherSerializer, ReadUserSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher, IsSignUp
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -11,7 +11,10 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.exceptions import APIException
 from django.core.exceptions import PermissionDenied
 
-# === JWT TOKEN CUSTOM VIEWS === #
+# ****************************************************** #
+# *************** JWT TOKEN CUSTOM VIEWS *************** #
+# ****************************************************** #
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 	@classmethod
 	def get_token(cls, user):
@@ -34,11 +37,77 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
 	serializer_class = MyTokenObtainPairSerializer
 
-# ======================== #
-# === APP VIEW CLASSES === #
-# ======================== #
+# ************************************************ #
+# *************** APP VIEW CLASSES *************** #
+# ************************************************ #
 
+# ================== #
+# ====== USER ====== #
+# ================== #
+
+class CreateUserView(generics.CreateAPIView):
+	'''
+	View to create a new user during signup, a new teacher will be automatically 
+	created after user creation (thx to post_save receiver from signals.py).
+	
+	Note : One user <=> one teacher
+	'''
+	serializer_class = UserSerializer
+	permission_classes = [IsSignUp]
+
+class ListUpdateUserView(generics.RetrieveUpdateAPIView):
+	'''
+	View to view and update basic user account infos (username & password).
+	'''
+	queryset = User.objects.all()
+	permission_classes = [IsAuthenticated, IsAdminOrUser]
+
+	def get_serializer_class(self):
+		'''
+		Define dynamically which serializer to use. For GET requests, it'll use 
+		ReadUserSerializer to avoid giving away critical infos like password hash
+		to user.
+
+		On the other hand for PUT requests, we'll use more fields to allow
+		password update. 
+		'''
+		method = self.request.method
+		if method == "GET":
+			return ReadUserSerializer
+		elif method == "PUT":
+			return UserSerializer
+	
+	def perform_update(self, serializer):
+		isAdmin = self.request.user.is_superuser
+		# Get current password entered by user
+		currentPasswd = self.request.POST.get('current_password')
+		# If not admin check old password
+		if not isAdmin:
+			# Get user instance (to use check_password)
+			currentUser = self.request.user
+			user = User.objects.get(username=currentUser)
+			# Compare passwd entered by user with stored password (to allow password/username update)
+			if user.check_password(currentPasswd):
+				# Authorize update of profile infos (username and/or password)
+				print("PASSWORDS MATCH")
+				instance = serializer.save()
+			else:
+				raise PermissionDenied
+		elif isAdmin:
+			# Skip password check
+			instance = serializer.save()
+
+class DeleteUserView(generics.DestroyAPIView):
+	'''
+	View used to delete User, it'll also delete associated teacher.
+	'''
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	permission_classes = [IsAuthenticated, IsAdminOrUser]
+
+# ===================== #
 # ====== TEACHER ====== #
+# ===================== #
 
 class TeachersView(generics.ListAPIView):
 	'''
@@ -69,60 +138,9 @@ class UpdateTeacherView(generics.RetrieveUpdateAPIView):
 	def perform_update(self, serializer):
 		instance = serializer.save()
 
-# ====== USER ====== #
-
-class CreateUserView(generics.CreateAPIView):
-	'''
-	View to create a new user during signup, a new teacher will be automatically 
-	created after user creation (thx to post_save receiver from signals.py).
-	
-	Note : One user <=> one teacher
-	'''
-	serializer_class = UserSerializer
-	permission_classes = [IsSignUp]
-
-class ListUpdateUserView(generics.RetrieveUpdateAPIView):
-	'''
-	View to view and update basic user account infos (username & password).
-	'''
-	queryset = User.objects.all()
-	serializer_class = UserSerializer
-	permission_classes = [IsAuthenticated, IsAdminOrUser]
-
-	# CUSTOMIZE QUERYSET TO AVOID GIVING PASSWD HASH !!!
-	def get_queryset(self):
-		isAdmin = self.request.user.is_superuser
-		currentUser = self.request.user
-		if not isAdmin:
-			# Get all infos of current user
-			userInfos = User.objects.filter(username=currentUser)
-		allUsers = User.objects.all()
-		return allUsers if isAdmin else userInfos
-	
-	# IS OK NOW
-	def perform_update(self, serializer):
-		# Get user instance (to use check_password)
-		currentUser = self.request.user
-		user = User.objects.get(username=currentUser)
-		# Get current password entered by user
-		currentPasswd = self.request.POST.get('current_password')
-		# Compare passwd entered by user with stored password (to allow password/username update)
-		if user.check_password(currentPasswd):
-			# Authorize update of profile infos (username and/or password)
-			print("PASSWORDS MATCH")
-			#instance = serializer.save()
-		else:
-			raise PermissionDenied
-
-class DeleteUserView(generics.DestroyAPIView):
-	'''
-	View used to delete User, it'll also delete associated teacher.
-	'''
-	queryset = User.objects.all()
-	serializer_class = UserSerializer
-	permission_classes = [IsAuthenticated, IsAdminOrUser]
-
+# ===================== #
 # ====== CLIENTS ====== #
+# ===================== #
 
 class ClientsView(generics.ListAPIView):
 	'''
