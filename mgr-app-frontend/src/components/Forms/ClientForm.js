@@ -198,7 +198,6 @@ const ClientFormComponent = (props) => {
 				{warningBox("notes", "textarea")}
 				<Input type="submit" value={upperFirstChar(customForm.operation)} />
 			</Form>
-			{console.log(customForm.submitError ? customForm.submitError : null)}
 		</>);
 }
 

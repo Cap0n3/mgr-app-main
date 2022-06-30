@@ -93,21 +93,25 @@ export const signUpCall = async (endpoint, inputs) => {
  * @param      {string}     endpoint       Endpoint of request.
  * @param      {Object}     authTokens     Authentication tokens.
  * @param      {Object}     user           User informations.
- * @returns                                Column entries data in an json object.                        
+ * @returns                                Column entries data in an json object or error object.                        
  */
 export const getEntries = async (endpoint, authTokens, user) => {
-    let response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + String(authTokens.access)
+        let response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + String(authTokens.access)
+            }
+        })
+        
+        if(response.ok) {
+            // If success, return fetched data
+            let data = await response.json();
+            return data;
+        } else {
+            // If failed, throw error and create custom error object
+            EvaluateResp(response, user, "READ");
         }
-    })
-
-    if (EvaluateResp(response, user, "READ")) {
-        let data = await response.json()
-        return data;
-    } 
 }
 
 /**
@@ -128,10 +132,14 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
         }
     })
     
-    if (EvaluateResp(response, user, "READ")) {
-        let data = await response.json()
+    if(response.ok) {
+        // If success, return fetched data
+        let data = await response.json();
         return data;
-    } 
+    } else {
+        // If failed, throw error and create custom error object
+        EvaluateResp(response, user, "READ");
+    }
 }
 
 // ==================== //
@@ -146,7 +154,7 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
  * @param   {Object}    user        User infos for identification.
  * @param   {string}    entryID     ID (primary key) of entry to update.
  * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).   
- * @returns                         True or throw Error (if any).
+ * @returns                         Http response infos or throw Error (if any).
  */
 export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) => {
     // Create FormData object
@@ -214,9 +222,9 @@ export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
     return EvaluateResp(response, user, "DELETE");
 }
 
-// ********************************************************* //
-// ****************** RESPONSE EVALUATION ****************** //
-// ********************************************************* //
+// ************************************************************ //
+// *********** RESPONSE EVALUATION & ERROR HANDLING *********** //
+// ************************************************************ //
 
 const EvaluateResp = (httpResponse, user, operation) => {
     /**
@@ -273,6 +281,7 @@ const EvaluateResp = (httpResponse, user, operation) => {
  * @param	{string}	err.message		Error message.
  */
 export const fetchFail = (err, endpoint) => {
+    console.log(err)
     console.error(`${err.message} ${endpoint} (${err.name})`);
     alert(`API CALL ERROR (${err.name}) : Une erreur est survenue lors du chargement !\n ${err.message} ${endpoint}`);
 }

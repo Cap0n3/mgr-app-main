@@ -18,7 +18,7 @@ const Dashboard = () => {
 	 */
 	useEffect(() => {	
 		// Necessary syntax (.then) for external async funcs
-		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then((data) => {
+		getEntries("http://127.0.0.1:8000/clientss/", authTokens, user, logoutUser).then((data) => {
 			// If API call is success, populate clientData
 			setData(data);
 		}).catch(err => fetchFail(err, "http://127.0.0.1:8000/clients/"));
