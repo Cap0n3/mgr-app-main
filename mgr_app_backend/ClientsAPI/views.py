@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.exceptions import APIException
 from django.core.exceptions import PermissionDenied
+from .utils.exceptionhandler import PasswordCheckFailed
 
 # ****************************************************** #
 # *************** JWT TOKEN CUSTOM VIEWS *************** #
@@ -92,7 +93,7 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 				print("PASSWORDS MATCH")
 				instance = serializer.save()
 			else:
-				raise PermissionDenied
+				raise PasswordCheckFailed
 		elif isAdmin:
 			# Skip password check
 			instance = serializer.save()
