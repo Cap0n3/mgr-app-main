@@ -216,32 +216,54 @@ export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
 // ============================ //
 
 const checkErrors = (httpResponse, user, operation) => {
+    /**
+     * Custom error constructor for bad HTTP requests handling
+     * @param   {string}    message     Custom error message 
+     */
+    function HttpError(message) {
+        this.message = message;
+        this.name = "HTTP_Error";
+        this.operation = operation;
+        this.status = httpResponse.status;
+        this.status_text = httpResponse.statusText;
+        this.url = httpResponse.url;
+        this.username = user.username;
+        this.user_id = user.user_id;
+    }
+
+    // Success response object (for return)
+    let response = {
+        status : httpResponse.status,
+        status_text : httpResponse.statusText,
+        operation : operation,
+        url : httpResponse.url,
+        username : user.username,
+        user_id : user.user_id
+    }
+
     if (httpResponse.status === 200 || httpResponse.status === 201) 
     {
         console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
         `[Teacher : ${user.fname} ${user.lname}]\n` +
         `${operation} operation was a success !\n` +
-        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
-        return true
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;");
+        return response;
     }
     else if (httpResponse.status === 204)
     {
         console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
         `[Teacher : ${user.fname} ${user.lname}]\n` +
         `${operation} operation was a success ! Client successfully deleted !\n` +
-        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
-        return true
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;");
+        return response;
     }
     else if (httpResponse.statusText === 'Unauthorized') 
     {
-        throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n` +
-            `${operation} operation has failed => Code 401 (Unauthorized)`
-        );
+        throw new HttpError(`${operation} operation has failed !`);
     }
     else
     {
-        throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n`+ 
-            `${operation} operation has failed : ${httpResponse.status} ${httpResponse.statusText}`);
+        throw new HttpError(`${operation} operation has failed !`);
     }
 }
 

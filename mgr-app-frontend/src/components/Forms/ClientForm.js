@@ -28,7 +28,7 @@ const ClientFormComponent = (props) => {
     const [customForm] = useCustForm({
         operation: props.target,
 		endpoints: {
-			create: "http://127.0.0.1:8000/client/create/",
+			create: "http://127.0.0.1:8000/client/creae/",
 			update: "http://127.0.0.1:8000/client/update/"
 		},
         authTokens: authTokens,
@@ -198,6 +198,7 @@ const ClientFormComponent = (props) => {
 				{warningBox("notes", "textarea")}
 				<Input type="submit" value={upperFirstChar(customForm.operation)} />
 			</Form>
+			{console.log(customForm.submitError ? customForm.submitError : null)}
 		</>);
 }
 

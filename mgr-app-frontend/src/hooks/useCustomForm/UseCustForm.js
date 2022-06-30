@@ -58,7 +58,7 @@ import { SignupContext } from "../../App";
  *		isValid: isValid, // Check input validation
  *		handleChange: handleChange, // Function to get changes on inputs
  *		handleSubmit: handleSubmit, // Function to submit form data to server
- *		submitError: submitError.message, // Error message if something went wrong durant data transfer
+ *		submitError: submitError, // Error object if something went wrong durant data transfer
  * }
  * ```
  * 
@@ -192,11 +192,11 @@ import { SignupContext } from "../../App";
  * {warningBox("first_name")}
  * ```
  * 
- * ## Error message
+ * ## Errors
  * 
- * - If something is wrong with data transfer to server an alert will be automatically displayed, but if you want to get exact error message do :
+ * - If something is wrong with data transfer to server an alert will be automatically displayed, but if you want to get all error infos do :
  * ```js
- * <p>{customForm.submitError ? customForm.submitError : "" }</p>
+ * <p>{customForm.submitError ? customForm.submitError.message : "" }</p>
  * ```
  * 
  * ## Parameters 
@@ -218,7 +218,7 @@ export const useCustForm = (formSetup) => {
     const alert = useAlert();
 	const [picPreviews, setPicPreviews] = useState({});
     const [radioState, setRadioState] = useState({});
-	const [submitError, setSubmitError] = useState();
+	const [submitError, setSubmitError] = useState(null);
 	const { setIsSignup } = useContext(SignupContext);
 
 	// ========= UTILS ========= //
@@ -310,7 +310,10 @@ export const useCustForm = (formSetup) => {
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
 		console.error(err);
-		setSubmitError(err);
+		setSubmitError(submitError => ({
+			...submitError,
+			...err
+		  }));
 	}
 
 	// ========= SETUP ========= //
@@ -479,11 +482,14 @@ export const useCustForm = (formSetup) => {
 			
 			// Make API call to server
 			if (formSetup.operation === "create") {
-				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then(() => {
+				
+				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then((response) => {
 					// If success, clear form cookies & go to dashboard
+					console.log(response)
 					clearFormCookies(formSetup.formRef.current)
 					navigate(formSetup.navigateTo);
 				}).catch(fetchFail);
+				
 			}
 			else if (formSetup.operation === "signup") {
 				// First check if password and confirmation match
@@ -517,7 +523,7 @@ export const useCustForm = (formSetup) => {
 		isValid: isValid,
         handleChange: handleChange,
         handleSubmit: handleSubmit,
-		submitError: submitError ? submitError.message : null,
+		submitError: submitError ? submitError : null,
     }
 
     return [FormHandling];
