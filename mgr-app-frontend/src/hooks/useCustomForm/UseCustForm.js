@@ -309,7 +309,7 @@ export const useCustForm = (formSetup) => {
 	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
-		console.error(err);
+		// Update error object with response infos
 		setSubmitError(submitError => ({
 			...submitError,
 			...err

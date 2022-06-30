@@ -2,6 +2,10 @@
     CRUD API custom calls functions.
 */
 
+// *********************************************************** //
+// ************************ API CALLS ************************ //
+// *********************************************************** //
+
 // ==================== //
 // ====== CREATE ====== //
 // ==================== //
@@ -44,7 +48,7 @@ export const createEntry = async (endpoint, authTokens, user, inputs) => {
         body: formData
     })
 
-    return checkErrors(response, user, "CREATE")
+    return EvaluateResp(response, user, "CREATE")
 }
 
 /**
@@ -77,7 +81,7 @@ export const signUpCall = async (endpoint, inputs) => {
         body: formData
     })
 
-    return checkErrors(response, user, "SIGNUP")
+    return EvaluateResp(response, user, "SIGNUP")
 }
 
 // ================== //
@@ -100,7 +104,7 @@ export const getEntries = async (endpoint, authTokens, user) => {
         }
     })
 
-    if (checkErrors(response, user, "READ")) {
+    if (EvaluateResp(response, user, "READ")) {
         let data = await response.json()
         return data;
     } 
@@ -124,7 +128,7 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
         }
     })
     
-    if (checkErrors(response, user, "READ")) {
+    if (EvaluateResp(response, user, "READ")) {
         let data = await response.json()
         return data;
     } 
@@ -182,7 +186,7 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
             body: formData
     })
 
-    return checkErrors(response, user, "UPDATE")
+    return EvaluateResp(response, user, "UPDATE")
 }
 
 // ==================== //
@@ -207,15 +211,14 @@ export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         },
     })
-
-    return checkErrors(response, user, "DELETE")
+    return EvaluateResp(response, user, "DELETE");
 }
 
-// ============================ //
-// ====== ERROR HANDLING ====== //
-// ============================ //
+// ********************************************************* //
+// ****************** RESPONSE EVALUATION ****************** //
+// ********************************************************* //
 
-const checkErrors = (httpResponse, user, operation) => {
+const EvaluateResp = (httpResponse, user, operation) => {
     /**
      * Custom error constructor for bad HTTP requests handling
      * @param   {string}    message     Custom error message 
@@ -241,29 +244,23 @@ const checkErrors = (httpResponse, user, operation) => {
         user_id : user.user_id
     }
 
-    if (httpResponse.status === 200 || httpResponse.status === 201) 
-    {
+    // Evaluate HTTP response
+    if(httpResponse.status >= 400 && httpResponse.status < 600) {
+        // ERROR
+        // Log message
+        console.error(`[User : ${user.username} (${user.user_id})]\n` +
+        `${operation} operation failed !\n` +
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`);
+        // Throw error
+        throw new HttpError(`${operation} operation has failed !`);
+    } else {
+        // SUCCESS
+        // Log message
         console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
-        `[Teacher : ${user.fname} ${user.lname}]\n` +
         `${operation} operation was a success !\n` +
         `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;");
+        // Return status object
         return response;
-    }
-    else if (httpResponse.status === 204)
-    {
-        console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
-        `[Teacher : ${user.fname} ${user.lname}]\n` +
-        `${operation} operation was a success ! Client successfully deleted !\n` +
-        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;");
-        return response;
-    }
-    else if (httpResponse.statusText === 'Unauthorized') 
-    {
-        throw new HttpError(`${operation} operation has failed !`);
-    }
-    else
-    {
-        throw new HttpError(`${operation} operation has failed !`);
     }
 }
 
