@@ -40,12 +40,12 @@ export const AuthProvider = ({ children }) => {
 	 * @param	{Object}	data		Data returned by JWT Auth. 
 	 */
 	const getUserData = async (endpoint, data) => {
-		getEntry(endpoint, data, jwt_decode(data.access), "").then(_data => {
+		getEntry(endpoint, data, jwt_decode(data.access), "").then(response => {
 			// Select relevant infos from data
 			let infos = {
-				user_profilePic : _data[0].teacher_pic,
-				user_fname : _data[0].teacher_fname,
-				user_lname : _data[0].teacher_lname,
+				user_profilePic : response["data"][0].teacher_pic,
+				user_fname : response["data"][0].teacher_fname,
+				user_lname : response["data"][0].teacher_lname,
 			}
 			
 			setUserData(userData => ({

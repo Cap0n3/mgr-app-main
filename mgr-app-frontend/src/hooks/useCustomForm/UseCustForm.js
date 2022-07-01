@@ -332,8 +332,8 @@ export const useCustForm = (formSetup) => {
         }
         else if (formSetup.operation === "update") {
             // On first render check if it's an update (to get entry infos)
-            getEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
-                let serverData = createDataObject(formSetup.formRef.current, data)
+            getEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID).then((response) => {
+                let serverData = createDataObject(formSetup.formRef.current, response["data"])
                 // Fill inputs with data received from server
                 setInputs(inputs => ({
                     ...serverData,

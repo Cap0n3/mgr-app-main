@@ -89,11 +89,12 @@ export const signUpCall = async (endpoint, inputs) => {
 // ================== //
 
 /**
- * This function retrives all database column entries belonging to a specific authenticated user and check for errors.
+ * This function role is to retrive all database column entries belonging to a specific authenticated user and check for errors.
+ * It returns an object containing json data and HTTP response informations.
  * @param      {string}     endpoint       Endpoint of request.
  * @param      {Object}     authTokens     Authentication tokens.
  * @param      {Object}     user           User informations.
- * @returns                                Column entries data in an json object or error object.                        
+ * @returns                                Column entries data in an json object, HTTP response infos or error object.                        
  */
 export const getEntries = async (endpoint, authTokens, user) => {
         let response = await fetch(endpoint, {
@@ -107,7 +108,11 @@ export const getEntries = async (endpoint, authTokens, user) => {
         if(response.ok) {
             // If success, return fetched data
             let data = await response.json();
-            return data;
+            let HttpRespObj = EvaluateResp(response, user, "READ");
+            return {
+                "data" : data,
+                "http_response" : HttpRespObj
+            };
         } else {
             // If failed, throw error and create custom error object
             EvaluateResp(response, user, "READ");
@@ -115,12 +120,13 @@ export const getEntries = async (endpoint, authTokens, user) => {
 }
 
 /**
- * This function retrieves a single entry belonging to a specific authenticated user and check for errors
+ * This function retrieves a single entry belonging to a specific authenticated user and check for errors. 
+ * It returns an object containing json data and HTTP response informations.
  * @param   {string}    endpoint    Endpoint of request. 
  * @param   {Object}    authTokens  Authentication tokens.
  * @param   {Object}    user        User informations.
  * @param   {string}    entryID     Primary key (ID) of database entry.
- * @returns                         Entry data in an json object.
+ * @returns                         Column entries data in an json object, HTTP response infos or error object.
  */
 export const getEntry = async (endpoint, authTokens, user, entryID) => {
     let entryEndoint = endpoint + entryID
@@ -135,7 +141,11 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
     if(response.ok) {
         // If success, return fetched data
         let data = await response.json();
-        return data;
+        let HttpRespObj = EvaluateResp(response, user, "READ");
+            return {
+                "data" : data,
+                "http_response" : HttpRespObj
+            };
     } else {
         // If failed, throw error and create custom error object
         EvaluateResp(response, user, "READ");

@@ -59,10 +59,10 @@ const TeacherDetail = () => {
 	 * Request teacher informations to API.
 	 */
 	useEffect(() => {
-		getEntries("http://127.0.0.1:8000/teacher/", authTokens, user).then((data) => {
+		getEntries("http://127.0.0.1:8000/teacher/", authTokens, user).then((response) => {
             //console.log(data)
             // Get array single entry (API pass an array with only one entry - the teacher)
-			setData(data[0]);
+			setData(response["data"][0]);
 		}).catch(fetchFail);
 	}, []);
 	

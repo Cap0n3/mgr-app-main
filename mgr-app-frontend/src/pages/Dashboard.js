@@ -18,9 +18,9 @@ const Dashboard = () => {
 	 */
 	useEffect(() => {	
 		// Necessary syntax (.then) for external async funcs
-		getEntries("http://127.0.0.1:8000/clientss/", authTokens, user, logoutUser).then((data) => {
+		getEntries("http://127.0.0.1:8000/clients/", authTokens, user, logoutUser).then((response) => {
 			// If API call is success, populate clientData
-			setData(data);
+			setData(response["data"]);
 		}).catch(err => fetchFail(err, "http://127.0.0.1:8000/clients/"));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])

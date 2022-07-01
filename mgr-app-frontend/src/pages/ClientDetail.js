@@ -58,8 +58,8 @@ const ClientDetail = () => {
 	 * Request client informations to API.
 	 */
 	useEffect(() => {
-		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((data) => {
-			setData(data);
+		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((response) => {
+			setData(response["data"]);
 		}).catch(fetchFail);
 	}, [clientID]);
 	
