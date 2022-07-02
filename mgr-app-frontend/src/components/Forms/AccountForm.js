@@ -90,6 +90,15 @@ const AccountForm = (props) => {
 		}
 	}
 
+    /**
+     * This function displays an error if password entered was wrong.
+     * @returns     JSX block or `null`.
+     */
+    const passwordErrorBox = () => {
+        let warnMessage = "Le mot de passe entré est incorrect !"
+        return <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal}/><p>{warnMessage}</p></WarningBox>
+    }
+
     return(
         <Form ref={formRef} onSubmit={customForm.handleSubmit}>
 				<Legend><Bullet>1</Bullet>Utilisateur</Legend>
@@ -99,6 +108,7 @@ const AccountForm = (props) => {
                 <Legend><Bullet>2</Bullet>Mot de passe</Legend>
                 <Label>Mot de passe actuel :</Label>
                 <Input type="password" name="current_password" placeholder="Mot de passe actuel" value={customForm.inputs.current_password || ""} onChange={customForm.handleChange} required />
+                {customForm.submitError ? passwordErrorBox() : null}
 				<Label>Nouveau mot de passe :</Label>
                 <Input type="password" name="password" placeholder="Nouveau mot de passe" value={customForm.inputs.password || ""} onChange={customForm.handleChange} />
                 <Input isValid={isMatch} warn_colors={InputWarnCompare} type="password" name="confirmPasswd" placeholder="Confirmer mot de passe" value={customForm.inputs.confirmPasswd || ""} onChange={customForm.handleChange} />

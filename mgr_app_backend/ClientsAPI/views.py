@@ -90,7 +90,6 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 			# Compare passwd entered by user with stored password (to allow password/username update)
 			if user.check_password(currentPasswd):
 				# Authorize update of profile infos (username and/or password)
-				print("PASSWORDS MATCH")
 				instance = serializer.save()
 			else:
 				raise PasswordCheckFailed
