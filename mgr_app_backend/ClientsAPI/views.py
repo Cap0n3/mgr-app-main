@@ -79,7 +79,6 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 			return UpdateUserSerializer
 	
 	def perform_update(self, serializer):
-		print(self.request.POST)
 		isAdmin = self.request.user.is_superuser
 		# Get current password entered by user
 		currentPasswd = self.request.POST.get('current_password')

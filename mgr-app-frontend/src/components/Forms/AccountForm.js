@@ -105,9 +105,6 @@ const AccountForm = (props) => {
 				<Label>Changer le nom d'utilisateur :</Label>
 				<Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
 				{warningBox("username", "text")}
-                <Label>Changer l'email utilisateur :</Label>
-                <Input isValid={customForm.isValid("email")} warn_colors={InputWarnNormal} type="email" name="email" value={customForm.inputs.email || ""} onChange={customForm.handleChange} required />
-				{warningBox("email", "email")}
                 <Legend><Bullet>2</Bullet>Mot de passe</Legend>
                 <Label>Mot de passe actuel :</Label>
                 <Input type="password" name="current_password" placeholder="Mot de passe actuel" value={customForm.inputs.current_password || ""} onChange={customForm.handleChange} required />

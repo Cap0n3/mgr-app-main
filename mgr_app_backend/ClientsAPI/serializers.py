@@ -42,22 +42,21 @@ class ReadUserSerializer(serializers.ModelSerializer):
 
 class UpdateUserSerializer(serializers.ModelSerializer):
 	'''
-	Used to update user information (username, email) and password.
+	Used to update user name and password.
 	'''
 	password = serializers.CharField(required=False, max_length=128, style={'input_type': 'password'})
 	class Meta:
 		model = User
-		fields = ['username', 'email', 'password']
+		fields = ['username', 'password']
 	
 	def update(self, instance, validated_data):
 		'''
-		Update user information and new password
+		Update user information and new password.
 		'''
 		# Get new password (if any)
 		newPassword = validated_data.get('password')
 		# Get other infos
 		instance.username = validated_data.get('username')
-		instance.email= validated_data.get('email')
 		# Only replace password if a new one was entered (to avoid saving None or string "undefined" as password !)
 		if newPassword != None and newPassword != "undefined" :
 			instance.password = make_password(validated_data.get('password'))
