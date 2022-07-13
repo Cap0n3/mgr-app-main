@@ -21,7 +21,10 @@ COUNTRY = (
     ('France', 'France'),
 )
 
-# ====== TEACHER ====== #
+# ================================= #
+# ============ TEACHER ============ #
+# ================================= #
+
 class Teacher(models.Model):
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
 	teacher_pic = models.ImageField(default='ProfilPic.png', null=True, blank=True)
@@ -46,7 +49,10 @@ class Teacher(models.Model):
 	def __str__(self):
 		return self.teacher_lname + " " + self.teacher_fname + " (" + str(self.id) + ")"
 
-# ====== CLIENTS (STUDENTS) ====== #
+# ====================================== #
+# ========= CLIENTS (STUDENTS) ========= #
+# ====================================== #
+
 class Clients(models.Model):
 	#Choices Lists
 	DAY_LIST = (

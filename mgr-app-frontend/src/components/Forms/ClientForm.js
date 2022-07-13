@@ -87,10 +87,10 @@ const ClientFormComponent = (props) => {
 				*/}
 				<Legend><Bullet>1</Bullet>Infos Client</Legend>
 				<Label>Photo :</Label>
-				{customForm.picPreview &&  customForm.operation === "create" ? <AvatarWrapper><Avatar src={customForm.picPreview} /></AvatarWrapper> : null }
-				{customForm.operation === "update" ? <AvatarWrapper><Avatar src={customForm.pic} /></AvatarWrapper> : null}
+				{customForm.picPreviews.student_pic ? <AvatarWrapper><Avatar src={customForm.picPreviews.student_pic} /></AvatarWrapper> : null }
+				{customForm.operation === "update" && !customForm.picPreviews.student_pic ? <AvatarWrapper><Avatar src={customForm.inputs.student_pic} /></AvatarWrapper> : null}
 				<LabelPic htmlFor="img_upload">Upload Client Pic</LabelPic>
-				<Input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
+				<Input type="file" id="img_upload" name="student_pic" onChange={customForm.handleChange} />
 				{warningBox("student_pic", "file")}
 				<Label>Prénom * :</Label>
 				<Input isValid={customForm.isValid("first_name")} warn_colors={InputWarnNormal} type="text" name="first_name" value={customForm.inputs.first_name || ""} onChange={customForm.handleChange} required />

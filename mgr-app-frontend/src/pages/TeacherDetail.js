@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
 import { getEntries } from "../functions/ApiCalls";
 import { useAlert } from 'react-alert';
@@ -26,7 +25,6 @@ import {
 	ContactInfo,
 	EmailIcon,
 	PhoneIcon,
-	BirthdayIcon,
     WebsiteIcon,
 	BodyWrapper
 } from "./pagesStyles/ClientDetail.style";
@@ -41,6 +39,14 @@ const TeacherDetail = () => {
 	const navigate = useNavigate();
 	const alert = useAlert();
 	
+	/**
+	 * This custom `fetchFail()` function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, 
+	 * it'll display it to console and cancel page displaying (by navigating back to home).
+	 * 
+	 * > **Note :** For simple API call error displaying, please use `ApiCalls.js` `fetchFail()` function.
+	 * 
+	 * @param	{Object}	err		Standard error object.
+	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
 		console.error(err);
@@ -51,10 +57,10 @@ const TeacherDetail = () => {
 	 * Request teacher informations to API.
 	 */
 	useEffect(() => {
-		getEntries("http://127.0.0.1:8000/teacher/", authTokens, user).then((data) => {
+		getEntries("http://127.0.0.1:8000/teacher/", authTokens, user).then((response) => {
             //console.log(data)
             // Get array single entry (API pass an array with only one entry - the teacher)
-			setData(data[0]);
+			setData(response["data"][0]);
 		}).catch(fetchFail);
 	}, []);
 	
@@ -110,7 +116,7 @@ const TeacherDetail = () => {
             <MainWrapper>
                 <Aside>
                     <ClientPic src={teacherData.teacher_pic} ref={teacherPicRef}/>
-                    <Title mobile="show">{teacherData.first_name} {teacherData.last_name} <StyledLink to={`/client/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
+                    <Title mobile="show">{teacherData.first_name} {teacherData.last_name} <StyledLink to={`/teacher/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
 					<AsideTitle mobile="hide">Infos</AsideTitle>
 					<ClientInfoWrapper mobile="hide">
 						<InfoList>
@@ -124,7 +130,7 @@ const TeacherDetail = () => {
                 <Section>
 					<HeaderWrapper height={picWidth}>
 						<InfosSubWrapper>
-							<Title mobile="hide">{teacherData.teacher_fname} {teacherData.teacher_lname}<StyledLink to={`/client/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
+							<Title mobile="hide">{teacherData.teacher_fname} {teacherData.teacher_lname}<StyledLink to={`/teacher/update/${teacherData.id}`}><EditButton /></StyledLink></Title>
 							<ContactInfo><EmailIcon />{teacherData.teacher_email}</ContactInfo>
 							<ContactInfo><PhoneIcon />{teacherData.teacher_phone}</ContactInfo>
 							<ContactInfo><WebsiteIcon />{teacherData.business_website}</ContactInfo>

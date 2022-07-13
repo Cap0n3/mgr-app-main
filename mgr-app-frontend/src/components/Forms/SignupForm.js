@@ -174,8 +174,7 @@ const SignupForm = () => {
             }
         } else {
             alert.show("Les mots de passe ne correspondent pas !");
-        }
-        
+        }   
     }
 
     return(

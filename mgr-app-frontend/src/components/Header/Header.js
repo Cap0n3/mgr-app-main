@@ -24,7 +24,7 @@ import AuthContext from "../../context/AuthContext";
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
-	const {user} = useContext(AuthContext);
+	const { user, userData } = useContext(AuthContext);
 	const profilMenuRef = useRef(null);
 	const notifListRef = useRef(null);
 	const navigate = useNavigate();
@@ -34,10 +34,10 @@ const Header = (props) => {
 		return (window.innerWidth <= 960) ? true : false;
 	}
 
+	/**
+	 * Alert if clicked on outside of menu to close dropdown menus (profile & notifications).
+	 */
 	useEffect(() => {
-		/*
-		  Alert if clicked on outside of menu to close dropdown menus (profile & notifications).
-		 */
 		function handleClickOutside(event) {
 			if (profilMenuRef.current && !profilMenuRef.current.contains(event.target) && openProfilMenu === true) {
 				// PROFILE MENU (Check if clicked oustide, to close menu).
@@ -75,9 +75,9 @@ const Header = (props) => {
 			</MenuList>
 		</DropMenu>
 		<ProfileWrapper>
-			<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
+			<ProfileImage src={userData.user_profilePic} alt="profile-pic" />
 			<NameRoleWrapper>
-				<ProfileName>{ user.isAdmin ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+				<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
 				<ProfileRole>{ user.role }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
@@ -87,13 +87,13 @@ const Header = (props) => {
 				<ProfileMobileWrapper>
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
-						<ProfileName>{ user.isAdmin ? user.username : user.fname.charAt(0) + "." + user.lname }</ProfileName>
+						<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
 						<ProfileRole>{ user.role }</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>
-					<MenuItem onClick={() => navigate("/teacher")}>Your Profile</MenuItem>
-					<MenuItem>Settings</MenuItem>
+					<MenuItem onClick={() => navigate("/teacher")}>Profil</MenuItem>
+					<MenuItem onClick={() => navigate("/account")}>Compte</MenuItem>
 					<MenuItem>Sign Out</MenuItem>
 				</MenuList>
 			</DropMenu>

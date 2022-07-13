@@ -40,6 +40,14 @@ const ClientDetail = () => {
 	const navigate = useNavigate();
 	const alert = useAlert();
 	
+	/**
+	 * This custom `fetchFail()` function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, 
+	 * it'll display it to console and cancel page displaying (by navigating back to home).
+	 * 
+	 * > **Note :** For simple API call error displaying, please use `ApiCalls.js` `fetchFail()` function.
+	 * 
+	 * @param	{Object}	err		Standard error object.
+	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
 		console.error(err);
@@ -50,8 +58,8 @@ const ClientDetail = () => {
 	 * Request client informations to API.
 	 */
 	useEffect(() => {
-		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((data) => {
-			setData(data);
+		getEntry("http://127.0.0.1:8000/client/", authTokens, user, clientID).then((response) => {
+			setData(response["data"]);
 		}).catch(fetchFail);
 	}, [clientID]);
 	
@@ -109,7 +117,7 @@ const ClientDetail = () => {
 			<MainWrapper>
 				<Aside>
 					<ClientPic src={clientData.student_pic} ref={clientPicRef}/>
-					<Title mobile="show">{clientData.first_name} {clientData.last_name} <StyledLink to={`/client/update/${clientData.id}`}><EditButton /></StyledLink></Title>
+					<Title mobile="show">{clientData.first_name} {clientData.last_name}<StyledLink to={`/client/update/${clientData.id}`}><EditButton /></StyledLink></Title>
 					<AsideTitle mobile="hide">Cours</AsideTitle>
 					<ClientInfoWrapper mobile="hide">
 						<InfoList>

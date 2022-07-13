@@ -2,6 +2,10 @@
     CRUD API custom calls functions.
 */
 
+// *********************************************************** //
+// ************************ API CALLS ************************ //
+// *********************************************************** //
+
 // ==================== //
 // ====== CREATE ====== //
 // ==================== //
@@ -44,9 +48,15 @@ export const createEntry = async (endpoint, authTokens, user, inputs) => {
         body: formData
     })
 
-    return checkErrors(response, user, "CREATE")
+    return EvaluateResp(response, user, "CREATE")
 }
 
+/**
+ * This function creates an API request to create a new user during signup.
+ * @param   {string}    endpoint    String representing server endpoint URL. 
+ * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).
+ * @returns 
+ */
 export const signUpCall = async (endpoint, inputs) => {
     let formData = new FormData();
     
@@ -57,10 +67,6 @@ export const signUpCall = async (endpoint, inputs) => {
     inputEntries.map((item) => (
         formData.append(item[0], item[1])
     ));
-
-    // for (let el of formData) {
-    //     console.log(el)
-    // }
 
     // Get user name from input data
     let user = formData.get("username");
@@ -75,7 +81,7 @@ export const signUpCall = async (endpoint, inputs) => {
         body: formData
     })
 
-    return checkErrors(response, user, "SIGNUP")
+    return EvaluateResp(response, user, "SIGNUP")
 }
 
 // ================== //
@@ -83,34 +89,44 @@ export const signUpCall = async (endpoint, inputs) => {
 // ================== //
 
 /**
- * This function retrives all database column entries belonging to a specific authenticated user and check for errors.
+ * This function role is to retrive all database column entries belonging to a specific authenticated user and check for errors.
+ * It returns an object containing json data and HTTP response informations.
  * @param      {string}     endpoint       Endpoint of request.
  * @param      {Object}     authTokens     Authentication tokens.
  * @param      {Object}     user           User informations.
- * @returns                                Column entries data in an json object.                        
+ * @returns                                Column entries data in an json object, HTTP response infos or error object.                        
  */
 export const getEntries = async (endpoint, authTokens, user) => {
-    let response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + String(authTokens.access)
+        let response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + String(authTokens.access)
+            }
+        })
+        
+        if(response.ok) {
+            // If success, return fetched data
+            let data = await response.json();
+            let HttpRespObj = EvaluateResp(response, user, "READ");
+            return {
+                "data" : data,
+                "http_response" : HttpRespObj
+            };
+        } else {
+            // If failed, throw error and create custom error object
+            EvaluateResp(response, user, "READ");
         }
-    })
-
-    if (checkErrors(response, user, "READ")) {
-        let data = await response.json()
-        return data;
-    } 
 }
 
 /**
- * This function retrieves a single entry belonging to a specific authenticated user and check for errors
+ * This function retrieves a single entry belonging to a specific authenticated user and check for errors. 
+ * It returns an object containing json data and HTTP response informations.
  * @param   {string}    endpoint    Endpoint of request. 
  * @param   {Object}    authTokens  Authentication tokens.
  * @param   {Object}    user        User informations.
  * @param   {string}    entryID     Primary key (ID) of database entry.
- * @returns                         Entry data in an json object.
+ * @returns                         Column entries data in an json object, HTTP response infos or error object.
  */
 export const getEntry = async (endpoint, authTokens, user, entryID) => {
     let entryEndoint = endpoint + entryID
@@ -121,11 +137,19 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         }
     })
-
-    if (checkErrors(response, user, "READ")) {
-        let data = await response.json()
-        return data;
-    } 
+    
+    if(response.ok) {
+        // If success, return fetched data
+        let data = await response.json();
+        let HttpRespObj = EvaluateResp(response, user, "READ");
+            return {
+                "data" : data,
+                "http_response" : HttpRespObj
+            };
+    } else {
+        // If failed, throw error and create custom error object
+        EvaluateResp(response, user, "READ");
+    }
 }
 
 // ==================== //
@@ -140,7 +164,7 @@ export const getEntry = async (endpoint, authTokens, user, entryID) => {
  * @param   {Object}    user        User infos for identification.
  * @param   {string}    entryID     ID (primary key) of entry to update.
  * @param   {Object}    inputs      Object reprenting form inputs key/value pair (must be identical to database model).   
- * @returns                         True or throw Error (if any).
+ * @returns                         Http response infos or throw Error (if any).
  */
 export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) => {
     // Create FormData object
@@ -151,10 +175,11 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
 
     // Append input data to FormData object & test if image is not a link to server stored image.
     inputEntries.map((item) => {
-        const isImage = /(pic|picture|image|img)/i;
+        // Only entries with these terms will be evaluated
+        const isImage = /(pic|picture|image|img|logo)/i;
         /* 
-            If value of image input is equal to a string then it's a link to a an img stored by server. 
-            Basically, this means that user have not updated his/her profile pic so don't update value of 
+            If value of image input is equal to a string then it's a link to a an image stored by the server. 
+            Basically, this means that user have not updated image so don't update value of 
             this var with a string because ONLY a file object is expected by the server.
         */ 
         if(isImage.test(item[0]) && typeof(item[1]) !== "string"){
@@ -179,7 +204,7 @@ export const updateEntry =  async (endpoint, authTokens, user, entryID, inputs) 
             body: formData
     })
 
-    return checkErrors(response, user, "UPDATE")
+    return EvaluateResp(response, user, "UPDATE")
 }
 
 // ==================== //
@@ -204,40 +229,69 @@ export const deleteEntry = async (endpoint, authTokens, user, entryID) => {
             'Authorization': 'Bearer ' + String(authTokens.access)
         },
     })
-
-    return checkErrors(response, user, "DELETE")
+    return EvaluateResp(response, user, "DELETE");
 }
 
-// ============================ //
-// ====== ERROR HANDLING ====== //
-// ============================ //
+// ************************************************************ //
+// *********** RESPONSE EVALUATION & ERROR HANDLING *********** //
+// ************************************************************ //
 
-const checkErrors = (httpResponse, user, operation) => {
-    if (httpResponse.status === 200 || httpResponse.status === 201) 
-    {
+const EvaluateResp = (httpResponse, user, operation) => {
+    /**
+     * Custom error constructor for bad HTTP requests handling
+     * @param   {string}    message     Custom error message 
+     */
+    function HttpError(message) {
+        this.message = message;
+        this.name = "HTTP_Error";
+        this.operation = operation;
+        this.status = httpResponse.status;
+        this.status_text = httpResponse.statusText;
+        this.url = httpResponse.url;
+        this.username = user.username;
+        this.user_id = user.user_id;
+    }
+
+    // Success response object (for return)
+    let response = {
+        status : httpResponse.status,
+        status_text : httpResponse.statusText,
+        operation : operation,
+        url : httpResponse.url,
+        username : user.username,
+        user_id : user.user_id
+    }
+
+    // Evaluate HTTP response
+    if(httpResponse.status >= 400 && httpResponse.status < 600) {
+        // ERROR
+        // Log message
+        console.error(`[User : ${user.username} (${user.user_id})]\n` +
+        `${operation} operation failed !\n` +
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`);
+        // Throw error
+        throw new HttpError(`${operation} operation has failed !`);
+    } else {
+        // SUCCESS
+        // Log message
         console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
-        `[Teacher : ${user.fname} ${user.lname}]\n` +
         `${operation} operation was a success !\n` +
-        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
-        return true
+        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;");
+        // Return status object
+        return response;
     }
-    else if (httpResponse.status === 204)
-    {
-        console.info(`%c[User : ${user.username} (${user.user_id})]\n` +
-        `[Teacher : ${user.fname} ${user.lname}]\n` +
-        `${operation} operation was a success ! Client successfully deleted !\n` +
-        `HTTP REQUEST : ${httpResponse.status} ${httpResponse.statusText}`, "color: green; font-style: bold;")
-        return true
-    }
-    else if (httpResponse.statusText === 'Unauthorized') 
-    {
-        throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n` +
-            `${operation} operation has failed => Code 401 (Unauthorized)`
-        );
-    }
-    else
-    {
-        throw new Error(`[User : ${user.username} (${user.user_id})] [Teacher : ${user.fname} ${user.lname}]\n`+ 
-            `${operation} operation has failed : ${httpResponse.status} ${httpResponse.statusText}`);
-    }
+}
+
+// TO FINISH !!!! (Already used in AuthContext, to implement in other files)
+
+/**
+ * This function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, it'll display 
+ * it to console and display a standard (non-react) alert box for user.
+ * @param   {Object}    err     		Error object.
+ * @param	{string}	err.message		Error message.
+ */
+export const fetchFail = (err, endpoint) => {
+    console.log(err)
+    console.error(`${err.message} ${endpoint} (${err.name})`);
+    alert(`API CALL ERROR (${err.name}) : Une erreur est survenue lors du chargement !\n ${err.message} ${endpoint}`);
 }

@@ -27,7 +27,7 @@ def user_post_save_receiver(sender, instance, created, *args, **kwargs):
     Teacher will inherit of basic user infos (first name, last name and email). It'll
     also assign user to group standard_user.
     
-    Note : User can have only one teacher.
+    Note : User can have only one teacher (one-to-one relationship).
     '''
     if created:
         # === Create Corresponding Teacher === #
@@ -51,4 +51,26 @@ def user_post_save_receiver(sender, instance, created, *args, **kwargs):
             pass
         else:
             standardUserGroup.user_set.add(instance)
-            #instance.save()
+
+@receiver(post_save, sender=Teacher)
+def teacher_post_save_receiver(sender, instance, created, *args, **kwargs):
+    '''
+    This signal function is to keep teacher infos in sync with user infos for first name, last name & username
+    since User and Teacher models are the same (one-to-one -> one user, one teacher). It'll be triggered only when teacher 
+    infos is updated from profile.
+    '''
+    # Do signal only for profile updates and not teacher creation (created must be False)
+    if not created:
+        # Get teacher info
+        teacherFname = instance.teacher_fname
+        teacherLname = instance.teacher_lname
+        teacherEmail = instance.teacher_email
+
+        # Get corresponding user instance & update infos for user
+        corrUser = User.objects.get(id=instance.user.id)
+        corrUser.first_name = teacherFname
+        corrUser.last_name = teacherLname
+        corrUser.email = teacherEmail
+        corrUser.save()
+
+

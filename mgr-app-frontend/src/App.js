@@ -31,7 +31,7 @@ export default function App() {
 					<AlertProvider template={AlertTemplate} {...options}>
 						<div className="App">
 							<UI />
-						</div>
+						</div>	
 					</AlertProvider>
 				</AuthProvider>
 			</SignupContext.Provider>

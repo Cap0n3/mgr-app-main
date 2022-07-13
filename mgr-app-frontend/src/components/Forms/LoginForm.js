@@ -7,7 +7,7 @@ import { InputWarnNormal } from "../../Colors";
 
 const LoginFormComponent = () => {
     let { loginUser } = useContext(AuthContext);
-    let { loginState } = useContext(AuthContext);
+    let { loginAttempt } = useContext(AuthContext);
     const { setIsSignup } = useContext(SignupContext);
 
     /**
@@ -16,7 +16,7 @@ const LoginFormComponent = () => {
      * @returns     JSX with styled-components.
      */
     const warningMessage = () => {
-		return loginState.state ?  null : <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal}/><p>{loginState.msg}</p></WarningBox>
+		return loginAttempt.state ?  null : <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal}/><p>{loginAttempt.msg}</p></WarningBox>
 	}
     return (
         <>

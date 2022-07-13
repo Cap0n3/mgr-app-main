@@ -174,8 +174,8 @@ const matchReturnVerif = (input_name, input_value, matching) => {
         }
     }).catch(err => console.log(err));
     
-    // Set cookie or clear previous one
-    isValid ? sessionStorage.removeItem(input_name):sessionStorage.setItem(input_name, false);
+    // Set session cookie
+    isValid ? sessionStorage.setItem(input_name, true) : sessionStorage.setItem(input_name, false);
     
     return isValid;
 }

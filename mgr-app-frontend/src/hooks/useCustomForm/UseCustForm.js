@@ -52,13 +52,13 @@ import { SignupContext } from "../../App";
  * FormHandling = {
  *		inputs: inputs, // Current value of all inputs
  *		operation: formSetup.operation, // Operation
- *		picPreview: picPreview, // Pic image for preview by user
+ *		picPreviews: picPreviews, // Pic image for preview by user
  *		pic: pic, // Pic source URL sent by server (if entry already exists in database)
  *		radioButtons: radioState, // Radio initial state
  *		isValid: isValid, // Check input validation
  *		handleChange: handleChange, // Function to get changes on inputs
  *		handleSubmit: handleSubmit, // Function to submit form data to server
- *		submitError: submitError.message, // Error message if something went wrong durant data transfer
+ *		submitError: submitError, // Error object if something went wrong durant data transfer
  * }
  * ```
  * 
@@ -112,22 +112,25 @@ import { SignupContext } from "../../App";
  * 
  * - To set up a file input to choose image :
  * ```js
- * <input type="file" id="img_upload" name="student_pic" className="ClientPic" onChange={customForm.handleChange} />
+ * <input type="file" id="img_upload" name="student_pic" onChange={customForm.handleChange} />
  * ```
- * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" (ex : "student_pic" or "student_image").
+ * > **IMPORTANT !** Name property of image file input must contain strings "image", "pic", "picture", "img" or "logo" (ex : "student_pic" or "student_image").
  * 
  * #### Image preview & displaying
  * 
- * To set up a profile picture with preview here's the way to go.
+ * To set up a image preview, this hook provide `picPreviews` object containing all choosen images by user. You can select them using
+ * their input names.
+ * 
+ * For and "update" operation, you can simply select input value from `inputs` object (as any other input).
  * 
  * - For "create" entry operation with a preview of choosen image :
  * ```js
- * {customForm.picPreview &&  customForm.operation === "create" ? <img src={customForm.picPreview} /> : null }
+ * {customForm.picPreviews.myPic ? <img src={customForm.picPreviews.myPic} /> : null }
  * ```
  * 
- * - For "update" operation with displaying of image URL received by server :
+ * - For "update" operation, we want of course to display stored image first but if user load another one, preview it :
  * ```js
- * {customForm.operation === "update" ? <img src={customForm.pic} /> : null}
+ * {customForm.operation === "update" && !customForm.picPreviews.myPic ? <img src={customForm.inputs.myPic} /> : null}
  * ```
  * 
  * #### Radio buttons
@@ -189,11 +192,11 @@ import { SignupContext } from "../../App";
  * {warningBox("first_name")}
  * ```
  * 
- * ## Error message
+ * ## Errors
  * 
- * - If something is wrong with data transfer to server an alert will be automatically displayed, but if you want to get exact error message do :
+ * - If something is wrong with data transfer to server an alert will be automatically displayed, but if you want to get all error infos do :
  * ```js
- * <p>{customForm.submitError ? customForm.submitError : "" }</p>
+ * <p>{customForm.submitError ? customForm.submitError.message : "" }</p>
  * ```
  * 
  * ## Parameters 
@@ -213,10 +216,9 @@ export const useCustForm = (formSetup) => {
     const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
     const alert = useAlert();
-    const [pic, setPic] = useState();
-	const [picPreview, setPicPreview] = useState();
+	const [picPreviews, setPicPreviews] = useState({});
     const [radioState, setRadioState] = useState({});
-	const [submitError, setSubmitError] = useState();
+	const [submitError, setSubmitError] = useState(null);
 	const { setIsSignup } = useContext(SignupContext);
 
 	// ========= UTILS ========= //
@@ -263,18 +265,20 @@ export const useCustForm = (formSetup) => {
 
 	/**
 	 * This function creates a data object which will be used during update opreation to populate form inputs with received data from server.
-	 * In order achieve this, it's take all input names from a form reference object and use it to create keys of data object.
+	 * In order achieve this, it takes all input names from a form reference object and use it to create keys of data object.
 	 * @param   {Object}  formReference   Form reference object.
 	 * @returns {Object}                  Data object with inputs and its data.
 	 */
 	const createDataObject = (formReference, data) => {
 		let htmlElements = [];
 		let allInputNames = [];
+
 		// Extract all inputs from form
 		let keys = Object.keys(formReference);
 		keys.forEach((key, index) => {
 			htmlElements.push(formReference[key]);
 		})
+
 		// Put name properties of inputs in an unfiltered list
 		for(let i = 0; i < htmlElements.length; i++) {
 			let inputName = htmlElements[i].name;
@@ -291,19 +295,25 @@ export const useCustForm = (formSetup) => {
 		for (let i = 0; i < filteredNames.length; i++) {
 			dataObj[filteredNames[i]] = data[filteredNames[i]];
 		}
+		
 		return dataObj;
 	}
 
     /**
-	 * This function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, it'll display it to console,
-	 * and pass the error message to `FormHandling` (hook return value) object.
-	 * @param   {Object}    err     		Error object.
-	 * @param	{string}	err.message		Error message.
+	 * This custom `fetchFail()` function handle errors if something went wrong with data transfer to server (API calls). If an error occurs, 
+	 * it'll display it to console and pass the error message to `FormHandling` (hook return value) object.
+	 * 
+	 * > **Note :** For simple API call error displaying, please use `ApiCalls.js` `fetchFail` function.
+	 * 
+	 * @param   {Object}    err     Error object.
 	 */
 	const fetchFail = (err) => {
         alert.show("Une erreur s'est produite !");
-		console.error(err);
-		setSubmitError(err);
+		// Update error object with response infos
+		setSubmitError(submitError => ({
+			...submitError,
+			...err
+		  }));
 	}
 
 	// ========= SETUP ========= //
@@ -321,16 +331,13 @@ export const useCustForm = (formSetup) => {
             setInputs(values => ({ ...values}));
         }
         else if (formSetup.operation === "update") {
-            // On first render check if it's an update (to get client infos)
-            getEntry("http://127.0.0.1:8000/client/", formSetup.authTokens, formSetup.user, formSetup.entryID).then((data) => {
-                let serverData = createDataObject(formSetup.formRef.current, data)
+            // On first render check if it's an update (to get entry infos)
+            getEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID).then((response) => {
+                let serverData = createDataObject(formSetup.formRef.current, response["data"])
                 // Fill inputs with data received from server
                 setInputs(inputs => ({
                     ...serverData,
                 }))
-                // Set profile picture
-                // NOT UNIVERSAL !!! Think of a better way
-                setPic(serverData["student_pic"])
             }).catch(fetchFail);
         }
         else {
@@ -386,14 +393,15 @@ export const useCustForm = (formSetup) => {
 				if(isValid === true)
 				{
 					// Set image preview for user
+					// Convert image object to local URL for preview
 					let file_local_URL = URL.createObjectURL(inputValue);
-					setPicPreview(file_local_URL)
+					setPicPreviews(values => ({...values, [inputName] : [file_local_URL]}));
 					
 					// Convert file object to readable format (for upload to server)
 					let reader  = new FileReader();
 					reader.onload = (e) => {
 						// Set updated image
-						setPic(e.target.result);
+						//setPic(e.target.result);
 					}
 					reader.readAsDataURL(inputValue);
 
@@ -412,7 +420,7 @@ export const useCustForm = (formSetup) => {
 						Nasty trick to force re-render on file input to take into
 						account set cookie and display warning message below input.
 					*/
-					setPicPreview(null);
+					setPicPreviews(values => ({...values, [inputName] : null}));
 
 					// Clear value of file input
 					e.target.value = null;
@@ -434,7 +442,6 @@ export const useCustForm = (formSetup) => {
 
 			// Check if input is valid (no special chars etc...)
 			inputValidation(inputValue, inputType, inputName);
-			
 			setInputs(values => ({ ...values, [inputName]: inputValue }));
 		}
 	}
@@ -445,37 +452,44 @@ export const useCustForm = (formSetup) => {
      */
     const handleSubmit = (event) => {
 		event.preventDefault();
+		
+		// === First,  check if there are wrong inputs in form === //
+		
+		// Get inputs infos from submit button
+		let allInputs = getFormInputInfos(event);
+			
+		let wrongInputs = []
+
+		// Check if an input cookie is set to false (last input verification before sending)
+		allInputs.forEach(element => {
+			if(sessionStorage.getItem(element.name) !== null) {
+				if(sessionStorage.getItem(element.name) === "false") {
+					wrongInputs.push(element.name);
+				}
+			}
+		})
+
+		// Warn user if inputs are wrong and quit function (without sending data)
+		if (wrongInputs.length !== 0){
+			alert.error("Des entrées ne sont pas valides !")
+			return;
+		}
+		
+		// === If there no bad inputs, send appropriate API Call === //
 
 		// Evaluate if it's an update or a creation
 		if (formSetup.operation === "create" || formSetup.operation === "signup") {
 			
-			// Get inputs infos from submit button
-			let allInputs = getFormInputInfos(event);
-			
-			let wrongInputs = []
-
-			// Check if an input cookie is set to false (last input verification before sending)
-			allInputs.forEach(element => {
-				if(sessionStorage.getItem(element.name) !== null) {
-					if(sessionStorage.getItem(element.name) === "false") {
-						wrongInputs.push(element.name);
-					}
-				}
-			})
-
-			// Warn user if inputs are wrong and quit function (without sending data)
-			if (wrongInputs.length !== 0){
-				alert.error("Des entrées ne sont pas valides !")
-				return;
-			}
-			
 			// Make API call to server
 			if (formSetup.operation === "create") {
-				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then(() => {
+				
+				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then((response) => {
 					// If success, clear form cookies & go to dashboard
+					console.log(response)
 					clearFormCookies(formSetup.formRef.current)
 					navigate(formSetup.navigateTo);
 				}).catch(fetchFail);
+				
 			}
 			else if (formSetup.operation === "signup") {
 				// First check if password and confirmation match
@@ -504,13 +518,12 @@ export const useCustForm = (formSetup) => {
     let FormHandling = {
         inputs: inputs,
         operation: formSetup.operation,
-        picPreview: picPreview ? picPreview : null,
-        pic: pic ? pic : null,
+        picPreviews: picPreviews ? picPreviews : null,
         radioButtons: radioState ? radioState : null,
 		isValid: isValid,
         handleChange: handleChange,
         handleSubmit: handleSubmit,
-		submitError: submitError ? submitError.message : null,
+		submitError: submitError ? submitError : null,
     }
 
     return [FormHandling];
