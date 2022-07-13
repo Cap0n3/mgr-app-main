@@ -485,7 +485,6 @@ export const useCustForm = (formSetup) => {
 				
 				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then((response) => {
 					// If success, clear form cookies & go to dashboard
-					console.log(response)
 					clearFormCookies(formSetup.formRef.current)
 					navigate(formSetup.navigateTo);
 				}).catch(fetchFail);
