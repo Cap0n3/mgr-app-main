@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAlert } from 'react-alert';
 import AuthContext from '../context/AuthContext';
 import { getEntries, deleteEntry, fetchFail } from "../functions/ApiCalls";
 import { Button } from "./pagesStyles/Global.style";
@@ -11,7 +10,6 @@ const Dashboard = () => {
 	const { authTokens, user, logoutUser } = useContext(AuthContext)
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 	const navigate = useNavigate();
-	const alert = useAlert();
 
 	/**
 	 * Request all clients info from API.

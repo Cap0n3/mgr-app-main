@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { useParams } from 'react-router-dom'
 import AuthContext from "../context/AuthContext";
 import { getEntries } from "../functions/ApiCalls";
 import { useAlert } from 'react-alert';
@@ -26,7 +25,6 @@ import {
 	ContactInfo,
 	EmailIcon,
 	PhoneIcon,
-	BirthdayIcon,
     WebsiteIcon,
 	BodyWrapper
 } from "./pagesStyles/ClientDetail.style";
