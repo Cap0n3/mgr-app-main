@@ -18,9 +18,9 @@ class SignupTest(APITestCase):
     Test signup process and proper user/teacher creation.
     '''
     def test_CreateUserView(self):
-        """
+        '''
         Ensure we can create a new user account.
-        """
+        '''
         url = reverse('signup')
         response = self.client.post(url, user_data, format='multipart')
         # Check request status
@@ -44,7 +44,7 @@ class ProfileTest(APITestCase):
         '''
         signupURL = reverse('signup')
         self.client.post(signupURL, user_data, format='multipart')
-
+    
     def test_ObtainTokenPair(self):
         '''
         Test if token pair is properly generated and contain valid infos about current user.
@@ -54,13 +54,13 @@ class ProfileTest(APITestCase):
             'username' : user_data['username'],
             'password' : user_data['password']
         }
-        # Test if token is created
-        response = self.client.post(tokenURL, userAuth, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        tokenResponse = self.client.post(tokenURL, userAuth, format='json')
+        # Test if token response is a success
+        self.assertEqual(tokenResponse.status_code, status.HTTP_200_OK)
         # Extract token data from response
         userToken = {
-            'access' : response.data['access'],
-            'refresh' : response.data['refresh']
+            'access' : tokenResponse.data['access'],
+            'refresh' : tokenResponse.data['refresh']
         }
         # Decode data
         userTokenData = jwt.decode(userToken['access'], SECRET_KEY, algorithms="HS256")
@@ -72,4 +72,8 @@ class ProfileTest(APITestCase):
 
     def test_TeachersView(self):
         url = reverse('teacher')
-        print(self.client.get(url, self.userToken))
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        # Test view
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
