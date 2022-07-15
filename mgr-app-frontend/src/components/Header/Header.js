@@ -92,7 +92,7 @@ const Header = (props) => {
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>
-					<MenuItem onClick={() => navigate("/teacher")}>Profil</MenuItem>
+					<MenuItem onClick={() => navigate("/teacher")}>Profile</MenuItem>
 					<MenuItem onClick={() => navigate("/account")}>Compte</MenuItem>
 					<MenuItem>Sign Out</MenuItem>
 				</MenuList>

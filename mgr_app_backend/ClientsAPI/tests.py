@@ -36,7 +36,7 @@ class SignupTest(APITestCase):
 
 class ProfileTest(APITestCase):
     '''
-    Test standard user token, profile views & more.
+    Test standard user token, views & more.
     '''
     def setUp(self):
         '''
@@ -44,6 +44,8 @@ class ProfileTest(APITestCase):
         '''
         signupURL = reverse('signup')
         self.client.post(signupURL, user_data, format='multipart')
+        # Get associated teacher ID
+        self.teacherID = Teacher.objects.get().id
     
     def test_ObtainTokenPair(self):
         '''
@@ -64,16 +66,70 @@ class ProfileTest(APITestCase):
         }
         # Decode data
         userTokenData = jwt.decode(userToken['access'], SECRET_KEY, algorithms="HS256")
-        # Test token data
+        # Test decoded data in token
         self.assertEqual(User.objects.get().id, userTokenData['user_id'])
         self.assertEqual(User.objects.get().username, userTokenData['username'])
         self.assertEqual(User.objects.get().first_name, userTokenData['fname'])
         self.assertEqual(User.objects.get().last_name, userTokenData['lname'])
 
     def test_TeachersView(self):
-        url = reverse('teacher')
+        '''
+        Test Teacher view, basic data response and update of informations.
+        '''
+        urlView = reverse('teacher')
+        # ================ #
+        # === Security === #
+        # ================ #
+        # Test if unauthenticated user can view page
+        notAuth_response = self.client.get(urlView)
+        self.assertEqual(notAuth_response.status_code, status.HTTP_401_UNAUTHORIZED)
         # Authenticate user
         self.client.login(username=user_data['username'], password=user_data['password'])
-        # Test view
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # ================= #
+        # === Test view === #
+        # ================= #
+        viewResponse = self.client.get(urlView)
+        self.assertEqual(viewResponse.status_code, status.HTTP_200_OK)
+        # Test viewResponse data
+        self.assertEqual(viewResponse.data[0]['teacher_fname'], user_data['first_name'])
+        self.assertEqual(viewResponse.data[0]['teacher_lname'], user_data['last_name'])
+
+    def test_UpdateTeacherView(self):
+        urlUpdate = reverse('teacher-update', kwargs={'pk' : self.teacherID})
+        # Create data for update
+        updateData = {
+            'business_name' : 'Test Company',
+            'business_website' : 'www.mytestbusiness.com',
+            'teacher_fname' : 'Franky',
+            'teacher_lname' : 'Letest',
+            'teacher_email' : 'test@gemal.com',
+            'teacher_phone' : '076 766 78 99',
+            'teacher_address' : '2 Chemin du Teste',
+            'teacher_postal' : '1207',
+            'teacher_city' : 'Lausanne',
+            'teacher_country' : 'Suisse',
+            'teacher_bankNumber' : '01-444001-3',
+            'teacher_iban' : 'CH66 0200 4000 0001 044 4000 3',
+            'teacher_bicSwift' : 'TESTSXF',
+            'teacher_taxLabel' : 'TestTax',
+            'teacher_tax' : 10,
+            'teacher_dueDays' : 20
+        }
+        # ================ #
+        # === Security === #
+        # ================ #
+        # Test if unauthenticated user can udpate teacher infos
+        notAuthResponse = self.client.put(urlUpdate, updateData)
+        self.assertEqual(notAuthResponse.status_code, status.HTTP_401_UNAUTHORIZED)
+        # ================= #
+        # === Test view === #
+        # ================= #
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        # Test if update is a success
+        updateResponse = self.client.put(urlUpdate, updateData)
+        self.assertEqual(updateResponse.status_code, status.HTTP_200_OK)
+        # Test a few data to see if anything went wrong (maybe not necessary ...)
+        getResponse = self.client.get(reverse("teacher"))
+        self.assertEqual(getResponse.data[0]['teacher_fname'], updateData['teacher_fname'])
+        self.assertEqual(getResponse.data[0]['teacher_lname'], updateData['teacher_lname'])

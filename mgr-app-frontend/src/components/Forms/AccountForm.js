@@ -19,11 +19,13 @@ import {
 } from "./FormStyles/GlobalForm.style";
 import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
+import { useAlert } from 'react-alert';
 import { InputWarnNormal, InputWarnCompare } from "../../Colors";
 
 const AccountForm = (props) => {
+    const alert = useAlert();
     const formRef = useRef();
-    const { authTokens, user } = useContext(AuthContext);
+    const { authTokens, user, logoutUser } = useContext(AuthContext);
     const [ customForm ] = useCustForm({
         operation: props.target,
 		endpoints: {
