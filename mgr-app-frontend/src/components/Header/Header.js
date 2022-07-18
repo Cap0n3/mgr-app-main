@@ -24,7 +24,7 @@ import AuthContext from "../../context/AuthContext";
 const Header = (props) => {
 	const [openProfilMenu, setOpenProfilMenu] = useState(false);
 	const [openNotifList, setOpenNotifList] = useState(false);
-	const { user, userData } = useContext(AuthContext);
+	const { user, userData, logoutUser } = useContext(AuthContext);
 	const profilMenuRef = useRef(null);
 	const notifListRef = useRef(null);
 	const navigate = useNavigate();
@@ -94,7 +94,7 @@ const Header = (props) => {
 				<MenuList>
 					<MenuItem onClick={() => navigate("/teacher")}>Profile</MenuItem>
 					<MenuItem onClick={() => navigate("/account")}>Compte</MenuItem>
-					<MenuItem>Sign Out</MenuItem>
+					<MenuItem onClick={() => logoutUser()}>Sign Out</MenuItem>
 				</MenuList>
 			</DropMenu>
 		</div>
