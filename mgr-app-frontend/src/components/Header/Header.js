@@ -85,7 +85,7 @@ const Header = (props) => {
 			<RiArrowDownSLine className="header-menu-dropdown" size="30" onClick={() => setOpenProfilMenu(!openProfilMenu)} />
 			<DropMenu isOpen={openProfilMenu} ref={profilMenuRef} rightOffset="30px">
 				<ProfileMobileWrapper>
-					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
+					<ProfileImage src={userData.user_profilePic} alt="profile-pic" />
 					<NameRoleWrapper>
 						<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
 						<ProfileRole>{ user.username }</ProfileRole>
