@@ -103,17 +103,30 @@ const AccountForm = (props) => {
     }
 
     /**
-     * This custom submit function ask user confirmation before submitting changes.
+     * This custom submit function checks if password are strong enough and if both password matches. 
+     * Then it asks user a final confirmation before submitting changes (and logout user, see callback function).
      * @param   {Object}  e   Event object. 
      */
-    const askBeforeSubmit = (e) => {
+    const askBeforeSubmit = (e, passLevel) => {
         e.preventDefault();
-        const answer = window.confirm("Vous allez être redirigé vers le login, êtes-vous sûr de vouloir continuer ?");
-        if (answer) customForm.handleSubmit(e);
+        if(isMatch) {
+            if(passLevel >= 4) {
+                // Password is strong enough
+                const answer = window.confirm("Vous allez être redirigé vers le login, êtes-vous sûr de vouloir continuer ?");
+                if (answer) customForm.handleSubmit(e);
+            }
+            else {
+                // Password is too weak
+                alert.show("Le mot de passe n'est pas sûr !");
+            }
+        } else {
+            // Password don't match
+            alert.show("Les mots de passe ne correspondent pas !");
+        }   
     }
 
     return(
-        <Form ref={formRef} onSubmit={askBeforeSubmit}>
+        <Form ref={formRef} onSubmit={e => {askBeforeSubmit(e, passCheck.level)}}>
 				<Legend><Bullet>1</Bullet>Utilisateur</Legend>
 				<Label>Changer le nom d'utilisateur :</Label>
 				<Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />

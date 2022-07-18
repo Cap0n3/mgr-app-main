@@ -32,6 +32,7 @@ import { SignupContext } from "../../App";
  *		user: user, // User information
  *		entryID: props.clientID, // Primary key of entry (for update operation)
  *		navigateTo: "/home",	// URL to navigate to if form submit is a success (value can be empty to do nothing but it could lead to strange behaviour)
+ *		callback: myFunc,	// Function to execute after successfully submitting form 
  *		formRef: formRef, // Form reference
  *		radioButtons: { // All radio buttons and their initial state
  *			invoice_numbering: false,
