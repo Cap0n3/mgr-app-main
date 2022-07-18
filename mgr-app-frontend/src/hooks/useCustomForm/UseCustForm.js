@@ -500,12 +500,13 @@ export const useCustForm = (formSetup) => {
 			// Make API call to server
 			if (formSetup.operation === "create") {
 				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then((response) => {
-					// If success, clear form cookies & go to link provided
+					// SUCCESS //
+					// Clear form cookies & go to link provided
 					clearFormCookies(formSetup.formRef.current)
-					if(formSetup.navigateTo !== "") {
-						navigate(formSetup.navigateTo);
-					}
-					
+					// Execute callback function (if any)
+					if (formSetup.callback) formSetup.callback();
+					// Navigate to custom page
+					if (formSetup.navigateTo !== "") navigate(formSetup.navigateTo);	
 				}).catch(fetchFail);
 			}
 			else if (formSetup.operation === "signup") {
@@ -515,19 +516,25 @@ export const useCustForm = (formSetup) => {
 					return;
 				}
 				signUpCall(formSetup.endpoints.signup, inputs).then(() => {
-					// If success, clear form cookies & go to dashboard
+					// SUCCESS //
+					// Clear form cookies
 					clearFormCookies(formSetup.formRef.current)
+					// Execute callback function (if any)
+					if (formSetup.callback) formSetup.callback();
+					// Go to dashboard
 					setIsSignup(false);
 				}).catch(fetchFail);
 			}
 		}
 		else if (formSetup.operation === "update") {
 			updateEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID, inputs).then(() => {
-				// If success, clear form cookies & go to dashboard
+				// SUCCESS //
+				// Clear form cookies & go to dashboard
 				clearFormCookies(formSetup.formRef.current)
-				if(formSetup.navigateTo !== "") {
-					navigate(formSetup.navigateTo);
-				}
+				// Execute callback function (if any)
+				if (formSetup.callback) formSetup.callback();
+				// Navigate to custom page
+				if (formSetup.navigateTo !== "") navigate(formSetup.navigateTo);
 			}).catch(fetchFail);
 		}
 	}

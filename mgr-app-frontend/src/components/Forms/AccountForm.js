@@ -36,6 +36,7 @@ const AccountForm = (props) => {
         user: user,
         entryID: user.user_id,
 		navigateTo: "/",
+        callback: logoutUser,
         formRef: formRef,
     });
 
@@ -101,8 +102,18 @@ const AccountForm = (props) => {
         return <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal}/><p>{warnMessage}</p></WarningBox>
     }
 
+    /**
+     * This custom submit function ask user confirmation before submitting changes.
+     * @param   {Object}  e   Event object. 
+     */
+    const askBeforeSubmit = (e) => {
+        e.preventDefault();
+        const answer = window.confirm("Vous allez être redirigé vers le login, êtes-vous sûr de vouloir continuer ?");
+        if (answer) customForm.handleSubmit(e);
+    }
+
     return(
-        <Form ref={formRef} onSubmit={customForm.handleSubmit}>
+        <Form ref={formRef} onSubmit={askBeforeSubmit}>
 				<Legend><Bullet>1</Bullet>Utilisateur</Legend>
 				<Label>Changer le nom d'utilisateur :</Label>
 				<Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
