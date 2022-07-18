@@ -78,7 +78,7 @@ const Header = (props) => {
 			<ProfileImage src={userData.user_profilePic} alt="profile-pic" />
 			<NameRoleWrapper>
 				<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
-				<ProfileRole>{ user.role }</ProfileRole>
+				<ProfileRole>{ user.username }</ProfileRole>
 			</NameRoleWrapper>
 		</ProfileWrapper>
 		<div>
@@ -88,7 +88,7 @@ const Header = (props) => {
 					<ProfileImage src="https://www.rd.com/wp-content/uploads/2021/03/GettyImages-1183822926.jpg" alt="profile-pic" />
 					<NameRoleWrapper>
 						<ProfileName>{ user.isAdmin ? user.username : (userData.user_fname ? userData.user_fname.charAt(0) + "." + userData.user_lname : "NoName")}</ProfileName>
-						<ProfileRole>{ user.role }</ProfileRole>
+						<ProfileRole>{ user.username }</ProfileRole>
 					</NameRoleWrapper>
 				</ProfileMobileWrapper>
 				<MenuList>
