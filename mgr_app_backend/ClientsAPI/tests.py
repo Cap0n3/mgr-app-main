@@ -4,13 +4,40 @@ from rest_framework.test import APITestCase
 import jwt
 from mgr_app_backend.settings import SECRET_KEY
 from django.contrib.auth.models import User
-from .models import Teacher
+from .models import Teacher, Clients
 
+# Dummy user data
 user_data = {
         'username' : 'TestUser',
         'first_name' : 'Al',
         'last_name' : 'Capone',
-        'password' : 'kcknail2'
+        'password' : '1234abc'
+}
+
+# Dummy client data
+client_data = {
+    'teacher' : '',
+    'first_name' : 'Frank',
+    'last_name' : 'Deloreal',
+    'lesson_day' : 'Lundi',
+    'lesson_hour' : '14:30',
+    'lesson_duration' : '60',
+    'lesson_frequency' : 'Hebdomadaire',
+    'instrument' : 'Guitare',
+    'student_email' : 'testUser@gmail.com',
+    'student_phone' : '+41 78 456 32 22',
+    'student_level' : 'D3',
+    'student_birth' : '2000-01-03',
+    'invoice_fname' : 'Jane',
+    'invoice_lname' : 'Deloreal',
+    'invoice_email' : 'janedoe@gmail.com',
+    'invoice_phone' : '+41 76 653 47 55',
+    'invoice_address' : 'Chemin des Pins 66',
+    'invoice_postal' : '23888',
+    'invoice_city' : 'Viry',
+    'invoice_country' : 'France',
+    'billing_currency' : 'EUR',
+    'notes' : 'BlaBlaBlaBlaBlaBla !'
 }
 
 class SignupTest(APITestCase):
@@ -43,10 +70,23 @@ class ProfileTest(APITestCase):
         Create a test user for testing.
         '''
         signupURL = reverse('signup')
+        # Create test user (and associated teacher)
         self.client.post(signupURL, user_data, format='multipart')
         # Get associated teacher ID
         self.teacherID = Teacher.objects.get().id
-    
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        # Create a client for testing
+        createClientURL = reverse("client-create")
+        # Update teacher id field in dummy data (to associated a teacher to a client)
+        client_data['teacher'] = self.teacherID
+        # Create test client for associated teacher
+        resp = self.client.post(createClientURL, client_data, format='multipart')
+        # Get client ID (for later)
+        self.clientID = Clients.objects.get().id
+        # Logout
+        self.client.logout()
+   
     def test_ObtainTokenPair(self):
         '''
         Test if token pair is properly generated and contain valid infos about current user.
@@ -133,3 +173,24 @@ class ProfileTest(APITestCase):
         getResponse = self.client.get(reverse("teacher"))
         self.assertEqual(getResponse.data[0]['teacher_fname'], updateData['teacher_fname'])
         self.assertEqual(getResponse.data[0]['teacher_lname'], updateData['teacher_lname'])
+
+    def test_ClientsView(self):
+        clientsUrl = reverse("clients")
+        # ================ #
+        # === Security === #
+        # ================ #
+        # Test if unauthenticated user can see clients page
+        notAuthResponse = self.client.get(clientsUrl)
+        self.assertEqual(notAuthResponse.status_code, status.HTTP_401_UNAUTHORIZED)
+        # ================= #
+        # === Test view === #
+        # ================= #
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        response = self.client.get(clientsUrl)
+        # Check if view is correcly given
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_ClientDetailView(self):
+        clientsUrl = reverse("client-detail", kwargs={'pk' : self.clientID})
+        # TO FINISH
