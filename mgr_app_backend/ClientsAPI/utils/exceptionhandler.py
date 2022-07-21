@@ -6,7 +6,7 @@ class PasswordCheckFailed(APIException):
     Custom error to handle password check failure. Used when data update needs password confirmation.
     '''
     status_code = 403
-    default_detail = 'Password check has failed ! String given does not match stored password.'
+    default_detail = "Password entered for verification is wrong ! Data not updated !"
     default_code = 'forbidden'
 
 def custom_exception_handler(exc, context):

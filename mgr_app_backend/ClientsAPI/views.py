@@ -72,6 +72,7 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 		On the other hand for PUT requests, we'll use more fields to allow
 		password update. 
 		'''
+		# Select correct serializer depending on request method
 		method = self.request.method
 		if method == "GET":
 			return ReadUserSerializer
@@ -94,7 +95,7 @@ class ListUpdateUserView(generics.RetrieveUpdateAPIView):
 			else:
 				raise PasswordCheckFailed
 		elif isAdmin:
-			# Skip password check
+			# Skip password security check
 			instance = serializer.save()
 
 class DeleteUserView(generics.DestroyAPIView):

@@ -44,7 +44,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 	'''
 	Used to update user name and password.
 	'''
-	password = serializers.CharField(required=False, max_length=128, style={'input_type': 'password'})
+	# Set password to "write only" to avoid returning hash in response when updating
+	password = serializers.CharField(required=False, max_length=128, style={'input_type': 'password'}, write_only=True)
 	class Meta:
 		model = User
 		fields = ['username', 'password']
