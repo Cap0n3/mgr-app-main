@@ -6,7 +6,7 @@ from mgr_app_backend.settings import SECRET_KEY
 from django.contrib.auth.models import User
 from .models import Teacher, Clients
 
-# Dummy user data
+# === Dummy user data === #
 user_data = {
         'username' : 'TestUser',
         'first_name' : 'Al',
@@ -14,7 +14,7 @@ user_data = {
         'password' : '1234abc'
 }
 
-# Dummy client data
+# === Dummy client data === #
 client_data = {
     'teacher' : '',
     'first_name' : 'Frank',
@@ -192,5 +192,74 @@ class ProfileTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_ClientDetailView(self):
-        clientsUrl = reverse("client-detail", kwargs={'pk' : self.clientID})
-        # TO FINISH
+        clientUrl = reverse("client-detail", kwargs={'pk' : self.clientID})
+        # ================ #
+        # === Security === #
+        # ================ #
+        # Test if unauthenticated user can see a client
+        notAuthResponse = self.client.get(clientUrl)
+        self.assertEqual(notAuthResponse.status_code, status.HTTP_401_UNAUTHORIZED)
+        # ================= #
+        # === Test view === #
+        # ================= #
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        response = self.client.get(clientUrl)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Test a few stored client data to see if anything's wrong
+        self.assertEqual(response.data['first_name'], client_data['first_name'])
+        self.assertEqual(response.data['last_name'], client_data['last_name'])
+        self.assertEqual(response.data['invoice_address'], client_data['invoice_address'])
+
+    def test_UpdateClientView(self):
+        clientUpdateURL = reverse('client-update', kwargs={'pk' : self.clientID})
+        # Modify a few things in dummy client data
+        client_data['last_name'] = 'Morris'
+        client_data['billing_currency'] = 'CHF'
+        client_data['invoice_postal'] = '444888'
+        client_data['notes'] = 'Lorem Ipsum is awesome !'
+        # ================ #
+        # === Security === #
+        # ================ #
+        # Test if an unauthenticated user can see or update a client
+        notAuthResponse_GET = self.client.get(clientUpdateURL)
+        notAuthResponse_PUT = self.client.put(clientUpdateURL, client_data)
+        self.assertEqual(notAuthResponse_GET.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(notAuthResponse_PUT.status_code, status.HTTP_401_UNAUTHORIZED)
+        # ================= #
+        # === Test view === #
+        # ================= #
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        # Test PUT to update data (with modified client_data)
+        response_PUT = self.client.put(clientUpdateURL, client_data)
+        self.assertEqual(response_PUT.status_code, status.HTTP_200_OK)
+        # Test GET response
+        response_GET = self.client.get(clientUpdateURL)
+        self.assertEqual(response_GET.status_code, status.HTTP_200_OK)
+        # Test a few updated client data to see if anything's wrong
+        self.assertEqual(response_GET.data['first_name'], client_data['first_name'])
+        self.assertEqual(response_GET.data['last_name'], client_data['last_name'])
+        self.assertEqual(response_GET.data['invoice_address'], client_data['invoice_address'])
+        
+    def test_DeleteClientView(self):
+        clientDeleteURL = reverse('client-delete', kwargs={'pk' : self.clientID})
+        # ================ #
+        # === Security === #
+        # ================ #
+        # Test if an unauthenticated user can delete a client
+        notAuthResponse = self.client.delete(clientDeleteURL)
+        self.assertEqual(notAuthResponse.status_code, status.HTTP_401_UNAUTHORIZED)
+        # ================= #
+        # === Test view === #
+        # ================= #
+        # Authenticate user
+        self.client.login(username=user_data['username'], password=user_data['password'])
+        # Test client deletion (if success it returs 204 code)
+        response = self.client.delete(clientDeleteURL)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # Double check if client was correctly deleted
+        clientUrl = reverse("client-detail", kwargs={'pk' : self.clientID})
+        response_GET = self.client.get(clientUrl)
+        self.assertEqual(response_GET.status_code, status.HTTP_404_NOT_FOUND)
+        
