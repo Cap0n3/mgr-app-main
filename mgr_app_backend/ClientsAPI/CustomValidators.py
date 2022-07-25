@@ -120,3 +120,14 @@ def validateBankSwift(value):
 
 	if len(forbidChars) != 0:
 		raise ValidationError("Swift number is invalid !")
+
+def validateNotifMessage(value):
+	'''
+		Func to validate notification message. Is similar to validateCharField but more permissive.
+		@isValid - Letters, spaces, [!, ?, :, ;] and [-] (no numbers or other special chars.)
+		@N
+	'''
+	forbidChars = re.findall(r'[^\w\sáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ!?,:;\-\']', value)
+	
+	if len(forbidChars) != 0:
+		raise ValidationError("No special characters or numbers please !")

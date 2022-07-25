@@ -6,8 +6,7 @@ from django.contrib.auth.hashers import make_password
 
 # Import des modèles
 from django.contrib.auth.models import User
-from .models import Teacher
-from .models import Clients
+from .models import Teacher, Clients, Notifications
 
 # ==================================== #
 # =============== USER =============== #
@@ -73,8 +72,21 @@ class TeacherSerializer(serializers.ModelSerializer):
 		model = Teacher
 		fields = '__all__'
 
+# ========================== #
+# ========= CLIENT ========= #
+# ========================== #
+
 class ClientSerializer(serializers.ModelSerializer):
 	lesson_hour = serializers.TimeField(format=settings.TIME_FORMAT, input_formats=None)
 	class Meta:
 		model = Clients
+		fields = '__all__'
+
+# ================================= #
+# ========= NOTIFICATIONS ========= #
+# ================================= #
+
+class NotificationSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Notifications
 		fields = '__all__'
