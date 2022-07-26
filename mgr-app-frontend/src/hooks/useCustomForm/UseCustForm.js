@@ -16,6 +16,8 @@ import { SignupContext } from "../../App";
  * > **IMPORTANT !** : Name properties of form inputs must have the same name as database model. For example, `first_name` input should relate
  * to `first_name` column in database.
  * 
+ * ---
+ * 
  * ## Hook Setup
  * 
  * ```js
@@ -29,22 +31,27 @@ import { SignupContext } from "../../App";
  *		authTokens: authTokens, // Authenfification tokens
  *		user: user, // User information
  *		entryID: props.clientID, // Primary key of entry (for update operation)
- *		navigateTo: "/home",	// URL to navigate to if form submit is a success
+ *		navigateTo: "/home",	// URL to navigate to if form submit is a success (value can be empty to do nothing but it could lead to strange behaviour)
+ *		callback: myFunc,	// Function to execute after successfully submitting form 
  *		formRef: formRef, // Form reference
  *		radioButtons: { // All radio buttons and their initial state
  *			invoice_numbering: false,
  *		}
  * });
  * ```
- * Property `radioButtons` can hold as many radio buttons as desired, name used should be identical to html name property :
- * 
+ * - **`operation`** - Defines current operation of form like "create", "update" or "signup" and is directly related to endpoints property below. 
+ * Could be passed from a `prop` to implement different operations with the same form.
+ * - **`radioButtons`** - Property `radioButtons` defines radio buttons initial statescan hold as many radio buttons as desired, 
+ * please note that name used should be identical to html name property :
  * ```js
  * radioButtons: {
  * 		<radioBtn1_name>: <initial_state>,
  * 		<radioBtn2_name>: <initial_state>,
  * }
  * ```
+ * 
  * ## Returned Object
+ * 
  * Here returned object stored in `customForm` will hold these values & methods. For instance, standard form functions like `handleChange` will handle input 
  * entries and profile pic, `handleSubmit` will perform input validation and send data to server. 
  * 
@@ -62,7 +69,7 @@ import { SignupContext } from "../../App";
  * }
  * ```
  * 
- * In this example, for accessing values simply do `customForm.<value>`.
+ * Let's access classic form functions like `handleChange` & `handleSubmit` through hook by doing `customForm.<value>`.
  * 
  * - To access `handleChange` function :
  * ```html
@@ -73,9 +80,13 @@ import { SignupContext } from "../../App";
  * <form onSubmit={customForm.handleSubmit}>
  * ```
  *
+ * ---
+ * 
  * ## Form Setup
  * 
- * To set up a form, first you must first import `useRef()` hook :
+ * Once you've set up hook, it's time to create your form.
+ * 
+ * To set up a form, first import `useRef()` hook :
  * 
  * ```js
  * import React, { useRef } from "react";
@@ -98,6 +109,8 @@ import { SignupContext } from "../../App";
  * ```
  * 
  * ### Basic input
+ * 
+ * Now you can create all your form inputs.
  * 
  * - To set up a simple text input with user input validation and warning message for user :
  * ```js
@@ -133,14 +146,16 @@ import { SignupContext } from "../../App";
  * {customForm.operation === "update" && !customForm.picPreviews.myPic ? <img src={customForm.inputs.myPic} /> : null}
  * ```
  * 
- * #### Radio buttons
+ * ### Radio buttons
  * 
  * - For accessing initial state of radio button and perform updates on value from JSX :
  * ```js
  * <input type="radio" name="invoice_numbering" checked={customForm.operation === "create" ? customForm.radioButtons["invoice_numbering"] || "" : customForm.inputs.invoice_numbering || ""} value="true" onChange={customForm.handleChange} />
  * ```
  *
- * #### Select
+ * > **IMPORTANT !** Don't forget to define radio button initial state in hook setup property `radioButtons` (see Hook Setup above)
+ * 
+ * ### Select
  * 
  * - For select box :
  * ```js
@@ -152,6 +167,8 @@ import { SignupContext } from "../../App";
  *		<option value="Libre">A la carte</option>
  *</Select>
  * ```
+ * 
+ * ---
  * 
  * ## Input validation
  * 
@@ -191,6 +208,8 @@ import { SignupContext } from "../../App";
  * <input type="text" name="first_name" />
  * {warningBox("first_name")}
  * ```
+ * 
+ * ---
  * 
  * ## Errors
  * 
@@ -479,17 +498,17 @@ export const useCustForm = (formSetup) => {
 
 		// Evaluate if it's an update or a creation
 		if (formSetup.operation === "create" || formSetup.operation === "signup") {
-			
 			// Make API call to server
 			if (formSetup.operation === "create") {
-				
 				createEntry(formSetup.endpoints.create, formSetup.authTokens, formSetup.user, inputs).then((response) => {
-					// If success, clear form cookies & go to dashboard
-					console.log(response)
+					// SUCCESS //
+					// Clear form cookies & go to link provided
 					clearFormCookies(formSetup.formRef.current)
-					navigate(formSetup.navigateTo);
+					// Execute callback function (if any)
+					if (formSetup.callback) formSetup.callback();
+					// Navigate to custom page
+					if (formSetup.navigateTo !== "") navigate(formSetup.navigateTo);	
 				}).catch(fetchFail);
-				
 			}
 			else if (formSetup.operation === "signup") {
 				// First check if password and confirmation match
@@ -498,18 +517,25 @@ export const useCustForm = (formSetup) => {
 					return;
 				}
 				signUpCall(formSetup.endpoints.signup, inputs).then(() => {
-					// If success, clear form cookies & go to dashboard
+					// SUCCESS //
+					// Clear form cookies
 					clearFormCookies(formSetup.formRef.current)
+					// Execute callback function (if any)
+					if (formSetup.callback) formSetup.callback();
+					// Go to dashboard
 					setIsSignup(false);
-					//navigate(formSetup.navigateTo);
 				}).catch(fetchFail);
 			}
 		}
 		else if (formSetup.operation === "update") {
 			updateEntry(formSetup.endpoints.update, formSetup.authTokens, formSetup.user, formSetup.entryID, inputs).then(() => {
-				// If success, clear form cookies & go to dashboard
+				// SUCCESS //
+				// Clear form cookies & go to dashboard
 				clearFormCookies(formSetup.formRef.current)
-				navigate(formSetup.navigateTo);
+				// Execute callback function (if any)
+				if (formSetup.callback) formSetup.callback();
+				// Navigate to custom page
+				if (formSetup.navigateTo !== "") navigate(formSetup.navigateTo);
 			}).catch(fetchFail);
 		}
 	}

@@ -19,11 +19,13 @@ import {
 } from "./FormStyles/GlobalForm.style";
 import { usePassCheck } from "../../hooks/usePassCheck/usePassCheck";
 import { useCustForm } from "../../hooks/useCustomForm/UseCustForm";
+import { useAlert } from 'react-alert';
 import { InputWarnNormal, InputWarnCompare } from "../../Colors";
 
 const AccountForm = (props) => {
+    const alert = useAlert();
     const formRef = useRef();
-    const { authTokens, user } = useContext(AuthContext);
+    const { authTokens, user, logoutUser } = useContext(AuthContext);
     const [ customForm ] = useCustForm({
         operation: props.target,
 		endpoints: {
@@ -34,6 +36,7 @@ const AccountForm = (props) => {
         user: user,
         entryID: user.user_id,
 		navigateTo: "/",
+        callback: logoutUser,
         formRef: formRef,
     });
 
@@ -99,8 +102,31 @@ const AccountForm = (props) => {
         return <WarningBox warn_colors={InputWarnNormal}><WarnIcon warn_colors={InputWarnNormal}/><p>{warnMessage}</p></WarningBox>
     }
 
+    /**
+     * This custom submit function checks if password are strong enough and if both password matches. 
+     * Then it asks user a final confirmation before submitting changes (and logout user, see callback function).
+     * @param   {Object}  e   Event object. 
+     */
+    const askBeforeSubmit = (e, passLevel) => {
+        e.preventDefault();
+        if(isMatch) {
+            if(passLevel >= 4) {
+                // Password is strong enough
+                const answer = window.confirm("Vous allez être redirigé vers le login, êtes-vous sûr de vouloir continuer ?");
+                if (answer) customForm.handleSubmit(e);
+            }
+            else {
+                // Password is too weak
+                alert.show("Le mot de passe n'est pas sûr !");
+            }
+        } else {
+            // Password don't match
+            alert.show("Les mots de passe ne correspondent pas !");
+        }   
+    }
+
     return(
-        <Form ref={formRef} onSubmit={customForm.handleSubmit}>
+        <Form ref={formRef} onSubmit={e => {askBeforeSubmit(e, passCheck.level)}}>
 				<Legend><Bullet>1</Bullet>Utilisateur</Legend>
 				<Label>Changer le nom d'utilisateur :</Label>
 				<Input isValid={customForm.isValid("username")} warn_colors={InputWarnNormal} type="text" name="username" value={customForm.inputs.username || ""} onChange={customForm.handleChange} required />
