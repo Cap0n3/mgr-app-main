@@ -11,8 +11,7 @@ from .CustomValidators import (
 	validateNote,
 	validateBankNumber,
 	validateBankIban,
-	validateBankSwift,
-	validateNotifMessage
+	validateBankSwift
 )
 
 #GLOBAL LISTS (FOR CHOICES)
@@ -139,29 +138,3 @@ class Clients(models.Model):
 
 	def __str__(self):
 		return self.last_name + " " + self.first_name + "(" + str(self.id) + ")"
-
-# ================================= #
-# ========= NOTIFICATIONS ========= #
-# ================================= #
-
-class Notifications(models.Model):
-	TYPE = {
-		('INFO', 'Info'),
-		('MESSAGE', 'Message'),
-		('WARNING', 'Avertissement'),
-		('ERROR', 'Erreur')
-	}
-
-	STATUS = {
-		('SUCCESS', 'Success'),
-		('ERROR', 'Error')
-	}
-	teacher = models.ForeignKey(Teacher, null=True, on_delete=models.SET_NULL)
-	notif_type = models.CharField(max_length=20, null=True, choices=TYPE)
-	notif_message = models.CharField(max_length=50, null=True, validators=[validateNotifMessage])
-	notif_status = models.CharField(max_length=20, null=True, choices=STATUS)
-	notif_date = models.DateField(auto_now_add=True)
-
-	def __str__(self):
-		#return + str(self.notif_date) + " " + str(self.teacher.id) + " " + self.notif_type + "(status : " + self.notif_status + ")"
-		return f"[{self.notif_date}] [TeacherID : {self.teacher.id}] Notif type : {self.notif_type} (status : {self.notif_status})"

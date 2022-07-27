@@ -72,5 +72,3 @@ def teacher_post_save_receiver(sender, instance, created, *args, **kwargs):
         corrUser.last_name = teacherLname
         corrUser.email = teacherEmail
         corrUser.save()
-
-

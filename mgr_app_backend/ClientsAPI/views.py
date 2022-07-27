@@ -2,7 +2,13 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import Clients, Teacher
 from django.contrib.auth.models import User
-from .serializers import CreateUserSerializer, ReadUserSerializer, UpdateUserSerializer, ClientSerializer, TeacherSerializer
+from .serializers import (
+	CreateUserSerializer, 
+	ReadUserSerializer, 
+	UpdateUserSerializer, 
+	ClientSerializer, 
+	TeacherSerializer
+) 
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsAdminOrUser, IsAdminOrOwner, IsAdminOrTeacher, IsSignUp
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
